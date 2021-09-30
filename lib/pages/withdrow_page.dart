@@ -47,7 +47,7 @@ class _WithDrowPageState extends State<WithDrowPage> {
                 Card(
                   color: Colors.green.shade50,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(color:Color(0xFF19B52B), width: 1),
+                    // side: BorderSide(color:Color(0xFF19B52B), width: 1),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   shadowColor: Colors.grey,
@@ -169,6 +169,7 @@ class _WithDrowPageState extends State<WithDrowPage> {
                             SizedBox(height: size.width*.05,),
 
                             TextField(
+                              obscureText: _isVisible,
 
                               controller: passwordController,
                               decoration: textFieldFormDecoration(size).copyWith(

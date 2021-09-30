@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mak_b/variables/size_config.dart';
 import 'package:mak_b/widgets/package_card.dart';
 
 class MyStorePage extends StatefulWidget {
@@ -22,52 +24,35 @@ class _MyStorePageState extends State<MyStorePage> {
           padding: const EdgeInsets.only(left: 5.0,right: 5.0),
           child:   SingleChildScrollView(
             child: Column(
-
-
-
               children: [
 
-              Align(
+                SizedBox(height: getProportionateScreenWidth(context,10)),
+                Align(
                   alignment: Alignment.topLeft,
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Store Collection',style: TextStyle(color: Colors.black,fontSize:size.width*.04,fontWeight: FontWeight.bold ),),
-                  )),
+                    padding:  EdgeInsets.only(top: size.width*.02,left: size.width*.02,right: size.width*.02,bottom:size.width*.02 ),
+
+                    child: Text('Store Collection',style: TextStyle(color: Colors.black,fontSize: size.width*.05 ),),
+                  ),
+                ),
 
                 Padding(
-
                   padding: const EdgeInsets.only(right:8.0),
-
                   child: GridView.builder(
-
                     shrinkWrap: true,
-
                     physics: new ClampingScrollPhysics(),
-
                     itemCount:4,
-
                     gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-
                         crossAxisCount: 2,
-
                         mainAxisSpacing: 2,
-
                         childAspectRatio: 5/9),
-
                     itemBuilder: (BuildContext context, int index) {
-
                       // if (demoProducts[index].isPopular)
-
                       return PackageCard();
-
                       // return SizedBox
-
                       //     .shrink(); // here by default width and height is 0
-
                     },
-
                   ),
-
                 ),
 
 

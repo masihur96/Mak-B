@@ -12,7 +12,7 @@ class _AddDepositState extends State<AddDeposit> {
   SingingCharacter? _character = SingingCharacter.Account;
    var amountController = TextEditingController();
    var passwordController = TextEditingController();
-
+  bool _isVisible=false;
   @override
   void initState() {
     _character = SingingCharacter.Account;
@@ -40,7 +40,7 @@ class _AddDepositState extends State<AddDeposit> {
               Card(
                 color: Colors.green.shade50,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(color:Color(0xFF19B52B), width: 1),
+                  // side: BorderSide(color:Color(0xFF19B52B), width: 1),
                   borderRadius: BorderRadius.circular(5),
                 ),
                 shadowColor: Colors.grey,
@@ -142,7 +142,7 @@ class _AddDepositState extends State<AddDeposit> {
 
                                     TextField(
 
-                                      controller: passwordController,
+                                      controller: amountController,
                                       decoration: textFieldFormDecoration(size).copyWith(
                                         suffixText: 'TK',suffixStyle: TextStyle(color: Colors.black,fontSize: size.width*.04),
                                         labelText: 'Amount',
@@ -157,6 +157,14 @@ class _AddDepositState extends State<AddDeposit> {
 
                                         labelText: 'Password',
                                         hintText: '********',
+
+                                          suffixIcon: InkWell(
+                                              onTap: (){
+                                                setState(() {
+                                                  _isVisible =!_isVisible;
+                                                });
+                                              },
+                                              child: Icon(_isVisible==true?Icons.visibility:Icons.visibility_off))
                                       ),
                                     ),
                                     SizedBox(height: size.width*.02,),
@@ -169,7 +177,7 @@ class _AddDepositState extends State<AddDeposit> {
 
                                 child:Text('Confirm',style: TextStyle(fontSize: size.width*.03),),
 
-                                onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (_)=>AddDeposit()));},
+                                onPressed: (){},
                                 borderRadius: 10,
                                 height: size.width*.1,
                                 width: size.width*.5,
