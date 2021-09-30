@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mak_b/home_nav.dart';
 import 'package:mak_b/models/Cart.dart';
+import 'package:mak_b/pages/payment_page.dart';
 
 import 'package:mak_b/variables/size_config.dart';
 import 'package:mak_b/widgets/cart_card.dart';
@@ -118,7 +119,7 @@ class _CartPageState extends State<CartPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => HomeNav()));
+                                  builder: (context) => PaymentPage()));
                         },
                         borderRadius: 5.0,
                         height: size.width * .1,

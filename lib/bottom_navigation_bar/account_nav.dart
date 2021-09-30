@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mak_b/pages/deposite_page.dart';
 import 'package:mak_b/pages/insaurance.dart';
+import 'package:mak_b/pages/my_store_page.dart';
 import 'package:mak_b/pages/refferred_people.dart';
+import 'package:mak_b/pages/withdrow_page.dart';
 
 class AccountNav extends StatefulWidget {
   const AccountNav({Key? key}) : super(key: key);
@@ -287,6 +290,9 @@ class _AccountNavState extends State<AccountNav> {
           ),
         ),
         ListTile(
+          onTap: (){
+            Navigator.push(context, MaterialPageRoute(builder: (_)=>MyStorePage()));
+          },
           leading: Icon(Icons.store),
           title: Text(
             'My Store',
@@ -327,9 +333,33 @@ class _AccountNavState extends State<AccountNav> {
           ),
         ),
         ListTile(
+          onTap: (){
+            Navigator.push(context, MaterialPageRoute(builder: (_)=>DepositePage()));
+          },
           leading: Icon(Icons.credit_card),
           title: Text(
             'Deposit',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: size.width * .04,
+                fontWeight: FontWeight.w500),
+          ),
+          trailing: Icon(Icons.chevron_right),
+        ),
+        Container(
+          width: size.width,
+          child: Divider(
+            color: Colors.grey.shade300,
+            thickness: size.width * .001,
+          ),
+        ),
+        ListTile(
+          onTap: (){
+            Navigator.push(context, MaterialPageRoute(builder: (_)=>WithDrowPage()));
+          },
+          leading: Icon(Icons.monetization_on_outlined),
+          title: Text(
+            'Withdraw',
             style: TextStyle(
                 color: Colors.black,
                 fontSize: size.width * .04,

@@ -16,6 +16,9 @@ dependencies:
   motion_tab_bar_v2:
   font_awesome_flutter:
   flutter_image_slideshow: ^0.1.1
+#  flutter_sslcommerze: ^1.0.1-nullsafety.0
+  fluttertoast:
+
 #flutter_shimmer: ^2.1.1
 
 
