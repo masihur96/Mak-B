@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mak_b/models/Product.dart';
+import 'package:mak_b/pages/watch_video_page.dart';
 import 'package:mak_b/variables/constants.dart';
 import 'package:mak_b/variables/size_config.dart';
 import 'package:mak_b/widgets/search_field.dart';
+import 'package:mak_b/widgets/solid_color_button.dart';
 import 'cart_page.dart';
 import 'package:mak_b/widgets/icon_btn_with_counter.dart';
 import 'package:mak_b/widgets/product_card.dart';
@@ -16,6 +18,7 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
     return Scaffold(
       drawer: new Drawer(
         child: new ListView(
@@ -116,7 +119,39 @@ class _ProductPageState extends State<ProductPage> {
       body: ListView(
         physics: BouncingScrollPhysics(),
         children: [
-          SizedBox(height: getProportionateScreenWidth(context,10)),
+          //SizedBox(height: getProportionateScreenWidth(context,10)),
+            GestureDetector(
+              onTap:()=> Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 8.0),
+                    height: 170,
+                    width: size.width,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/watch_1.png'),
+                        fit: BoxFit.fill
+                      )
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 10.0,
+                    right: 20.0,
+                    child: SolidColorButton(
+                        child: Text('Watch Now',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
+                        onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
+                        borderRadius: 5.0,
+                        height: size.width*.06,
+                        width: size.width*.3,
+                        bgColor: Colors.amber),
+                  )
+                ],
+              ),
+            ),
+          SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.only(right:8.0),
             child: GridView.builder(

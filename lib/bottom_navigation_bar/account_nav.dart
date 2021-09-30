@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mak_b/home_nav.dart';
 import 'package:mak_b/pages/deposite_page.dart';
 import 'package:mak_b/pages/insaurance.dart';
 import 'package:mak_b/pages/my_store_page.dart';
+import 'package:mak_b/pages/order_list_page.dart';
 import 'package:mak_b/pages/refferred_people.dart';
 import 'package:mak_b/pages/withdrow_page.dart';
 
@@ -221,6 +223,8 @@ class _AccountNavState extends State<AccountNav> {
             ),
           ),
           SizedBox(height: size.width * .02),
+
+
           Container(
             width: size.width * .85,
             padding: EdgeInsets.all(size.width * .04),
@@ -248,108 +252,48 @@ class _AccountNavState extends State<AccountNav> {
             ),
           ),
           SizedBox(height: size.width * .02),
-          ListTile(
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => RefferredPeople()));
-            },
-            leading: Icon(Icons.people),
-            title: Text(
-              'Refferred People',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: size.width * .04,
-                  fontWeight: FontWeight.w500),
-            ),
-            trailing: Icon(Icons.chevron_right),
-          ),
-          Container(
-            width: size.width,
-            child: Divider(
-              color: Colors.grey.shade300,
-              thickness: size.width * .001,
-            ),
-          ),
-          ListTile(
-            onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (_)=>MyStorePage()));
-            },
-            leading: Icon(Icons.store),
-            title: Text(
-              'My Store',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: size.width * .04,
-                  fontWeight: FontWeight.w500),
-            ),
-            trailing: Icon(Icons.chevron_right),
-          ),
-          Container(
-            width: size.width,
-            child: Divider(
-              color: Colors.grey.shade300,
-              thickness: size.width * .001,
-            ),
-          ),
-          ListTile(
-            onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Insaurance()));
-            },
-            leading: Icon(Icons.account_balance_wallet),
-            title: Text(
-              'Insaurance',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: size.width * .04,
-                  fontWeight: FontWeight.w500),
-            ),
-            trailing: Icon(Icons.chevron_right),
-          ),
-          Container(
-            width: size.width,
-            child: Divider(
-              color: Colors.grey.shade300,
-              thickness: size.width * .001,
-            ),
-          ),
-          ListTile(
-            onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (_)=>DepositePage()));
-            },
-            leading: Icon(Icons.credit_card),
-            title: Text(
-              'Deposit',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: size.width * .04,
-                  fontWeight: FontWeight.w500),
-            ),
-            trailing: Icon(Icons.chevron_right),
-          ),
-          Container(
-            width: size.width,
-            child: Divider(
-              color: Colors.grey.shade300,
-              thickness: size.width * .001,
-            ),
-          ),
-          ListTile(
-            onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (_)=>WithDrowPage()));
-            },
-            leading: Icon(Icons.monetization_on_outlined),
-            title: Text(
-              'Withdraw',
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: size.width * .04,
-                  fontWeight: FontWeight.w500),
-            ),
-            trailing: Icon(Icons.chevron_right),
-          ),
+
+          _functionBuilder('Referred People', Icons.people, size),
+          _functionBuilder('My Store', Icons.store, size),
+          _functionBuilder('My Order', Icons.shopping_basket, size),
+          _functionBuilder('Insurance', Icons.account_balance_wallet, size),
+          _functionBuilder('Deposit', Icons.credit_card, size),
+          _functionBuilder('Withdraw', Icons.monetization_on_outlined, size),
         ],
       ),
     );
   }
+
+  Column _functionBuilder(String title, IconData iconData, Size size)=>Column(
+    children: [
+      ListTile(
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context){
+            if(title=='Referred People') return RefferredPeople();
+            else if(title=='My Store') return MyStorePage();
+            else if(title=='My Order') return OrderListPage();
+            else if(title=='Insurance') return Insaurance();
+            else if(title=='Deposit') return DepositePage();
+            else return WithDrowPage();
+          }));
+        },
+        leading: Icon(iconData),
+        title: Text(
+          title,
+          style: TextStyle(
+              color: Colors.black,
+              fontSize: size.width * .04,
+              fontWeight: FontWeight.w500),
+        ),
+        trailing: Icon(Icons.chevron_right),
+      ),
+      Container(
+        width: size.width,
+        child: Divider(
+          color: Colors.grey.shade300,
+          thickness: size.width * .001,
+        ),
+      ),
+    ],
+  );
 }

@@ -110,10 +110,7 @@ class _PackageCardState extends State<PackageCard> {
                                             setState(() {
                                               selectedSize.add(index);
                                             });
-
-
                                           }
-
                                         },
                                         child:  Container(
                                             height: size.width*.05,
