@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_sslcommerz/model/SSLCAdditionalInitializer.dart';
+import 'package:flutter_sslcommerz/model/SSLCCustomerInfoInitializer.dart';
+import 'package:flutter_sslcommerz/model/SSLCEMITransactionInitializer.dart';
+import 'package:flutter_sslcommerz/model/SSLCSdkType.dart';
+import 'package:flutter_sslcommerz/model/SSLCShipmentInfoInitializer.dart';
+import 'package:flutter_sslcommerz/model/SSLCTransactionInfoModel.dart';
+import 'package:flutter_sslcommerz/model/SSLCommerzInitialization.dart';
+import 'package:flutter_sslcommerz/model/SSLCurrencyType.dart';
+import 'package:flutter_sslcommerz/model/sslproductinitilizer/General.dart';
+import 'package:flutter_sslcommerz/model/sslproductinitilizer/SSLCProductInitializer.dart';
+import 'package:flutter_sslcommerz/sslcommerz.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mak_b/widgets/form_decoration.dart';
@@ -312,11 +323,10 @@ class _PaymentPageState extends State<PaymentPage> {
                         ],
                       )),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: size.width * .1,),
-                  child: GradientButton(child: Text('Payment'), onPressed: (){},
-                      borderRadius: 10, height: size.width*.1, width: size.width*.5, gradientColors: [Color(0xFF0198DD), Color(0xFF19B52B)])
-                ),
+                GradientButton(child: Text('Payment'), onPressed: (){
+                  _paySSLCommerz();
+                },
+                    borderRadius: 10, height: size.width*.1, width: size.width*.5, gradientColors: [Color(0xFF0198DD), Color(0xFF19B52B)]),
 
 
               ],
@@ -383,6 +393,73 @@ class _PaymentPageState extends State<PaymentPage> {
             ),
           );
         });
+  }
+
+  Future<void> _paySSLCommerz() async {
+    Sslcommerz sslcommerz = Sslcommerz(
+        initializer: SSLCommerzInitialization(
+          //Use the ipn if you have valid one, or it will fail the transaction.
+            //ipn_url: "www.ipnurl.com",
+            multi_card_name: '',
+            currency: SSLCurrencyType.BDT,
+            product_category: "Food",
+            sdkType: SSLCSdkType.LIVE,
+            store_id: "demotest",
+            store_passwd: "qwerty",
+            total_amount: 100.0,
+            tran_id: DateTime.now().millisecondsSinceEpoch.toString()));
+    sslcommerz
+        .addEMITransactionInitializer(
+        sslcemiTransactionInitializer: SSLCEMITransactionInitializer(
+            emi_options: 1, emi_max_list_options: 3, emi_selected_inst: 2))
+        .addShipmentInfoInitializer(
+        sslcShipmentInfoInitializer: SSLCShipmentInfoInitializer(
+            shipmentMethod: "yes",
+            numOfItems: 5,
+            shipmentDetails: ShipmentDetails(
+                shipAddress1: 'Gazipur, Dhaka',
+                shipCity: 'Dhaka',
+                shipCountry: "Bangladesh",
+                shipName: "From hub",
+                shipPostCode: '1700')))
+        .addCustomerInfoInitializer(
+        customerInfoInitializer: SSLCCustomerInfoInitializer(
+            customerState: "Uttara",
+            customerName: "Mak bro",
+            customerEmail: "makbro@gmail.com",
+            customerAddress1: "Uttara",
+            customerCity: "Dhaka",
+            customerPostCode:'1230',
+            customerCountry: "Bangladesh",
+            customerPhone: "01610000016"))
+        .addProductInitializer(
+        sslcProductInitializer:
+        // ***** ssl product initializer for general product STARTS*****
+        SSLCProductInitializer(
+            productName: "T-Shirt",
+            productCategory: "All",
+            general: General(
+                general: "General Purpose",
+                productProfile: "Product Profile")))
+        .addAdditionalInitializer(
+        sslcAdditionalInitializer:
+        SSLCAdditionalInitializer(valueA: "SSL_VERIFYPEER_FALSE"));
+    var result = await sslcommerz.payNow();
+    if (result is PlatformException) {
+      print("the response is: " +
+          result.message.toString() +
+          " code: " +
+          result.code);
+    } else {
+      SSLCTransactionInfoModel model = result;
+      //print('Payment Status: ${model.status}');
+      //showSuccessMgs('"Transaction Status: ${model.status}"');
+      if (model.status == 'VALID') {
+        print(model.status);
+      } else {
+        print(model.status);
+      }
+    }
   }
 
 }

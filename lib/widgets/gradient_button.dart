@@ -8,40 +8,37 @@ class GradientButton extends StatelessWidget {
   double? height;
   double? width;
   List<Color>? gradientColors;
-  GradientButton(
-      {required this.child,
-      required this.onPressed,
-      required this.borderRadius,
-      required this.height,
-      required this.width,
-      required this.gradientColors});
+  GradientButton({
+      required this.child,required this.onPressed,required this.borderRadius,required this.height,
+    required this.width, required this.gradientColors});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        primary: Colors.white,
-        padding: EdgeInsets.symmetric(horizontal: 0.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(borderRadius!)),
-        ),
-      ),
-      child: Ink(
-        height: height,
-        width: width,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: gradientColors!,
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          primary: Colors.white,
+          padding: EdgeInsets.symmetric(horizontal: 0.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(borderRadius!)),
           ),
-          borderRadius: BorderRadius.all(Radius.circular(borderRadius!)),
         ),
-        child: Center(
-          child: child,
-        ),
-      ),
-    );
+        child: Ink(
+          height: height,
+          width: width,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: gradientColors!,
+            ),
+            borderRadius:
+            BorderRadius.all(Radius.circular(borderRadius!)),
+          ),
+          child: Center(
+            child: child,
+          ),
+          ),
+        );
   }
 }

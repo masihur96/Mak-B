@@ -35,6 +35,7 @@ class _RefferredPeopleState extends State<RefferredPeople> {
     return Padding(
       padding: EdgeInsets.all(size.width * .04),
       child: ListView(
+        physics: BouncingScrollPhysics(),
         children: [
           Container(
               width: size.width,

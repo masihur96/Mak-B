@@ -113,7 +113,8 @@ class _ProductPageState extends State<ProductPage> {
           SizedBox(width: 3),
         ],
       ),
-      body: Column(
+      body: ListView(
+        physics: BouncingScrollPhysics(),
         children: [
           SizedBox(height: getProportionateScreenWidth(context,10)),
           Padding(

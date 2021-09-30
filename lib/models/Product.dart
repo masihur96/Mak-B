@@ -97,6 +97,185 @@ List<Product> demoProducts = [
     rating: 4.1,
     isFavourite: true,
   ),
+  Product(
+    id: 2,
+    images: [
+      "assets/images/Image Popular Product 2.png",
+    ],
+    colors: [
+      Color(0xFFF6625E),
+      Color(0xFF836DB8),
+      Color(0xFFDECB9C),
+      Colors.white,
+    ],
+    title: "Nike Sport White - Man Pant",
+    price: 50.5,
+    description: description,
+    rating: 4.1,
+    isPopular: true,
+  ),
+  Product(
+    id: 2,
+    images: [
+      "assets/images/Image Popular Product 2.png",
+    ],
+    colors: [
+      Color(0xFFF6625E),
+      Color(0xFF836DB8),
+      Color(0xFFDECB9C),
+      Colors.white,
+    ],
+    title: "Nike Sport White - Man Pant",
+    price: 50.5,
+    description: description,
+    rating: 4.1,
+    isPopular: true,
+  ),Product(
+    id: 2,
+    images: [
+      "assets/images/Image Popular Product 2.png",
+    ],
+    colors: [
+      Color(0xFFF6625E),
+      Color(0xFF836DB8),
+      Color(0xFFDECB9C),
+      Colors.white,
+    ],
+    title: "Nike Sport White - Man Pant",
+    price: 50.5,
+    description: description,
+    rating: 4.1,
+    isPopular: true,
+  ),Product(
+    id: 2,
+    images: [
+      "assets/images/Image Popular Product 2.png",
+    ],
+    colors: [
+      Color(0xFFF6625E),
+      Color(0xFF836DB8),
+      Color(0xFFDECB9C),
+      Colors.white,
+    ],
+    title: "Nike Sport White - Man Pant",
+    price: 50.5,
+    description: description,
+    rating: 4.1,
+    isPopular: true,
+  ),Product(
+    id: 2,
+    images: [
+      "assets/images/Image Popular Product 2.png",
+    ],
+    colors: [
+      Color(0xFFF6625E),
+      Color(0xFF836DB8),
+      Color(0xFFDECB9C),
+      Colors.white,
+    ],
+    title: "Nike Sport White - Man Pant",
+    price: 50.5,
+    description: description,
+    rating: 4.1,
+    isPopular: true,
+  ),Product(
+    id: 2,
+    images: [
+      "assets/images/Image Popular Product 2.png",
+    ],
+    colors: [
+      Color(0xFFF6625E),
+      Color(0xFF836DB8),
+      Color(0xFFDECB9C),
+      Colors.white,
+    ],
+    title: "Nike Sport White - Man Pant",
+    price: 50.5,
+    description: description,
+    rating: 4.1,
+    isPopular: true,
+  ),Product(
+    id: 2,
+    images: [
+      "assets/images/Image Popular Product 2.png",
+    ],
+    colors: [
+      Color(0xFFF6625E),
+      Color(0xFF836DB8),
+      Color(0xFFDECB9C),
+      Colors.white,
+    ],
+    title: "Nike Sport White - Man Pant",
+    price: 50.5,
+    description: description,
+    rating: 4.1,
+    isPopular: true,
+  ),Product(
+    id: 2,
+    images: [
+      "assets/images/Image Popular Product 2.png",
+    ],
+    colors: [
+      Color(0xFFF6625E),
+      Color(0xFF836DB8),
+      Color(0xFFDECB9C),
+      Colors.white,
+    ],
+    title: "Nike Sport White - Man Pant",
+    price: 50.5,
+    description: description,
+    rating: 4.1,
+    isPopular: true,
+  ),Product(
+    id: 2,
+    images: [
+      "assets/images/Image Popular Product 2.png",
+    ],
+    colors: [
+      Color(0xFFF6625E),
+      Color(0xFF836DB8),
+      Color(0xFFDECB9C),
+      Colors.white,
+    ],
+    title: "Nike Sport White - Man Pant",
+    price: 50.5,
+    description: description,
+    rating: 4.1,
+    isPopular: true,
+  ),Product(
+    id: 2,
+    images: [
+      "assets/images/Image Popular Product 2.png",
+    ],
+    colors: [
+      Color(0xFFF6625E),
+      Color(0xFF836DB8),
+      Color(0xFFDECB9C),
+      Colors.white,
+    ],
+    title: "Nike Sport White - Man Pant",
+    price: 50.5,
+    description: description,
+    rating: 4.1,
+    isPopular: true,
+  ),Product(
+    id: 2,
+    images: [
+      "assets/images/Image Popular Product 2.png",
+    ],
+    colors: [
+      Color(0xFFF6625E),
+      Color(0xFF836DB8),
+      Color(0xFFDECB9C),
+      Colors.white,
+    ],
+    title: "Nike Sport White - Man Pant",
+    price: 50.5,
+    description: description,
+    rating: 4.1,
+    isPopular: true,
+  )
+
 ];
 
 const String description =

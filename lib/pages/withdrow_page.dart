@@ -39,6 +39,7 @@ class _WithDrowPageState extends State<WithDrowPage> {
       body: SafeArea(
 
         child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

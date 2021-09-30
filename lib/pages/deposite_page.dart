@@ -21,6 +21,7 @@ class _DepositePageState extends State<DepositePage> {
       ),
 
       body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
