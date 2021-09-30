@@ -31,7 +31,7 @@ class _DepositePageState extends State<DepositePage> {
                 child: Card(
                   color: Colors.green.shade50,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(color:Color(0xFF19B52B), width: 1),
+                    // side: BorderSide(color:Color(0xFF19B52B), width: 1),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   elevation: 5,
