@@ -264,28 +264,29 @@ class _PaymentPageState extends State<PaymentPage> {
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Per Product',
-                                    style: TextStyle(
-
-                                        color: Colors.black,
-                                        fontStyle: FontStyle.normal,
-                                        fontSize: size.width * .04)),
-                                Row(
-                                  children: [
-                                    Icon(Icons.attach_money_outlined),
-                                    Text('79.95',
-                                        style: TextStyle(
-
-                                            color: Colors.black,
-                                            fontStyle: FontStyle.normal,
-                                            fontSize: size.width * .04)),
-                                  ],
-                                ),
-                              ],
-                            ),
+                            //child:
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
+                            //     Text('Per Product',
+                            //         style: TextStyle(
+                            //
+                            //             color: Colors.black,
+                            //             fontStyle: FontStyle.normal,
+                            //             fontSize: size.width * .04)),
+                            //     Row(
+                            //       children: [
+                            //         Icon(Icons.attach_money_outlined),
+                            //         Text('79.95',
+                            //             style: TextStyle(
+                            //
+                            //                 color: Colors.black,
+                            //                 fontStyle: FontStyle.normal,
+                            //                 fontSize: size.width * .04)),
+                            //       ],
+                            //     ),
+                            //   ],
+                            // ),
                           ),
                           Divider(
                             height: 1,

@@ -1,10 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mak_b/pages/register_page.dart';
 import 'package:mak_b/variables/constants.dart';
 import 'package:mak_b/variables/size_config.dart';
 import 'package:mak_b/widgets/gradient_button.dart';
+import 'package:mak_b/widgets/notification_widget.dart';
 import '../home_nav.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'forgot_password.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,6 +16,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _phone = TextEditingController();
+  final TextEditingController _password = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -66,6 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                               border: Border(bottom: BorderSide(color: Colors.grey[100]!))
                           ),
                           child: TextField(
+                            controller: _phone,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Phone number",
@@ -76,6 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                         Container(
                           padding: EdgeInsets.all(8.0),
                           child: TextField(
+                            controller: _password,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Password",
@@ -93,11 +100,34 @@ class _LoginPageState extends State<LoginPage> {
                           'Login',
                           style: TextStyle(color: Colors.white),
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomeNav()));
+                        onPressed: () async{
+                          if(_phone.text.isNotEmpty&&_password.text.isNotEmpty){
+                            showLoadingDialog(context);
+                            QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('Users')
+                                .where('id', isEqualTo: _phone.text).get();
+                            final List<QueryDocumentSnapshot> user = snapshot.docs;
+                            if(user.isNotEmpty){
+                              if(user[0].get('password')==_password.text){
+                                SharedPreferences pref = await SharedPreferences.getInstance();
+                                pref.setString('id', _phone.text);
+                                closeLoadingDialog(context);
+                                showToast("Successfully logged in");
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => HomeNav()));
+                              }
+                              else {
+                                closeLoadingDialog(context);
+                                showToast("Incorrect password");
+                              }
+                            }else{
+                              closeLoadingDialog(context);
+                              showToast("No User is registered with this phone");
+                            }
+                          }else {
+                            showToast("Field can't be empty");
+                          }
                         },
                         borderRadius: 5.0,
                         height: size.width * .12,
@@ -139,3 +169,4 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+

@@ -1,13 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mak_b/home_nav.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:mak_b/controller/auth_controller.dart';
 import 'package:mak_b/models/Cart.dart';
+import 'package:mak_b/pages/login_page.dart';
 import 'package:mak_b/pages/payment_page.dart';
 
 import 'package:mak_b/variables/size_config.dart';
 import 'package:mak_b/widgets/cart_card.dart';
 import 'package:mak_b/widgets/gradient_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -15,6 +19,22 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  final AuthController authController=Get.find<AuthController>();
+
+  // String? id;
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   _checkPreferences();
+  // }
+  // void _checkPreferences() async {
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     id = preferences.get('id') as String?;
+  //     //pass = preferences.get('pass');
+  //   });
+  // }
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -116,7 +136,7 @@ class _CartPageState extends State<CartPage> {
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () {
-                          Navigator.push(
+                          authController.id.value.isEmpty?LoginPage():Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => PaymentPage()));

@@ -23,6 +23,11 @@ dependencies:
   fluttertoast:
   flutter_sslcommerz: ^2.0.0-nullsafety.0
   video_player:
+  get:
+  cloud_firestore:
+  firebase_auth:
+  firebase_core:
+  shared_preferences:
 
 #flutter_shimmer: ^2.1.1
 

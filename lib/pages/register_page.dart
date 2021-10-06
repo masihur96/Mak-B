@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:mak_b/controller/auth_controller.dart';
 import 'package:mak_b/variables/size_config.dart';
 import 'package:mak_b/widgets/gradient_button.dart';
-
-import '../home_nav.dart';
+import 'package:mak_b/widgets/notification_widget.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -11,11 +12,18 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final AuthController authController=Get.find<AuthController>();
+
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _address = TextEditingController();
+  final TextEditingController _phone = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+  final TextEditingController _nbp = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      //resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Register',style: TextStyle(color: Colors.black)),
         toolbarHeight: AppBar().preferredSize.height,
@@ -30,17 +38,17 @@ class _RegisterPageState extends State<RegisterPage> {
         child: Column(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.all(getProportionateScreenWidth(context,5)),
-              height: getProportionateScreenWidth(context,100),
-              width: getProportionateScreenWidth(context,100),
+              //padding: EdgeInsets.all(getProportionateScreenWidth(context,5)),
+              height: getProportionateScreenWidth(context,120),
+              width: getProportionateScreenWidth(context,120),
               decoration: BoxDecoration(
                 color: Colors.white70,
                 shape: BoxShape.circle,
               ),
-              child: Image.asset("icons/logo.jpg"),
+              child: Image.asset("assets/icons/logo.PNG"),
             ),
             Padding(
-              padding: EdgeInsets.all(10.0),
+              padding: EdgeInsets.only(left: 10.0,right: 10.0,bottom: 10.0),
               child: Column(
                 children: <Widget>[
                   Container(
@@ -64,6 +72,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               border: Border(bottom: BorderSide(color: Colors.grey[100]!))
                           ),
                           child: TextField(
+                            controller: _name,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Name",
@@ -74,6 +83,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Container(
                           padding: EdgeInsets.all(8.0),
                           child: TextField(
+                            controller: _address,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Address",
@@ -87,6 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               border: Border(bottom: BorderSide(color: Colors.grey[100]!))
                           ),
                           child: TextField(
+                            controller: _phone,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Phone number",
@@ -97,6 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Container(
                           padding: EdgeInsets.all(8.0),
                           child: TextField(
+                            controller: _password,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Password",
@@ -110,6 +122,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               border: Border(bottom: BorderSide(color: Colors.grey[100]!))
                           ),
                           child: TextField(
+                            controller: _nbp,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Nid/BirthCertificate/Passport",
@@ -128,10 +141,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomeNav()));
+                          if(_name.text.isNotEmpty&& _address.text.isNotEmpty&&
+                          _phone.text.isNotEmpty&&_password.text.isNotEmpty&&_nbp.text.isNotEmpty){
+                            authController.createUser(_name.text, _address.text, _phone.text, _password.text,_nbp.text);
+
+                          }else{
+                            showToast('Complete all required fields');
+                          }
                         },
                         borderRadius: 5.0,
                         height: size.width * .12,
@@ -145,6 +161,8 @@ class _RegisterPageState extends State<RegisterPage> {
           ],
         ),
       ),
+
     );
   }
 }
+
