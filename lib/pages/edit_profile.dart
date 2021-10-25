@@ -1,38 +1,48 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:mak_b/controller/auth_controller.dart';
-import 'package:mak_b/controller/product_controller.dart';
 import 'package:mak_b/controller/user_controller.dart';
-import 'package:mak_b/variables/size_config.dart';
 import 'package:mak_b/widgets/gradient_button.dart';
 import 'package:mak_b/widgets/notification_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class RegisterPage extends StatefulWidget {
+class EditProfile extends StatefulWidget {
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  _EditProfileState createState() => _EditProfileState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-  final AuthController authController=Get.find<AuthController>();
+class _EditProfileState extends State<EditProfile> {
+  int count=0;
   final UserController userController=Get.find<UserController>();
-  final ProductController productController=Get.find<ProductController>();
+  final AuthController authController=Get.find<AuthController>();
 
   final TextEditingController _name = TextEditingController();
+  final TextEditingController _email = TextEditingController();
   final TextEditingController _address = TextEditingController();
   final TextEditingController _phone = TextEditingController();
-  final TextEditingController _password = TextEditingController();
   final TextEditingController _nbp = TextEditingController();
-  final TextEditingController _referCode = TextEditingController();
+  final TextEditingController _zip = TextEditingController();
 
+  void _initialize(){
+    _name.text=userController.user.name??'';
+    _email.text=userController.user.email??'';
+    _phone.text=userController.user.phone??'';
+    _address.text=userController.user.address??'';
+    _nbp.text=userController.user.nbp??'';
+    _zip.text=userController.user.zip??'';
+    setState(() => count++);
+  }
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    if(count==0){
+      _initialize();
+    }
     return Scaffold(
       //resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Register',style: TextStyle(color: Colors.black)),
+        title: Text('Update Profile',style: TextStyle(color: Colors.black)),
         toolbarHeight: AppBar().preferredSize.height,
         leading: IconButton(
           onPressed: () {
@@ -44,16 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Container(
-              //padding: EdgeInsets.all(getProportionateScreenWidth(context,5)),
-              height: getProportionateScreenWidth(context,120),
-              width: getProportionateScreenWidth(context,120),
-              decoration: BoxDecoration(
-                color: Colors.white70,
-                shape: BoxShape.circle,
-              ),
-              child: Image.asset("assets/icons/logo.PNG"),
-            ),
+            SizedBox(height: 30),
             Padding(
               padding: EdgeInsets.only(left: 10.0,right: 10.0,bottom: 10.0),
               child: Column(
@@ -115,10 +116,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         Container(
                           padding: EdgeInsets.all(8.0),
                           child: TextField(
-                            controller: _password,
+                            controller: _email,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: "Password",
+                                hintText: "Email address",
                                 hintStyle: TextStyle(color: Colors.grey[400])
                             ),
                           ),
@@ -143,10 +144,10 @@ class _RegisterPageState extends State<RegisterPage> {
                               border: Border(bottom: BorderSide(color: Colors.grey[100]!))
                           ),
                           child: TextField(
-                            controller: _referCode,
+                            controller: _zip,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: "Refer Code",
+                                hintText: "Zip",
                                 hintStyle: TextStyle(color: Colors.grey[400])
                             ),
                           ),
@@ -158,25 +159,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   Center(
                     child: GradientButton(
                         child: Text(
-                          'Continue',
+                          'Update',
                           style: TextStyle(color: Colors.white),
                         ),
-                        onPressed: () async{
-                          if(_name.text.isNotEmpty&& _address.text.isNotEmpty&& _phone.text.isNotEmpty
-                              &&_password.text.isNotEmpty&&_nbp.text.isNotEmpty&& _referCode.text.isNotEmpty){
-
-                            if(productController.cartList.length!=0){
-                              await userController.getReferUser(_referCode.text);
-                              //await userController.getReferUserReferList(userController.referUser.phone!);
-                              if(userController.referredList.length!=userController.referUser.referLimit){
-                                authController.createUser(_name.text, _address.text, _phone.text, _password.text,_nbp.text,_referCode.text);
-                              }else{
-                                showToast('Refer limit is over for this referCode!');
-                              }
-                            }else{
-                              showToast('Registration cannot be done with empty cart!' );
-                            }
-
+                        onPressed: () {
+                          if(_name.text.isNotEmpty&& _address.text.isNotEmpty&&
+                              _phone.text.isNotEmpty&&_nbp.text.isNotEmpty){
+                            authController.updateProfile(_name.text, _address.text, _phone.text, _nbp.text, _email.text, _zip.text);
                           }else{
                             showToast('Complete all required fields');
                           }
@@ -197,4 +186,3 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 }
-

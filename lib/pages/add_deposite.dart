@@ -1,14 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:mak_b/controller/auth_controller.dart';
+import 'package:mak_b/controller/user_controller.dart';
 import 'package:mak_b/variables/constants.dart';
 import 'package:mak_b/widgets/form_decoration.dart';
 import 'package:mak_b/widgets/gradient_button.dart';
+import 'package:mak_b/widgets/notification_widget.dart';
 class AddDeposit extends StatefulWidget {
   @override
   _AddDepositState createState() => _AddDepositState();
 }
 enum SingingCharacter { Account, Manually }
 class _AddDepositState extends State<AddDeposit> {
+  final UserController userController=Get.find<UserController>();
+  final AuthController authController=Get.find<AuthController>();
   SingingCharacter? _character = SingingCharacter.Account;
    var amountController = TextEditingController();
    var passwordController = TextEditingController();
@@ -16,8 +24,6 @@ class _AddDepositState extends State<AddDeposit> {
   @override
   void initState() {
     _character = SingingCharacter.Account;
-    amountController.text = 5000.toString();
-
     // TODO: implement initState
     super.initState();
   }
@@ -51,13 +57,13 @@ class _AddDepositState extends State<AddDeposit> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('A/C: Mak-B2021',style: TextStyle(color: Color(0xFF19B52B),fontSize: size.width*.05),),
+                      Text('A/C: ${userController.user.name??''}',style: TextStyle(color: Color(0xFF19B52B),fontSize: size.width*.05),),
 
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text('Current Balance ; 50,000',style: TextStyle(color: Color(0xFF19B52B),fontSize: size.width*.05),),
+                        child: Text('Current Balance : ${userController.user.depositBalance??''}',style: TextStyle(color: Color(0xFF19B52B),fontSize: size.width*.05),),
                       ),
-                      Text('Available Balance  To Deposit; 45,000',style: TextStyle(color: Colors.black,fontSize: size.width*.04),),
+                      Text('Available Balance  To Deposit: ${userController.user.mainBalance??''}',style: TextStyle(color: Colors.black,fontSize: size.width*.04),),
                   ],),
                 ),
               ),
@@ -80,7 +86,7 @@ class _AddDepositState extends State<AddDeposit> {
                       children: [
                         Expanded(
                           child: ListTile(
-                            title: const Text('From A/C Balance'),
+                            title: const Text('From Balance'),
                             leading: Radio<SingingCharacter>(
                               value: SingingCharacter.Account,
                               groupValue: _character,
@@ -136,7 +142,7 @@ class _AddDepositState extends State<AddDeposit> {
                                       alignment: Alignment.center,
                                         child: Padding(
                                           padding:  EdgeInsets.only(left: size.width*.02,top:size.width*.03,bottom:size.width*.02  ),
-                                          child: Text('A/C Name: Makb2021',style: TextStyle(color: Color(0xFF19B52B),fontSize: size.width*.05,fontWeight: FontWeight.normal),),
+                                          child: Text('A/C Name: ${userController.user.name??''}',style: TextStyle(color: Color(0xFF19B52B),fontSize: size.width*.05,fontWeight: FontWeight.normal),),
                                         )),
 
 
@@ -146,18 +152,19 @@ class _AddDepositState extends State<AddDeposit> {
                                       decoration: textFieldFormDecoration(size).copyWith(
                                         suffixText: 'TK',suffixStyle: TextStyle(color: Colors.black,fontSize: size.width*.04),
                                         labelText: 'Amount',
-                                        hintText: '500000',
+                                        hintText: 'Write Amount',
+                                        hintStyle: TextStyle(color: Colors.grey,fontSize: size.width*.04),
                                       ),
                                     ),
                                     SizedBox(height: size.width*.03,),
                                     TextField(
-
+                                      obscureText: _isVisible,
                                       controller: passwordController,
                                       decoration: textFieldFormDecoration(size).copyWith(
 
                                         labelText: 'Password',
                                         hintText: '********',
-
+                                          hintStyle: TextStyle(color: Colors.grey,fontSize: size.width*.04),
                                           suffixIcon: InkWell(
                                               onTap: (){
                                                 setState(() {
@@ -177,7 +184,28 @@ class _AddDepositState extends State<AddDeposit> {
 
                                 child:Text('Confirm',style: TextStyle(fontSize: size.width*.03),),
 
-                                onPressed: (){},
+                                onPressed: (){
+                                  if(amountController.text!=''&&passwordController.text!='') {
+                                    dynamic balance=int.parse(userController.user.mainBalance!)-int.parse(amountController.text);
+                                    if(balance<0){
+                                      showToast('Not enough balance to deposit!');
+                                    }else{
+                                        if(passwordController.text==userController.user.password) {
+                                          dynamic depositBalance=int.parse(userController.user.depositBalance!)+int.parse(amountController.text);
+                                          dynamic mainBalance=int.parse(userController.user.mainBalance!)-int.parse(amountController.text);
+
+                                          authController.depositBalance(amountController.text,depositBalance,mainBalance,userController.user.name!,userController.user.phone!).then((value) {
+                                            amountController.clear();
+                                            passwordController.clear();
+                                          });
+                                        }else{
+                                          showToast('Wrong Password!');
+                                        }
+                                    }
+                                  }else{
+                                    showToast('Fill up the required fields');
+                                  }
+                                },
                                 borderRadius: 10,
                                 height: size.width*.1,
                                 width: size.width*.5,
@@ -213,11 +241,63 @@ class _AddDepositState extends State<AddDeposit> {
                                 padding:  EdgeInsets.only(left: size.width*.02),
                                 child: Text('To Deposit Amount',style: TextStyle(color: Colors.black,fontSize: size.width*.045),),
                               ),
+                              SizedBox(height: 5),
+                              GradientButton(
 
-                              Padding(
-                                padding:  EdgeInsets.only(left: size.width*.02),
-                                child: Text('Mak-B : 014458697',style: TextStyle(color: Colors.black,fontSize: size.width*.045),),
-                              ),
+                                  child:Text('Sent Request',style: TextStyle(fontSize: size.width*.04),),
+
+                                  onPressed: ()async{
+                                    await authController.depositRequest(userController.user.name!,userController.user.phone!).then((value){
+                                      showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (context) {
+
+                                            return AlertDialog(
+                                              backgroundColor: Colors.white,
+                                              scrollable: true,
+                                              contentPadding: EdgeInsets.all(20),
+                                              title: Column(
+                                                children: [
+                                                  SizedBox(
+                                                    height: MediaQuery.of(context).size.width * .030,
+                                                  ),
+                                                  Text(
+                                                    'Your deposit request has been sent to admin.\nAdmin will contact you soon.',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        fontWeight: FontWeight.normal, color: kPrimaryColor),
+                                                  ),
+                                                  SizedBox(
+                                                    height: MediaQuery.of(context).size.width * .050,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: (){
+                                                          Get.back();
+                                                        },
+                                                        child: Text(
+                                                          "Ok",
+                                                          style: TextStyle(
+                                                              color: kPrimaryColor,
+                                                              fontWeight: FontWeight.bold),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          });
+                                    });
+
+                                  },
+                                  borderRadius: 10,
+                                  height: size.width*.1,
+                                  width: size.width*.35,
+                                  gradientColors: [Color(0xFF0198DD), Color(0xFF19B52B)]),
                             ],),
                         ),
                       ),

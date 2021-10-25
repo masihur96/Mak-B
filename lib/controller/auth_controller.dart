@@ -1,25 +1,32 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:mak_b/controller/user_controller.dart';
 import 'package:mak_b/pages/login_page.dart';
+import 'package:mak_b/pages/payment_page.dart';
 import 'package:mak_b/widgets/notification_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../home_nav.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class AuthController extends GetxController{
+  final UserController userController=Get.find<UserController>();
   final _codeController = TextEditingController();
-  Rx<String> id=''.obs;
+  String? id;
   String? _verificationId;
   void _checkPreferences() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-      id = (preferences.get('id') as String?)! as Rx<String>;
+      id = preferences.get('id') as String? ;
   }
   @override // called when you use Get.put before running app
   void onInit() {
     super.onInit();
     _checkPreferences();
   }
+
 
   //var loading=false.obs;
   //FirebaseAuth _auth = FirebaseAuth.instance;
@@ -40,11 +47,16 @@ class AuthController extends GetxController{
       return true;
     }
   }
-  Future<void> createUser(String name,String address,String phone,String password,String nbp) async {
+  Future<void> createUser(String name,String address,String phone,String password,String nbp,String referCode) async {
+    int year =DateTime.now().year+5;
+    String insuranceEndingDate='$year-${DateTime.now().month}-${DateTime.now().day}';
+    var newString = phone.substring(phone.length - 6);
+    final String monthYear =DateFormat('MM-yy').format(DateTime(DateTime.now().month,DateTime.now().year));
+    String myReferCode='MakB$monthYear$newString';
     showLoadingDialog(Get.context!);
     bool isReg= await isRegistered(phone);
     if(!isReg){
-     create(name,address,phone,password,nbp);
+     create(name,address,phone,password,nbp,referCode,myReferCode,insuranceEndingDate);
     }else{
       Get.back();
       showToast('Phone Number already exist');
@@ -53,15 +65,14 @@ class AuthController extends GetxController{
      //loading(true);
   }
 
-  Future<void> create(String name,String address,String phone,String password,String nbp) async{
+  Future<void> create(String name,String address,String phone,String password,String nbp,String myReferCode,String referCode,String insuranceEndingDate) async{
     FirebaseAuth _auth = FirebaseAuth.instance;
-
     _auth.verifyPhoneNumber(
         phoneNumber: '+88'+phone,
         timeout: Duration(seconds: 60),
         verificationCompleted: (AuthCredential credential) async{
           // Navigator.of(context).pop();
-          Get.back();
+          //Get.back();
 
           UserCredential result = await _auth.signInWithCredential(credential);
 
@@ -69,20 +80,45 @@ class AuthController extends GetxController{
 
           if(user != null){
             try{
-              String id = phone.trim();
-              await FirebaseFirestore.instance.collection('Users').doc(id).set({
-                'id': id,
-                "name": name,
-                "address": address,
-                "phone":phone,
-                "password":password,
-                "nbp":nbp
-              });
+              // String id = phone.trim();
+              // await FirebaseFirestore.instance.collection('Users').doc(id).set({
+              //   'id': id,
+              //   "name": name,
+              //   "address": address,
+              //   "phone":phone,
+              //   "password":password,
+              //   "nbp":nbp,
+              //   "email": '',
+              //   "zip": '',
+              //   "referCode": myReferCode,
+              //   "timeStamp": DateTime.now().millisecondsSinceEpoch,
+              //   "referDate": '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}',
+              //   "imageUrl": '',
+              //   //"referredList": '',
+              //   "numberOfReferred": '0',
+              //   "insuranceEndingDate": insuranceEndingDate,
+              //   "depositBalance": '0',
+              //   //"depositHistory": '',
+              //   //"withdrawHistory": '',
+              //   "insuranceBalance": '0',
+              //   "lastInsurancePaymentDate": '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}',
+              //   "level": '0',
+              //   "mainBalance": '0',
+              //   "videoWatched": '0',
+              //   "watchDate": DateFormat('yyyy-MM-dd').format(DateTime.now()),
+              //   "myStore": '',
+              //   "myOrder": '',
+              //   //"cartList": '',
+              //   "referLimit": '100',
+              //
+              // });
             }finally{
               Get.back();
-              showToast('Registration Succeed');
+              // SharedPreferences pref = await SharedPreferences.getInstance();
+              // pref.setString('id', phone);
+              // showToast('Registration Succeed');
               //loading(false);
-              Get.offAll(HomeNav());
+              Get.offAll(PaymentPage(referCode,name,phone));
             }
           }else{
             print("Error");
@@ -95,8 +131,8 @@ class AuthController extends GetxController{
         },
         codeSent: (String verificationId, [int? forceResendingToken]){
           _verificationId=verificationId;
-          Get.back();
-          showOtp(name, address, phone, password, nbp, verificationId);
+          //Get.back();
+          showOtp(name, address, phone, password, nbp,myReferCode,referCode,insuranceEndingDate, verificationId);
         },
         codeAutoRetrievalTimeout: (String verificationId)async{
           _verificationId=verificationId;
@@ -107,7 +143,7 @@ class AuthController extends GetxController{
     );
   }
 
-  void showOtp(String name,String address,String phone,String password,String nbp,String verificationId){
+  void showOtp(String name,String address,String phone,String password,String nbp,String myReferCode,String referCode,String insuranceEndingDate,String verificationId){
     FirebaseAuth _auth = FirebaseAuth.instance;
     showDialog(
         context: Get.context!,
@@ -155,20 +191,44 @@ class AuthController extends GetxController{
 
                       if(user != null){
                         try{
-                          String id = phone.trim();
-                          await FirebaseFirestore.instance.collection('Users').doc(id).set({
-                            'id': id,
-                            "name": name,
-                            "address": address,
-                            "phone":phone,
-                            "password":password,
-                            "nbp":nbp
-                          });
+                          // String id = phone.trim();
+                          // await FirebaseFirestore.instance.collection('Users').doc(id).set({
+                          //   'id': id,
+                          //   "name": name,
+                          //   "address": address,
+                          //   "phone":phone,
+                          //   "password":password,
+                          //   "nbp":nbp,
+                          //   "email": '',
+                          //   "zip": '',
+                          //   "referCode": myReferCode,
+                          //   "timeStamp": DateTime.now().millisecondsSinceEpoch,
+                          //   "referDate": '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}',
+                          //   "imageUrl": '',
+                          //   //"referredList": '',
+                          //   "numberOfReferred": '0',
+                          //   "insuranceEndingDate": insuranceEndingDate,
+                          //   "depositBalance": '0',
+                          //   //"depositHistory": '',
+                          //   //"withdrawHistory": '',
+                          //   "insuranceBalance": '0',
+                          //   "lastInsurancePaymentDate": '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}',
+                          //   "level": '0',
+                          //   "mainBalance": '0',
+                          //   "videoWatched": '0',
+                          //   "watchDate": DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                          //   "myStore": '',
+                          //   "myOrder": '',
+                          //   //"cartList": '',
+                          //   "referLimit": '100',
+                          // });
                         }finally{
                           //_loading(false);
-                          showToast('Registration Succeed');
+                          // SharedPreferences pref = await SharedPreferences.getInstance();
+                          // pref.setString('id', phone);
+                          // showToast('Registration Succeed');
                           //loading(false);
-                          Get.offAll(HomeNav());
+                          Get.offAll(PaymentPage(referCode,name,phone));
                         }
                       }else{
                         print("Error");
@@ -185,4 +245,162 @@ class AuthController extends GetxController{
     );
   }
 
+  Future<void> updatePhoto(File imageFile)async {
+    showLoadingDialog(Get.context!);
+    try{
+      firebase_storage.Reference storageReference =
+      firebase_storage.FirebaseStorage.instance.ref().child('User Photo').child(id!);
+
+      firebase_storage.UploadTask storageUploadTask = storageReference.putFile(imageFile);
+
+      firebase_storage.TaskSnapshot taskSnapshot;
+      storageUploadTask.then((value) {
+        taskSnapshot = value;
+        taskSnapshot.ref.getDownloadURL().then((newImageDownloadUrl) {
+          final photoUrl = newImageDownloadUrl;
+          FirebaseFirestore.instance.collection('Users').doc(id).update({
+            "imageUrl": photoUrl,
+          });
+        }).then((value)async{
+          await userController.getUser(id!);
+          Get.back();
+          showToast('Photo Updated');
+        });
+      });
+    }catch(e){
+      Get.back();
+      print(e.toString());
+      showToast('Something went wrong');
+    }
+  }
+
+  Future<void> updateProfile(String name,String address,String phone,String nbp,String email,String zip)async {
+    showLoadingDialog(Get.context!);
+    await FirebaseFirestore.instance.collection('Users').doc(id).update({
+      "name": name,
+      "address": address,
+      "phone":phone,
+      "nbp":nbp,
+      "email": email,
+      "zip": zip,
+    }).then((value)async{
+      await userController.getUser(id!);
+      Get.back();
+      Get.back();
+      showToast('Profile Updated');
+    });
+  }
+
+  Future<void> changePassword(String newPass)async {
+    try{
+      showLoadingDialog(Get.context!);
+      await FirebaseFirestore.instance.collection('Users').doc(id).update({
+        "password": newPass,
+      }).then((value)async{
+        await userController.getUser(id!);
+        Get.back();
+        Get.back();
+        showToast('Password Changed');
+      });
+    }catch(e){
+      print(e);
+    }
+  }
+
+  Future<void> recoverPassword(String newPass,String phone)async {
+    try{
+      showLoadingDialog(Get.context!);
+      await FirebaseFirestore.instance.collection('Users').doc(phone).update({
+        "password": newPass,
+      }).then((value){
+        Get.back();
+        Get.offAll(()=>LoginPage());
+        showToast('Password Recovered');
+      });
+    }catch(e){
+      print(e);
+    }
+  }
+
+  Future<void> withdrawHistory(String amount,String name,dynamic due,String image)async {
+   try{
+     showLoadingDialog(Get.context!);
+     await userController.getUser(id!);
+     await FirebaseFirestore.instance.collection('Users').doc(id).collection('WithdrawHistory').doc('${DateTime.now().millisecondsSinceEpoch}').set({
+       "id": '$id',
+       "date":'${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}',
+       "phone":id,
+       "name":name,
+       "imageUrl":image,
+       "amount":amount,
+       "status":'pending'
+     }).then((value)async{
+       await FirebaseFirestore.instance.collection('WithdrawRequests').doc('${DateTime.now().millisecondsSinceEpoch}').set({
+         "id": '$id',
+         "phone":id,
+         "name":name,
+         "imageUrl":image,
+         "date":'${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}',
+         "amount":amount,
+         "status":'pending'
+       }).then((value)async{
+         await FirebaseFirestore.instance.collection('Users').doc(id).update({
+           "lastInsurancePaymentDate":'${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}',
+           "insuranceBalance":int.parse(userController.user.insuranceBalance!)+due,
+         }).then((value)async{
+         await userController.getWithDrawHistory(id!);
+         Get.back();
+         showToast('Request Sent  for withdraw');
+       });
+     });
+     });
+   }catch(e){
+     print(e.toString());
+   }
+  }
+
+  Future<void> depositBalance(String amount,dynamic depositBalance,dynamic mainBalance,String name,String phone)async {
+    try{
+      showLoadingDialog(Get.context!);
+      await FirebaseFirestore.instance.collection('Users').doc(id).collection('DepositHistory').doc('${DateTime.now().millisecondsSinceEpoch}').set({
+        "id": DateTime.now().millisecondsSinceEpoch,
+        "name": name,
+        "phone":phone,
+        "date":'${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}',
+        "amount":amount,
+        "status":"transferred"
+      }).then((value)async{
+        await FirebaseFirestore.instance.collection('Users').doc(id).update({
+          "depositBalance":'$depositBalance',
+          "mainBalance":'$mainBalance'
+        }).then((value)async{
+          await userController.getDepositHistory(id!);
+          Get.back();
+          showToast('Balance deposited');
+        });
+      });
+    }catch(e){
+      print(e.toString());
+    }
+  }
+
+  Future<void> depositRequest(String name,String phone)async {
+    try{
+      showLoadingDialog(Get.context!);
+      await FirebaseFirestore.instance.collection('Users').doc(id).collection('DepositHistory').doc('${DateTime.now().millisecondsSinceEpoch}').set({
+        "id": DateTime.now().millisecondsSinceEpoch,
+        "name": name,
+        "phone":phone,
+        "date":'${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}',
+        "amount":'',
+        "status":'pending'
+      }).then((value)async{
+          await userController.getDepositHistory(id!);
+          Get.back();
+          //showToast('Balance deposited');
+        });
+    }catch(e){
+      print(e.toString());
+    }
+  }
 }

@@ -28,6 +28,12 @@ dependencies:
   firebase_auth:
   firebase_core:
   shared_preferences:
+  image_picker:
+  firebase_storage:
+  flutter_staggered_grid_view:
+  dependencies:
+  carousel_pro_nullsafety:
+  platform_device_id:
 
 #flutter_shimmer: ^2.1.1
 

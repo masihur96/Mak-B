@@ -1,11 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:mak_b/controller/product_controller.dart';
+import 'package:mak_b/controller/user_controller.dart';
 import 'package:mak_b/models/Product.dart';
+import 'package:mak_b/pages/login_page.dart';
 import 'package:mak_b/pages/watch_video_page.dart';
 import 'package:mak_b/variables/constants.dart';
-import 'package:mak_b/variables/size_config.dart';
+import 'package:get/get.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:mak_b/widgets/notification_widget.dart';
 import 'package:mak_b/widgets/search_field.dart';
 import 'package:mak_b/widgets/solid_color_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../home_nav.dart';
 import 'cart_page.dart';
 import 'package:mak_b/widgets/icon_btn_with_counter.dart';
 import 'package:mak_b/widgets/product_card.dart';
@@ -16,6 +24,23 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
+  final UserController userController=Get.find<UserController>();
+  final ProductController productController=Get.find<ProductController>();
+  String? id;
+
+  void _checkPreferences() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      id = preferences.get('id') as String?;
+      //pass = preferences.get('pass');
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _checkPreferences();
+  }
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -80,18 +105,25 @@ class _ProductPageState extends State<ProductPage> {
             ),
             Divider(),
 
-            InkWell(
+            id == null?InkWell(
               onTap: ()async{
-                // SharedPreferences pref = await SharedPreferences.getInstance();
-                // // pref.setString('userId', '');
-                // // pref.setString('api_token', '');
-                // pref.clear();
-                // Navigator.pushNamedAndRemoveUntil(context, MainPage.routeName,(Route<dynamic> route) => false);
-                //_showToast('Logged Out', kPrimaryColor);
+                Get.to(()=>LoginPage());
               },
               child: ListTile(
                 title: Text('Log In'),
-                leading: Icon(Icons.login, color: Colors.grey,),
+                leading: Icon(Icons.login, color: Colors.grey),
+              ),
+            ): InkWell(
+              onTap: ()async{
+                SharedPreferences pref = await SharedPreferences.getInstance();
+                pref.clear();
+                userController.clear();
+                Get.offAll(()=>HomeNav());
+                showToast('Logged Out');
+              },
+              child: ListTile(
+                title: Text('Log Out'),
+                leading: Icon(Icons.logout, color: Colors.grey,),
               ),
             ),
 
@@ -109,7 +141,7 @@ class _ProductPageState extends State<ProductPage> {
           Center(
             child: IconBtnWithCounter(
               svgSrc: "icons/Cart Icon.svg",
-              numOfitem: 3,
+              numOfitem: productController.cartList==null?0:productController.cartList.length,
               press: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()))
             ),
           ),
@@ -154,17 +186,21 @@ class _ProductPageState extends State<ProductPage> {
           SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.only(right:8.0),
-            child: GridView.builder(
+            child:  StaggeredGridView.countBuilder(
               shrinkWrap: true,
               physics: new ClampingScrollPhysics(),
-              itemCount: demoProducts.length,
-              gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3,mainAxisSpacing: 15,childAspectRatio: 6/9),
+              itemCount: productController.productList.length,
+              crossAxisCount: 3,
               itemBuilder: (BuildContext context, int index) {
                 // if (demoProducts[index].isPopular)
-                return ProductCard(product: demoProducts[index]);
+                return ProductCard(product: productController.productList[index]);
                 // return SizedBox
                 //     .shrink(); // here by default width and height is 0
               },
+              staggeredTileBuilder: (int index) =>
+              new StaggeredTile.fit(1),
+              mainAxisSpacing: 15.0,
+
             ),
           ),
           //SizedBox(width: getProportionateScreenWidth(20)),

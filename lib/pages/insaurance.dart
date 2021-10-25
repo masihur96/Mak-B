@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:mak_b/controller/user_controller.dart';
 import 'package:mak_b/variables/constants.dart';
 
 class Insaurance extends StatefulWidget {
@@ -10,9 +13,39 @@ class Insaurance extends StatefulWidget {
 }
 
 class _InsauranceState extends State<Insaurance> {
+  final UserController userController=Get.find<UserController>();
+  int counter=0;
+  dynamic due;
+  dynamic remaining;
+  DateTime? currentDate;
+  DateTime? lastInsuranceDate;
+  DateTime? insuranceEndingDate;
+  var months;
+  var remainingMonths;
+
+  void count(){
+    setState(() {
+      counter++;
+    });
+    setState(() {
+      currentDate = DateTime.parse('${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}');
+      lastInsuranceDate = DateTime.parse(userController.user.lastInsurancePaymentDate!);
+      insuranceEndingDate = DateTime.parse(userController.user.insuranceEndingDate!);
+    });
+    setState(() {
+      months = currentDate!.difference(lastInsuranceDate!).inDays ~/ 30;
+      due=months*250;
+      remainingMonths=currentDate!.difference(insuranceEndingDate!).inDays ~/ 30;
+      remaining=remainingMonths*250*(-1);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    if(counter==0){
+      count();
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -80,9 +113,9 @@ class _InsauranceState extends State<Insaurance> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            insuranceCard(size, Color(0xFF19B52B), 250, 'Balance'),
-            insuranceCard(size, Color(0xFF0861AF), 250, 'Due'),
-            insuranceCard(size, Color(0xFF0198DD), 4500, 'Remaining'),
+            insuranceCard(size, Color(0xFF19B52B), userController.user.insuranceBalance??'', 'Balance'),
+            insuranceCard(size, Color(0xFF0861AF), '$due', 'Due'),
+            insuranceCard(size, Color(0xFF0198DD), '$remaining', 'Remaining'),
           ],
         ),
         SizedBox(
@@ -104,7 +137,7 @@ class _InsauranceState extends State<Insaurance> {
     );
   }
 
-  Widget insuranceCard(Size size, Color color, int amount, String title) {
+  Widget insuranceCard(Size size, Color color, String amount, String title) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(size.width * .04),
@@ -119,7 +152,7 @@ class _InsauranceState extends State<Insaurance> {
           children: [
             Text(
               amount.toString(),
-              style: TextStyle(color: Colors.white, fontSize: size.width * .08),
+              style: TextStyle(color: Colors.white, fontSize: size.width * .07),
             ),
             SizedBox(
               height: size.width * .02,

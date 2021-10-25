@@ -6,12 +6,14 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:mak_b/variables/theme.dart';
 import 'controller/auth_controller.dart';
+import 'controller/user_controller.dart';
 import 'home_nav.dart';
 
 Future<void> main() async {
   debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
   WidgetsFlutterBinding.ensureInitialized();
   await firebase_core.Firebase.initializeApp();
+  Get.put(UserController());
   Get.put(AuthController());
   // DevicePreview(
   //

@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mak_b/pages/details/add_deposite.dart';
-import 'package:mak_b/pages/payment_page.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:mak_b/controller/user_controller.dart';
+import 'add_deposite.dart';
+import 'package:get/get.dart';
 import 'package:mak_b/widgets/gradient_button.dart';
 class DepositePage extends StatefulWidget {
   @override
@@ -9,13 +12,14 @@ class DepositePage extends StatefulWidget {
 }
 
 class _DepositePageState extends State<DepositePage> {
+  final UserController userController=Get.find<UserController>();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Deposite",
+          "Deposit",
           style: TextStyle(color: Colors.black),
         ),
       ),
@@ -50,13 +54,13 @@ class _DepositePageState extends State<DepositePage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
 
-                        Text('MAKb-2021',style: TextStyle(color: Color(0xFF19B52B),fontSize: size.width*.05),),
+                        Text(userController.user.name??'',style: TextStyle(color: Color(0xFF19B52B),fontSize: size.width*.05),),
                         Padding(
                           padding: const EdgeInsets.only(top: 5.0,bottom: 15),
-                          child: Text('Deposit Balance: 50000',style: TextStyle(color: Colors.black,fontSize: size.width*.04),),
+                          child: Text('Deposit Balance: ${userController.user.depositBalance??''}',style: TextStyle(color: Colors.black,fontSize: size.width*.04),),
                         ),
                         GradientButton(child: Text('Add Deposit',style: TextStyle(fontSize: size.width*.04),), onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (_)=>AddDeposit()));
+                          Get.to(()=>AddDeposit());
                         }, borderRadius: 10, height:size.width*.1, width:size.width*.5,
                             gradientColors: [Color(0xFF0198DD), Color(0xFF19B52B)]),
 
@@ -92,17 +96,17 @@ class _DepositePageState extends State<DepositePage> {
                         ListView.builder(
                             shrinkWrap: true,
                             physics: ClampingScrollPhysics(),
-                            itemCount: 20,
+                            itemCount: userController.depositList.length,
                             itemBuilder: (context, index) {
                               return Padding(
                                 padding: EdgeInsets.only(bottom: size.width * .02),
                                 child: Card(
                                   elevation: 1,
                                   child: ListTile(
-                                      leading:Text('29/09/2021'),
+                                      leading:Text(userController.depositList[index].date),
                                       title: Center(
                                         child: Text(
-                                          'Manually',
+                                          userController.depositList[index].status,
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontSize: size.width * .04,
@@ -110,7 +114,7 @@ class _DepositePageState extends State<DepositePage> {
                                         ),
                                       ),
                                   trailing: Text(
-                                    '50000',
+                                    userController.depositList[index].amount,
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: size.width * .04,

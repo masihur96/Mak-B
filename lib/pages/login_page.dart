@@ -18,6 +18,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _phone = TextEditingController();
   final TextEditingController _password = TextEditingController();
+  bool _isVisible=false;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -33,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       body: Container(
-        child: Column(
+        child: ListView(
           children: <Widget>[
             SizedBox(height: size.height*.05),
             Container(
@@ -82,11 +83,19 @@ class _LoginPageState extends State<LoginPage> {
                         Container(
                           padding: EdgeInsets.all(8.0),
                           child: TextField(
+                            obscureText: _isVisible,
                             controller: _password,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Password",
-                                hintStyle: TextStyle(color: Colors.grey[400])
+                                hintStyle: TextStyle(color: Colors.grey[400]),
+                                suffixIcon: InkWell(
+                                    onTap: (){
+                                      setState(() {
+                                        _isVisible =!_isVisible;
+                                      });
+                                    },
+                                    child: Icon(_isVisible==false?Icons.visibility:Icons.visibility_off))
                             ),
                           ),
                         )
@@ -112,10 +121,8 @@ class _LoginPageState extends State<LoginPage> {
                                 pref.setString('id', _phone.text);
                                 closeLoadingDialog(context);
                                 showToast("Successfully logged in");
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomeNav()));
+                                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                                    HomeNav()), (Route<dynamic> route) => false);
                               }
                               else {
                                 closeLoadingDialog(context);
