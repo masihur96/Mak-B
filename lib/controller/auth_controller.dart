@@ -118,7 +118,8 @@ class AuthController extends GetxController{
               // pref.setString('id', phone);
               // showToast('Registration Succeed');
               //loading(false);
-              Get.offAll(PaymentPage(referCode,name,phone));
+              Get.offAll(PaymentPage(referCode, name,address,phone,password,
+                  nbp,myReferCode,insuranceEndingDate));
             }
           }else{
             print("Error");
@@ -228,7 +229,8 @@ class AuthController extends GetxController{
                           // pref.setString('id', phone);
                           // showToast('Registration Succeed');
                           //loading(false);
-                          Get.offAll(PaymentPage(referCode,name,phone));
+                          Get.offAll(PaymentPage(referCode, name,address,phone,password,
+                              nbp,myReferCode,insuranceEndingDate));
                         }
                       }else{
                         print("Error");
@@ -402,5 +404,57 @@ class AuthController extends GetxController{
     }catch(e){
       print(e.toString());
     }
+  }
+
+  Future<void> register(String name,String address,String phone,String password,
+      String nbp,String myReferCode,String insuranceEndingDate,String mainBalance)async {
+    await FirebaseFirestore.instance.collection('Users').doc(id).set({
+      'id': id,
+      "name": name,
+      "address": address,
+      "phone":phone,
+      "password":password,
+      "nbp":nbp,
+      "email": '',
+      "zip": '',
+      "referCode": myReferCode,
+      "timeStamp": DateTime.now().millisecondsSinceEpoch,
+      "referDate": '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}',
+      "imageUrl": '',
+      //"referredList": '',
+      "numberOfReferred": '0',
+      "insuranceEndingDate": insuranceEndingDate,
+      "depositBalance": '0',
+      //"depositHistory": '',
+      //"withdrawHistory": '',
+      "insuranceBalance": '0',
+      "lastInsurancePaymentDate": '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}',
+      "level": '0',
+      "mainBalance": mainBalance,
+      "videoWatched": '0',
+      "watchDate": DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      "myStore": '',
+      "myOrder": '',
+      //"cartList": '',
+      "referLimit": '100',
+    });
+  }
+
+  Future<void> updateReferUser(String phone,String profit)async {
+    await FirebaseFirestore.instance.collection('Users').doc(phone).update({
+      "mainBalance": profit,
+    });
+  }
+
+  Future<void> addReferUserReferList(String referPhone,String referCode,String name,String profit,String userPhone)async{
+    await FirebaseFirestore.instance.collection('Users').doc(referPhone).collection('referredList').
+    doc('${DateTime.now().millisecondsSinceEpoch}').set({
+      "id": referPhone,
+      "date":'${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}',
+      "phone":userPhone,
+      "name":name,
+      "referCode":referCode,
+      "profit":profit
+    });
   }
 }

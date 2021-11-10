@@ -267,8 +267,9 @@ class _CartPageState extends State<CartPage> {
                             style: TextStyle(color: Colors.white),
                           ),
                           onPressed: () {
-                            //id==null?Get.to(()=>LoginPage()):
-                            Get.to(()=>PaymentPage('',userController.user.name,userController.user.phone));
+                            id==null?Get.to(()=>LoginPage()):
+                            Get.to(()=>PaymentPage('',userController.user.name,userController.user.phone,
+                            '','','','',''));
                           },
                           borderRadius: 5.0,
                           height: size.width * .1,

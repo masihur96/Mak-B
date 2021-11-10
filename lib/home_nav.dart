@@ -167,9 +167,10 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     if(_counter==0){
+      productController.getArea();
       productController.getProducts();
       productController.getCart();
-      productController.getAreaHub();
+      productController.getAreaHub(productController.areaList[0].id);
       if(id!=null){
         updateUserDetails();
       }

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:mak_b/models/Cart.dart';
 import 'package:mak_b/models/area_hub_model.dart';
 import 'package:mak_b/models/product_model.dart';
@@ -11,6 +12,7 @@ class ProductController extends GetxController{
   RxInt totalProfitAmount=0.obs;
   RxList<ProductModel> _productList = RxList<ProductModel>([]);
   RxList<Cart> _cartList = RxList<Cart>([]);
+  RxList<AreaHubModel> _areaList = RxList<AreaHubModel>([]);
   RxList<AreaHubModel> _areaHubList = RxList<AreaHubModel>([]);
   RxList<String> _productIdList = RxList<String>([]);
   String? id;
@@ -30,6 +32,7 @@ class ProductController extends GetxController{
   get productList => _productList;
   get cartList => _cartList;
   get productIdList => _productIdList;
+  get areaList => _areaList;
   get areaHubList => _areaHubList;
 
   Future<void> getProducts()async{
@@ -132,9 +135,26 @@ class ProductController extends GetxController{
     });
   }
 
-  Future<void> getAreaHub()async{
+  Future<void> getArea()async{
     try{
       await FirebaseFirestore.instance.collection('Area&Hub').get().then((snapShot){
+        _areaList.clear();
+        snapShot.docChanges.forEach((element) {
+          AreaHubModel areaHubModel=AreaHubModel(
+            hub: element.doc['hub'],
+            id: element.doc['id'],
+          );
+          _areaList.add(areaHubModel) ;
+        });
+        print('Area List${_areaList.length}');
+      });
+    }catch(error){
+      print(error);
+    }
+  }
+  Future<void> getAreaHub(String area)async{
+    try{
+      await FirebaseFirestore.instance.collection('Area&Hub').where('id',isEqualTo: area).get().then((snapShot){
         _areaHubList.clear();
         snapShot.docChanges.forEach((element) {
           AreaHubModel areaHubModel=AreaHubModel(
@@ -148,6 +168,23 @@ class ProductController extends GetxController{
     }catch(error){
       print(error);
     }
+  }
+
+  Future<void> createOrder(String name,String phone,String unique,String area,String hub,
+      String quantity,String totalAmount,List<Cart> cartModel)async{
+
+    await FirebaseFirestore.instance.collection('Orders').doc(unique).set({
+      "name":name,
+      "phone":phone,
+      "orderNumber":'${DateTime.now().millisecondsSinceEpoch}',
+      "orderDate":DateFormat('yyyy/MM/dd hh:mm:ss').format(DateTime.now()),
+      "state": 'pending',
+      "Area":area,
+      "hub":hub,
+      "quantity":quantity,
+      "totalAmount":totalAmount,
+      "products": cartModel
+    });
   }
 
 }

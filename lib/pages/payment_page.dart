@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:flutter_sslcommerz/model/SSLCAdditionalInitializer.dart';
 import 'package:flutter_sslcommerz/model/SSLCCustomerInfoInitializer.dart';
 import 'package:flutter_sslcommerz/model/SSLCEMITransactionInitializer.dart';
@@ -14,18 +15,29 @@ import 'package:flutter_sslcommerz/model/sslproductinitilizer/SSLCProductInitial
 import 'package:flutter_sslcommerz/sslcommerz.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:mak_b/controller/auth_controller.dart';
 import 'package:mak_b/controller/product_controller.dart';
+import 'package:mak_b/controller/user_controller.dart';
+import 'package:mak_b/models/area_hub_model.dart';
 import 'package:mak_b/widgets/form_decoration.dart';
 import 'package:mak_b/widgets/gradient_button.dart';
+import 'package:mak_b/widgets/notification_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentPage extends StatefulWidget {
   String? referenceCode;
   //String? referMobileNo;
   String? customerName;
   String? customerPhone;
+  String? address;
+  String? password;
+  String? nbp;
+  String? myReferCode;
+  String? insuranceEndingDate;
 
 
-  PaymentPage(this.referenceCode, this.customerName,this.customerPhone);
+  PaymentPage(this.referenceCode, this.customerName,this.customerPhone,this.address,
+  this.password,this.nbp,this.myReferCode,this.insuranceEndingDate);
 
   @override
   _PaymentPageState createState() => _PaymentPageState();
@@ -33,11 +45,17 @@ class PaymentPage extends StatefulWidget {
 
 class _PaymentPageState extends State<PaymentPage> {
   final ProductController productController=Get.find<ProductController>();
+  final AuthController authController=Get.find<AuthController>();
+  final UserController userController=Get.find<UserController>();
   dynamic userProfitAmount;
+  dynamic referUserProfitAmount;
+  dynamic referBalance;
   int count=0;
   String? referredBy;
   String? districtsValue;
   String? hubValue;
+  List<AreaHubModel> _list=[];
+  List<AreaHubModel> _hubList=[];
 
   var tempList =[];
   TextEditingController _nameTextFieldController = TextEditingController();
@@ -47,19 +65,40 @@ class _PaymentPageState extends State<PaymentPage> {
 
   var _key = GlobalKey<FormState>();
   dynamic formData = {};
+  Future<void> operate()async{
+    districtsValue = productController.areaList[0].id;
+    hubValue=productController.areaHubList[0].hub[0];
+    _list=productController.areaList;
+    _hubList=productController.areaHubList;
+    String profit='${productController.totalProfitAmount}';
+    setState(() {
+      count++;
+      referredBy=widget.referenceCode==''?'None':widget.referenceCode;
+      userProfitAmount=int.parse(profit) *.3;
+      referUserProfitAmount=int.parse(profit) *.2;
+      referBalance=userController.referUser.mainBalance!+referUserProfitAmount;
+    });
+    print(userProfitAmount);
+  }
+  String? id;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _checkPreferences();
+  }
+  void _checkPreferences() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      id = preferences.get('id') as String?;
+      //pass = preferences.get('pass');
+    });
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     if(count==0){
-      districtsValue = productController.areaHubList[0].id;
-      hubValue=productController.areaHubList[0].hub[0];
-      String profit='${productController.totalProfitAmount}';
-      setState(() {
-        count++;
-        referredBy=widget.referenceCode==''?'None':widget.referenceCode;
-        userProfitAmount=int.parse(profit) *.3;
-      });
-      print(userProfitAmount);
+      operate();
     }
     return Scaffold(
 
@@ -208,16 +247,19 @@ class _PaymentPageState extends State<PaymentPage> {
                                       child: DropdownButton(
                                         value: districtsValue,
                                         icon: Icon(Icons.keyboard_arrow_down),
-                                        items:productController.areaHubList.map((items) {
+                                        items:_list.map((items) {
                                           return DropdownMenuItem(
-                                              value: items,
-                                              child: Text(items.id)
+                                              value: items.id,
+                                              child: Text(items.id!)
                                           );
                                         }).toList(),
 
-                                        onChanged: (newValue){
+                                        onChanged: (newValue)async{
+                                          await productController.getAreaHub(newValue.toString());
                                           setState(() {
                                             districtsValue = newValue.toString();
+                                            _hubList=productController.areaHubList;
+                                            hubValue=productController.areaHubList[0].hub[0];
                                           });
                                         },
                                       ),
@@ -235,7 +277,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                       child: DropdownButton(
                                         value: hubValue,
                                         icon: Icon(Icons.keyboard_arrow_down),
-                                        items:productController.areaHubList[0].hub.map((String items) {
+                                        items:_hubList[0].hub!.map((items) {
                                           return DropdownMenuItem(
                                               value: items,
                                               child: Text(items)
@@ -366,7 +408,13 @@ class _PaymentPageState extends State<PaymentPage> {
                       )),
                 ),
                 GradientButton(child: Text('Payment'), onPressed: (){
-                  _paySSLCommerz();
+                  String unique='${DateTime.now().millisecondsSinceEpoch}';
+                  showLoadingDialog(Get.context!);
+                  productController.createOrder(widget.customerName!, widget.customerPhone!,
+                      unique, districtsValue!, hubValue!, '${productController.cartList.length}', '${productController.total}', productController.cartList).then((value){
+                    Get.back();
+                  });
+                  //_paySSLCommerz();
                 },
                     borderRadius: 10, height: size.width*.1, width: size.width*.5, gradientColors: [Color(0xFF0198DD), Color(0xFF19B52B)]),
 
@@ -378,64 +426,64 @@ class _PaymentPageState extends State<PaymentPage> {
       ),
     );
   }
-  Future<void> _displayTextInputDialog(BuildContext context,Size size) async {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Update Data',style: TextStyle(color: Color(0xFF19B52B)),),
-            content: Container(
-              height: size.width*.8,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10))
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextField(
-                    controller: _nameTextFieldController,
-                    decoration: textFieldFormDecoration(size).copyWith(
-                      labelText: 'Name',
-                      hintText: 'Mak-B',
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
-                    child: TextField(
-                      controller: _addressFieldController,
-                      decoration: textFieldFormDecoration(size).copyWith(
-                        labelText: 'Address',
-                        hintText: 'House-16, Sonargaon, Dhaka',
-                      ),
-                    ),
-                  ),
-                  TextField(
-
-                    controller: _phoneFieldController,
-                    decoration: textFieldFormDecoration(size).copyWith(
-
-                      labelText: 'Phone',
-                      hintText: '0147582369',
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
-                    child: TextField(
-                      controller: _descriptionFieldController,
-                      decoration: textFieldFormDecoration(size).copyWith(
-                        labelText: 'Description',
-                        hintText: 'I Need this Product Urgently',
-                      ),
-                    ),
-                  ),
-                  GradientButton(child: Text('Update'), onPressed: (){}, borderRadius: 10, height: size.width*.1, width: size.width*.3, gradientColors: [Color(0xFF0198DD), Color(0xFF19B52B)])
-
-                ],
-              ),
-            ),
-          );
-        });
-  }
+  // Future<void> _displayTextInputDialog(BuildContext context,Size size) async {
+  //   return showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return AlertDialog(
+  //           title: Text('Update Data',style: TextStyle(color: Color(0xFF19B52B)),),
+  //           content: Container(
+  //             height: size.width*.8,
+  //             decoration: BoxDecoration(
+  //               borderRadius: BorderRadius.all(Radius.circular(10))
+  //             ),
+  //             child: Column(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               children: [
+  //                 TextField(
+  //                   controller: _nameTextFieldController,
+  //                   decoration: textFieldFormDecoration(size).copyWith(
+  //                     labelText: 'Name',
+  //                     hintText: 'Mak-B',
+  //                   ),
+  //                 ),
+  //                 Padding(
+  //                   padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
+  //                   child: TextField(
+  //                     controller: _addressFieldController,
+  //                     decoration: textFieldFormDecoration(size).copyWith(
+  //                       labelText: 'Address',
+  //                       hintText: 'House-16, Sonargaon, Dhaka',
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 TextField(
+  //
+  //                   controller: _phoneFieldController,
+  //                   decoration: textFieldFormDecoration(size).copyWith(
+  //
+  //                     labelText: 'Phone',
+  //                     hintText: '0147582369',
+  //                   ),
+  //                 ),
+  //                 Padding(
+  //                   padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
+  //                   child: TextField(
+  //                     controller: _descriptionFieldController,
+  //                     decoration: textFieldFormDecoration(size).copyWith(
+  //                       labelText: 'Description',
+  //                       hintText: 'I Need this Product Urgently',
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 GradientButton(child: Text('Update'), onPressed: (){}, borderRadius: 10, height: size.width*.1, width: size.width*.3, gradientColors: [Color(0xFF0198DD), Color(0xFF19B52B)])
+  //
+  //               ],
+  //             ),
+  //           ),
+  //         );
+  //       });
+  // }
 
   Future<void> _paySSLCommerz() async {
     Sslcommerz sslcommerz = Sslcommerz(
@@ -448,7 +496,7 @@ class _PaymentPageState extends State<PaymentPage> {
             sdkType: SSLCSdkType.LIVE,
             store_id: "demotest",
             store_passwd: "qwerty",
-            total_amount: 100.0,
+            total_amount: double.parse('${productController.total}'),
             tran_id: DateTime.now().millisecondsSinceEpoch.toString()));
     sslcommerz
         .addEMITransactionInitializer(
@@ -457,13 +505,13 @@ class _PaymentPageState extends State<PaymentPage> {
         .addShipmentInfoInitializer(
         sslcShipmentInfoInitializer: SSLCShipmentInfoInitializer(
             shipmentMethod: "yes",
-            numOfItems: 5,
+            numOfItems: productController.cartList.length,
             shipmentDetails: ShipmentDetails(
-                shipAddress1: 'Gazipur, Dhaka',
-                shipCity: 'Dhaka',
+                shipAddress1: hubValue!,
+                shipCity: districtsValue!,
                 shipCountry: "Bangladesh",
                 shipName: "From hub",
-                shipPostCode: '1700')))
+                shipPostCode: '')))
         .addCustomerInfoInitializer(
         customerInfoInitializer: SSLCCustomerInfoInitializer(
             customerState: "Uttara",
@@ -497,9 +545,30 @@ class _PaymentPageState extends State<PaymentPage> {
       //print('Payment Status: ${model.status}');
       //showSuccessMgs('"Transaction Status: ${model.status}"');
       if (model.status == 'VALID') {
-        print(model.status);
+        if(id==null){
+          String unique='${DateTime.now().millisecondsSinceEpoch}';
+          showLoadingDialog(Get.context!);
+          authController.register(widget.customerName!, widget.address!, widget.customerPhone!,
+              widget.password!, widget.nbp!, widget.myReferCode!, widget.insuranceEndingDate!,'$userProfitAmount').then((value){
+                authController.updateReferUser(userController.referUser.phone!, '$referBalance').then((value){
+                  authController.addReferUserReferList(userController.referUser.phone!,widget.myReferCode!,widget.customerName!,referUserProfitAmount!,widget.customerPhone!).then((value){
+                    productController.createOrder(widget.customerName!, widget.customerPhone!,
+                        unique, districtsValue!, hubValue!, '${productController.cartList.length}', '${productController.total}', productController.cartList).then((value){
+                       Get.back();
+                    });
+                  });
+                });
+          });
+        }else{
+          String unique='${DateTime.now().millisecondsSinceEpoch}';
+          showLoadingDialog(Get.context!);
+          productController.createOrder(widget.customerName!, widget.customerPhone!,
+              unique, districtsValue!, hubValue!, '${productController.cartList.length}', '${productController.total}', productController.cartList).then((value){
+            Get.back();
+          });
+        }
       } else {
-        print(model.status);
+        showToast('Transaction failed');
       }
     }
   }
