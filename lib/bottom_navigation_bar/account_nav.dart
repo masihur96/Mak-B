@@ -18,6 +18,9 @@ import 'package:mak_b/pages/refferred_people.dart';
 import 'package:mak_b/pages/withdrow_page.dart';
 import 'package:mak_b/variables/constants.dart';
 import 'package:mak_b/widgets/notification_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../home_nav.dart';
 
 class AccountNav extends StatefulWidget {
   const AccountNav({Key? key}) : super(key: key);
@@ -33,12 +36,29 @@ class _AccountNavState extends State<AccountNav> {
   double _animatedContainerHeight = 0.0;
   File? uploadImage;
   bool icon=false;
+  int level=0;
 
   Future<void> chooseImage() async {
     var choosedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
     setState(() {
       uploadImage = File(choosedImage!.path);
       icon=true;
+    });
+    await userController.updatePhoto(uploadImage!);
+  }
+  String? id;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkPreferences();
+  }
+
+  void _checkPreferences() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      id = preferences.get('id') as String?;
+      //pass = preferences.get('pass');
     });
   }
 
@@ -48,8 +68,20 @@ class _AccountNavState extends State<AccountNav> {
     Size size = MediaQuery.of(context).size;
     setState(() {
       _animatedContainerHeight = size.width * .26;
+      level=int.parse(userController.userModel.value.level!);
     });
-    return SafeArea(child: Scaffold(body: _bodyUI(size)));
+    if(userController.userModel.value.name==null)userController.getUser(id!);
+    return SafeArea(
+        child: WillPopScope(
+          onWillPop: _onBackPressed,
+          child: Scaffold(
+              body: _bodyUI(size)
+          ),
+        ));
+  }
+  Future<bool> _onBackPressed() {
+    Get.offAll(HomeNav());
+    return Future<bool>.value(true);
   }
 
   Widget _bodyUI(Size size) {
@@ -95,18 +127,18 @@ class _AccountNavState extends State<AccountNav> {
                               clipBehavior: Clip.none,
                               children: [
                                 uploadImage == null
-                                    ?userController.user.imageUrl==null?CircleAvatar(
+                                    ?userController.userModel.value.imageUrl==null?CircleAvatar(
                                     backgroundColor: Colors.grey.shade200,
                                     radius: size.width * .18,
                                     backgroundImage: AssetImage(
                                         'assets/images/profile_image_demo.png'))
-                                    :userController.user.imageUrl==''?CircleAvatar(
+                                    :userController.userModel.value.imageUrl==''?CircleAvatar(
                                     backgroundColor: Colors.grey.shade200,
                                     radius: size.width * .18,
                                     backgroundImage: AssetImage(
                                         'assets/images/profile_image_demo.png'))
                                     : CachedNetworkImage(
-                                  imageUrl: userController.user.imageUrl!,
+                                  imageUrl: userController.userModel.value.imageUrl!,
                                   imageBuilder: (context, imageProvider) => Container(
                                     width: size.width*.45,
                                     height: size.width*.35,
@@ -153,17 +185,17 @@ class _AccountNavState extends State<AccountNav> {
                                 )
                               ],
                             ),
-                            icon==false
-                                ? Container()
-                                : IconButton(
-                              icon: Icon(Icons.update_outlined),
-                              onPressed: () async{
-                                await authController.updatePhoto(uploadImage!);
-                                setState(() {
-                                  icon = false;
-                                });
-                              },
-                            )
+                            // icon==false
+                            //     ? Container()
+                            //     : IconButton(
+                            //   icon: Icon(Icons.update_outlined),
+                            //   onPressed: () async{
+                            //     await userController.updatePhoto(uploadImage!);
+                            //     setState(() {
+                            //       icon = false;
+                            //     });
+                            //   },
+                            // )
                           ],
                         ),
                         SizedBox(
@@ -175,7 +207,7 @@ class _AccountNavState extends State<AccountNav> {
                           padding: EdgeInsets.only(
                               left: size.width * .04, right: size.width * .04),
                           child: Text(
-                            userController.user.name??'',
+                            userController.userModel.value.name??'',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.black,
@@ -189,11 +221,36 @@ class _AccountNavState extends State<AccountNav> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            level>99 && level<200?Container(
+                                width: size.width * .15,
+                                height: size.width * .15,
+                                child: Image.asset(
+                                    'assets/images/bronz.png')):
+                            level>199 && level<300?Container(
+                                width: size.width * .15,
+                                height: size.width * .15,
+                                child: Image.asset(
+                                    'assets/images/silver_badge.jpg')):
+                            level>299 && level<400?Container(
+                                width: size.width * .15,
+                                height: size.width * .15,
+                                child: Image.asset(
+                                    'assets/images/gold.png')):
+                            level>399 && level<500?Container(
+                                width: size.width * .15,
+                                height: size.width * .15,
+                                child: Image.asset(
+                                    'assets/images/platinum.png')):
+                            level>499?Container(
+                                width: size.width * .15,
+                                height: size.width * .15,
+                                child: Image.asset(
+                                    'assets/images/premium.png')):
                             Container(
                                 width: size.width * .15,
                                 height: size.width * .15,
                                 child: Image.asset(
-                                    'assets/images/silver_badge.jpg')),
+                                    'assets/images/level.png')),
                             SizedBox(width: size.width * .04),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,8 +263,43 @@ class _AccountNavState extends State<AccountNav> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: size.width * .04),
                                 ),
-                                Text(
-                                  'Level: ${userController.user.level??''}',
+                                level>99 && level<200?Text(
+                                  'Bronze',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.grey.shade700,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: size.width * .04),
+                                ):level>199 && level<300?Text(
+                                  'Silver',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.grey.shade700,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: size.width * .04),
+                                ):level>299 && level<400?Text(
+                                  'Gold',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.grey.shade700,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: size.width * .04),
+                                ):level>399 && level<500?Text(
+                                  'Platinum',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.grey.shade700,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: size.width * .04),
+                                ):level>499?Text(
+                                  'Premium',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.grey.shade700,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: size.width * .04),
+                                ):Text(
+                                  'Level: ${userController.userModel.value.level??''}',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Colors.grey.shade700,
@@ -275,7 +367,7 @@ class _AccountNavState extends State<AccountNav> {
                           width: size.width * .04,
                         ),
                         Text(
-                          userController.user.nbp??'',
+                          userController.userModel.value.nbp??'',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: size.width * .04,
@@ -296,7 +388,7 @@ class _AccountNavState extends State<AccountNav> {
                           width: size.width * .04,
                         ),
                         Text(
-                          userController.user.phone??'',
+                          userController.userModel.value.phone??'',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: size.width * .04,
@@ -317,7 +409,7 @@ class _AccountNavState extends State<AccountNav> {
                           width: size.width * .04,
                         ),
                         Text(
-                          userController.user.address??'',
+                          userController.userModel.value.address??'',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: size.width * .04,
@@ -350,7 +442,7 @@ class _AccountNavState extends State<AccountNav> {
                   height: size.width * .04,
                 ),
                 Text(
-                  userController.user.referCode??'',
+                  userController.userModel.value.referCode??'',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: size.width * .04,

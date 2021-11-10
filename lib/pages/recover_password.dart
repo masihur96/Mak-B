@@ -75,7 +75,7 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
                             if (newPass!.endsWith(renewPass!)) {
-                                authController.recoverPassword(newPass!,widget.phone!);
+                                userController.recoverPassword(newPass!,widget.phone!);
 
                             } else {
                               showToast('Passwords doesn\'t matched');

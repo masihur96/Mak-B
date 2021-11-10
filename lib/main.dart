@@ -4,6 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
+import 'package:mak_b/pages/splash_screen_page.dart';
 import 'package:mak_b/variables/theme.dart';
 import 'controller/auth_controller.dart';
 import 'controller/user_controller.dart';
@@ -13,8 +14,6 @@ Future<void> main() async {
   debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
   WidgetsFlutterBinding.ensureInitialized();
   await firebase_core.Firebase.initializeApp();
-  Get.put(UserController());
-  Get.put(AuthController());
   // DevicePreview(
   //
   //    enabled: !kReleaseMode,
@@ -37,7 +36,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Mak B',
       theme: theme(),
-      home: HomeNav(),
+      home: SplashScreen(),
     );
   }
 }

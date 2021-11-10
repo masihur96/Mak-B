@@ -7,6 +7,7 @@ import 'package:mak_b/bottom_navigation_bar/account_nav.dart';
 import 'package:mak_b/bottom_navigation_bar/cart_page.dart';
 import 'package:mak_b/bottom_navigation_bar/package_list.dart';
 import 'package:mak_b/bottom_navigation_bar/product_page.dart';
+import 'package:mak_b/controller/advertisement_controller.dart';
 import 'package:mak_b/pages/login_page.dart';
 import 'package:intl/intl.dart';
 import 'package:mak_b/variables/constants.dart';
@@ -25,9 +26,6 @@ class HomeNav extends StatefulWidget {
 }
 
 class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
-  final AuthController authController=Get.put(AuthController());
-  final UserController userController=Get.put(UserController());
-  final ProductController productController=Get.put(ProductController());
 
   DateTime? currentReferDate;
   DateTime? lastReferDate;
@@ -41,6 +39,7 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
 
   String? id;
   String? _deviceId;
+  String? deviceId;
   Future<void> initDeviceId() async {
     String deviceid;
 
@@ -59,8 +58,9 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
       id = preferences.get('id') as String?;
-      //pass = preferences.get('pass');
+      deviceId = preferences.get('deviceId') as String? ;
     });
+    print(id);
   }
 
   @override
@@ -82,7 +82,7 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
     _tabController!.dispose();
   }
 
-  Future<void> updateUserDetails()async {
+  Future<void> updateUserDetails(UserController userController)async {
     // to convert from "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" to 'MM/dd/yyyy hh:mm a'
     //
     // date = '2021-01-26T03:17:00.000000Z';
@@ -93,12 +93,13 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
     // var outputDate = outputFormat.format(inputDate);
     // print(outputDate)
 
-    setState(() {
+
       _counter++;
-    });
     await userController.getUser(id!);
+    await userController.getUserCart();
     await userController.getWithDrawHistory(id!);
     await userController.getDepositHistory(id!);
+    await userController.getReferUserReferList(id!);
     await FirebaseFirestore.instance.collection('Users').where('id',isEqualTo: id).get().then((querySnapshots)async{
       querySnapshots.docChanges.forEach((document) {
         if(watchDt!=document.doc['watchDate']){
@@ -123,9 +124,16 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
               newReferYear=date.year+1;
               newReferMonth=newMonth-12;
             });
+          }else{
+            setState(() {
+              newReferYear=date.year;
+            });
           }
-          var newYear = '$newReferYear'.substring('$newReferYear'.length - 2);
           var newString = document.doc['phone'].substring(document.doc['phone'].length - 6);
+          final String monthYear = DateFormat('MMyy').format(DateTime(newReferMonth!, newReferYear!));
+          String myReferCode = 'MakB$monthYear$newString';
+          //var newYear = '$newReferYear'.substring('$newReferYear'.length - 2);
+          //var newString = document.doc['phone'].substring(document.doc['phone'].length - 6);
           FirebaseFirestore.instance.collection('Users').doc(id).update({
             // 'id': id,
             // "name": name,
@@ -135,25 +143,25 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
             // "nbp":nbp,
             // "email": '',
             // "zip": '',
-            "referCode": 'MakB$newReferMonth$newYear$newString',
+            "referCode": myReferCode,
             "timeStamp": DateTime.now().millisecondsSinceEpoch,
             "referDate": '$newReferYear-$newReferMonth-${date.day}',
-            "imageUrl": '',
-            "referredList": '',
-            "numberOfReferred": '0',
-            //"insuranceEndingDate": insuranceEndingDate,
-            "depositBalance": '0',
-            "depositHistory": '',
-            "withdrawHistory": '',
-            "insuranceBalance": '0',
-            "lastInsurancePayment": '',
-            "level": '0',
-            "mainBalance": '0',
-            "videoWatched": '0',
+            // "imageUrl": '',
+            // "referredList": '',
+            // //"numberOfReferred": '0',
+            // //"insuranceEndingDate": insuranceEndingDate,
+            // "depositBalance": '0',
+            // "depositHistory": '',
+            // "withdrawHistory": '',
+            // //"insuranceBalance": '0',
+            // "lastInsurancePayment": '',
+            // "level": '0',
+            // //"mainBalance": '0',
+            // "videoWatched": '0',
             "watchDate": DateFormat('yyyy-MM-dd').format(DateTime.now()),
-            "myStore": '',
-            "myOrder": '',
-            "cartList": '',
+            // "myStore": '',
+            // "myOrder": '',
+            // "cartList": '',
             "referLimit": '$referLimit',
           });
         }else{
@@ -162,17 +170,14 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
       });
     });
   }
-
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    final UserController userController=Get.find<UserController>();
+    final ProductController productController=Get.find<ProductController>();
+    final Size size = MediaQuery.of(context).size;
     if(_counter==0){
-      productController.getArea();
-      productController.getProducts();
-      productController.getCart();
-      productController.getAreaHub(productController.areaList[0].id);
       if(id!=null){
-        updateUserDetails();
+        updateUserDetails(userController);
       }
     }
     return Scaffold(

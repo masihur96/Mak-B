@@ -24,6 +24,9 @@ import 'package:mak_b/widgets/gradient_button.dart';
 import 'package:mak_b/widgets/notification_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../home_nav.dart';
+import 'order_list_page.dart';
+
 class PaymentPage extends StatefulWidget {
   String? referenceCode;
   //String? referMobileNo;
@@ -33,11 +36,11 @@ class PaymentPage extends StatefulWidget {
   String? password;
   String? nbp;
   String? myReferCode;
-  String? insuranceEndingDate;
+  //String? insuranceEndingDate;
 
 
   PaymentPage(this.referenceCode, this.customerName,this.customerPhone,this.address,
-  this.password,this.nbp,this.myReferCode,this.insuranceEndingDate);
+      this.password,this.nbp,this.myReferCode);
 
   @override
   _PaymentPageState createState() => _PaymentPageState();
@@ -56,6 +59,7 @@ class _PaymentPageState extends State<PaymentPage> {
   String? hubValue;
   List<AreaHubModel> _list=[];
   List<AreaHubModel> _hubList=[];
+  List cartItemList = [];
 
   var tempList =[];
   TextEditingController _nameTextFieldController = TextEditingController();
@@ -65,6 +69,36 @@ class _PaymentPageState extends State<PaymentPage> {
 
   var _key = GlobalKey<FormState>();
   dynamic formData = {};
+  void getData() {
+    for (int i = 0; i < productController.cartList.length; i++) {
+      cartItemList.add({
+        "productId": productController.cartList[i].productId,
+        "productName": productController.cartList[i].productName,
+        "quantity": productController.cartList[i].quantity,
+        "productImage": productController.cartList[i].productImage,
+        "price": productController.cartList[i].price,
+        "color": productController.cartList[i].color,
+        "size": productController.cartList[i].size,
+        "profitAmount": productController.cartList[i].profitAmount
+      });
+    }
+    print(cartItemList[0]['productName']);
+  }
+  void getUserData() {
+    for (int i = 0; i < userController.cartList.length; i++) {
+      cartItemList.add({
+        "productId": userController.cartList[i].productId,
+        "productName": userController.cartList[i].productName,
+        "quantity": userController.cartList[i].quantity,
+        "productImage": userController.cartList[i].productImage,
+        "price": userController.cartList[i].price,
+        "color": userController.cartList[i].color,
+        "size": userController.cartList[i].size,
+        "profitAmount": userController.cartList[i].profitAmount
+      });
+    }
+    print(cartItemList[0]['productName']);
+  }
   Future<void> operate()async{
     districtsValue = productController.areaList[0].id;
     hubValue=productController.areaHubList[0].hub[0];
@@ -75,10 +109,7 @@ class _PaymentPageState extends State<PaymentPage> {
       count++;
       referredBy=widget.referenceCode==''?'None':widget.referenceCode;
       userProfitAmount=int.parse(profit) *.3;
-      referUserProfitAmount=int.parse(profit) *.2;
-      referBalance=userController.referUser.mainBalance!+referUserProfitAmount;
     });
-    print(userProfitAmount);
   }
   String? id;
   @override
@@ -101,12 +132,11 @@ class _PaymentPageState extends State<PaymentPage> {
       operate();
     }
     return Scaffold(
-
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60.0),
-        child: AppBar(
-          title: Text('Payment'),
-        )
+          preferredSize: Size.fromHeight(60.0),
+          child: AppBar(
+            title: Text('Payment',style: TextStyle(color: Colors.black)),
+          )
       ),
       body: Container(
         height: size.height,
@@ -149,7 +179,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                       color: Colors.black,
                                       fontStyle: FontStyle.normal,
                                       fontSize: size.width * .04)),
-                              SizedBox(height: 5,),
+                              SizedBox(height: 5),
                               Text(widget.customerPhone!,
                                   style: TextStyle(
 
@@ -225,82 +255,82 @@ class _PaymentPageState extends State<PaymentPage> {
                   padding: const EdgeInsets.only(left: 8.0,right: 8,bottom: 8),
                   child: Card(
                     shadowColor: Colors.grey,
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(9.0),
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(9.0),
+                    ),
+                    child:  Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text('Division: ' ,  style: TextStyle(
+
+                                      color: Colors.black,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: size.width * .04)),
+                                  DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                      value: districtsValue,
+                                      icon: Icon(Icons.keyboard_arrow_down),
+                                      items:_list.map((items) {
+                                        return DropdownMenuItem(
+                                            value: items.id,
+                                            child: Text(items.id!)
+                                        );
+                                      }).toList(),
+
+                                      onChanged: (newValue)async{
+                                        await productController.getAreaHub(newValue.toString());
+                                        setState(() {
+                                          districtsValue = newValue.toString();
+                                          _hubList=productController.areaHubList;
+                                          hubValue=productController.areaHubList[0].hub[0];
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              Row(
+                                children: [
+                                  Text('HUB: ',   style: TextStyle(
+                                      color: Colors.black,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: size.width * .04)),
+                                  DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                      value: hubValue,
+                                      icon: Icon(Icons.keyboard_arrow_down),
+                                      items:_hubList[0].hub!.map((items) {
+                                        return DropdownMenuItem(
+                                            value: items,
+                                            child: Text(items)
+                                        );
+                                      }
+                                      ).toList(),
+
+                                      onChanged: (newValue){
+                                        setState(() {
+                                          hubValue = newValue.toString();
+                                        });
+                                      },
+
+
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      child:  Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text('Division: ' ,  style: TextStyle(
-
-                        color: Colors.black,
-                            fontStyle: FontStyle.normal,
-                            fontSize: size.width * .04)),
-                                    DropdownButtonHideUnderline(
-                                      child: DropdownButton(
-                                        value: districtsValue,
-                                        icon: Icon(Icons.keyboard_arrow_down),
-                                        items:_list.map((items) {
-                                          return DropdownMenuItem(
-                                              value: items.id,
-                                              child: Text(items.id!)
-                                          );
-                                        }).toList(),
-
-                                        onChanged: (newValue)async{
-                                          await productController.getAreaHub(newValue.toString());
-                                          setState(() {
-                                            districtsValue = newValue.toString();
-                                            _hubList=productController.areaHubList;
-                                            hubValue=productController.areaHubList[0].hub[0];
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                Row(
-                                  children: [
-                                    Text('HUB: ',   style: TextStyle(
-                                        color: Colors.black,
-                                        fontStyle: FontStyle.normal,
-                                        fontSize: size.width * .04)),
-                                    DropdownButtonHideUnderline(
-                                      child: DropdownButton(
-                                        value: hubValue,
-                                        icon: Icon(Icons.keyboard_arrow_down),
-                                        items:_hubList[0].hub!.map((items) {
-                                          return DropdownMenuItem(
-                                              value: items,
-                                              child: Text(items)
-                                          );
-                                        }
-                                        ).toList(),
-
-                                        onChanged: (newValue){
-                                          setState(() {
-                                            hubValue = newValue.toString();
-                                          });
-                                        },
-
-
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),),
+                    ),),
                 ),
                 Align(
                   alignment: Alignment.topLeft,
@@ -319,7 +349,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   padding: const EdgeInsets.only(left: 8.0,right: 8,bottom: 8),
                   child: Card(
                       shadowColor: Colors.grey,
-                    elevation: 5,
+                      elevation: 5,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(9.0),
                       ),
@@ -407,13 +437,40 @@ class _PaymentPageState extends State<PaymentPage> {
                         ],
                       )),
                 ),
-                GradientButton(child: Text('Payment'), onPressed: (){
+                GradientButton(child: Text('Payment'),
+                    onPressed: ()async{
                   String unique='${DateTime.now().millisecondsSinceEpoch}';
-                  showLoadingDialog(Get.context!);
-                  productController.createOrder(widget.customerName!, widget.customerPhone!,
-                      unique, districtsValue!, hubValue!, '${productController.cartList.length}', '${productController.total}', productController.cartList).then((value){
-                    Get.back();
-                  });
+                  if(id==null){
+                    showLoadingDialog(Get.context!);
+                    String profit='${productController.totalProfitAmount}';
+                    setState(() {
+                      referUserProfitAmount=int.parse(profit) *.2;
+                      referBalance=double.parse(userController.referUserModel.value.mainBalance!)+referUserProfitAmount;
+                    });
+                    getData();
+                    productController.createOrder(widget.customerName!, widget.customerPhone!,
+                        unique, districtsValue!, hubValue!, '${productController.cartList.length}',
+                        '${productController.total}', cartItemList,userController).then((value){
+                      authController.createUser(widget.customerName!, widget.address!, widget.customerPhone!,
+                          widget.password!, widget.nbp!, widget.referenceCode!, '$userProfitAmount',widget.myReferCode!).then((value){
+                        userController.updateReferUser(userController.referUserModel.value.phone!, '$referBalance').then((value){
+                          userController.addReferUserReferList(userController.referUserModel.value.phone!,widget.myReferCode!,
+                           widget.customerName!,'$referUserProfitAmount',widget.customerPhone!);
+                        });
+                      });
+                    });
+                  }else{
+                    showLoadingDialog(Get.context!);
+                    getUserData();
+                    productController.createOrder(widget.customerName!, widget.customerPhone!,
+                        unique, districtsValue!, hubValue!, '${productController.cartList.length}',
+                        '${productController.total}', cartItemList,userController).then((value){
+                      Get.back();
+                      Get.to(()=>HomeNav());
+                      showToast('Order Placed');
+                    });
+                  }
+
                   //_paySSLCommerz();
                 },
                     borderRadius: 10, height: size.width*.1, width: size.width*.5, gradientColors: [Color(0xFF0198DD), Color(0xFF19B52B)]),
@@ -485,93 +542,93 @@ class _PaymentPageState extends State<PaymentPage> {
   //       });
   // }
 
-  Future<void> _paySSLCommerz() async {
-    Sslcommerz sslcommerz = Sslcommerz(
-        initializer: SSLCommerzInitialization(
-          //Use the ipn if you have valid one, or it will fail the transaction.
-            //ipn_url: "www.ipnurl.com",
-            multi_card_name: '',
-            currency: SSLCurrencyType.BDT,
-            product_category: "Food",
-            sdkType: SSLCSdkType.LIVE,
-            store_id: "demotest",
-            store_passwd: "qwerty",
-            total_amount: double.parse('${productController.total}'),
-            tran_id: DateTime.now().millisecondsSinceEpoch.toString()));
-    sslcommerz
-        .addEMITransactionInitializer(
-        sslcemiTransactionInitializer: SSLCEMITransactionInitializer(
-            emi_options: 1, emi_max_list_options: 3, emi_selected_inst: 2))
-        .addShipmentInfoInitializer(
-        sslcShipmentInfoInitializer: SSLCShipmentInfoInitializer(
-            shipmentMethod: "yes",
-            numOfItems: productController.cartList.length,
-            shipmentDetails: ShipmentDetails(
-                shipAddress1: hubValue!,
-                shipCity: districtsValue!,
-                shipCountry: "Bangladesh",
-                shipName: "From hub",
-                shipPostCode: '')))
-        .addCustomerInfoInitializer(
-        customerInfoInitializer: SSLCCustomerInfoInitializer(
-            customerState: "Uttara",
-            customerName: "Mak bro",
-            customerEmail: "makbro@gmail.com",
-            customerAddress1: "Uttara",
-            customerCity: "Dhaka",
-            customerPostCode:'1230',
-            customerCountry: "Bangladesh",
-            customerPhone: "01610000016"))
-        .addProductInitializer(
-        sslcProductInitializer:
-        // ***** ssl product initializer for general product STARTS*****
-        SSLCProductInitializer(
-            productName: "T-Shirt",
-            productCategory: "All",
-            general: General(
-                general: "General Purpose",
-                productProfile: "Product Profile")))
-        .addAdditionalInitializer(
-        sslcAdditionalInitializer:
-        SSLCAdditionalInitializer(valueA: "SSL_VERIFYPEER_FALSE"));
-    var result = await sslcommerz.payNow();
-    if (result is PlatformException) {
-      print("the response is: " +
-          result.message.toString() +
-          " code: " +
-          result.code);
-    } else {
-      SSLCTransactionInfoModel model = result;
-      //print('Payment Status: ${model.status}');
-      //showSuccessMgs('"Transaction Status: ${model.status}"');
-      if (model.status == 'VALID') {
-        if(id==null){
-          String unique='${DateTime.now().millisecondsSinceEpoch}';
-          showLoadingDialog(Get.context!);
-          authController.register(widget.customerName!, widget.address!, widget.customerPhone!,
-              widget.password!, widget.nbp!, widget.myReferCode!, widget.insuranceEndingDate!,'$userProfitAmount').then((value){
-                authController.updateReferUser(userController.referUser.phone!, '$referBalance').then((value){
-                  authController.addReferUserReferList(userController.referUser.phone!,widget.myReferCode!,widget.customerName!,referUserProfitAmount!,widget.customerPhone!).then((value){
-                    productController.createOrder(widget.customerName!, widget.customerPhone!,
-                        unique, districtsValue!, hubValue!, '${productController.cartList.length}', '${productController.total}', productController.cartList).then((value){
-                       Get.back();
-                    });
-                  });
-                });
-          });
-        }else{
-          String unique='${DateTime.now().millisecondsSinceEpoch}';
-          showLoadingDialog(Get.context!);
-          productController.createOrder(widget.customerName!, widget.customerPhone!,
-              unique, districtsValue!, hubValue!, '${productController.cartList.length}', '${productController.total}', productController.cartList).then((value){
-            Get.back();
-          });
-        }
-      } else {
-        showToast('Transaction failed');
-      }
-    }
-  }
+  // Future<void> _paySSLCommerz() async {
+  //   Sslcommerz sslcommerz = Sslcommerz(
+  //       initializer: SSLCommerzInitialization(
+  //         //Use the ipn if you have valid one, or it will fail the transaction.
+  //         //ipn_url: "www.ipnurl.com",
+  //           multi_card_name: '',
+  //           currency: SSLCurrencyType.BDT,
+  //           product_category: "Food",
+  //           sdkType: SSLCSdkType.LIVE,
+  //           store_id: "demotest",
+  //           store_passwd: "qwerty",
+  //           total_amount: double.parse('${productController.total}'),
+  //           tran_id: DateTime.now().millisecondsSinceEpoch.toString()));
+  //   sslcommerz
+  //       .addEMITransactionInitializer(
+  //       sslcemiTransactionInitializer: SSLCEMITransactionInitializer(
+  //           emi_options: 1, emi_max_list_options: 3, emi_selected_inst: 2))
+  //       .addShipmentInfoInitializer(
+  //       sslcShipmentInfoInitializer: SSLCShipmentInfoInitializer(
+  //           shipmentMethod: "yes",
+  //           numOfItems: productController.cartList.length,
+  //           shipmentDetails: ShipmentDetails(
+  //               shipAddress1: hubValue!,
+  //               shipCity: districtsValue!,
+  //               shipCountry: "Bangladesh",
+  //               shipName: "From hub",
+  //               shipPostCode: '')))
+  //       .addCustomerInfoInitializer(
+  //       customerInfoInitializer: SSLCCustomerInfoInitializer(
+  //           customerState: "Uttara",
+  //           customerName: "Mak bro",
+  //           customerEmail: "makbro@gmail.com",
+  //           customerAddress1: "Uttara",
+  //           customerCity: "Dhaka",
+  //           customerPostCode:'1230',
+  //           customerCountry: "Bangladesh",
+  //           customerPhone: "01610000016"))
+  //       .addProductInitializer(
+  //       sslcProductInitializer:
+  //       // ***** ssl product initializer for general product STARTS*****
+  //       SSLCProductInitializer(
+  //           productName: "T-Shirt",
+  //           productCategory: "All",
+  //           general: General(
+  //               general: "General Purpose",
+  //               productProfile: "Product Profile")))
+  //       .addAdditionalInitializer(
+  //       sslcAdditionalInitializer:
+  //       SSLCAdditionalInitializer(valueA: "SSL_VERIFYPEER_FALSE"));
+  //   var result = await sslcommerz.payNow();
+  //   if (result is PlatformException) {
+  //     print("the response is: " +
+  //         result.message.toString() +
+  //         " code: " +
+  //         result.code);
+  //   } else {
+  //     SSLCTransactionInfoModel model = result;
+  //     //print('Payment Status: ${model.status}');
+  //     //showSuccessMgs('"Transaction Status: ${model.status}"');
+  //     if (model.status == 'VALID') {
+  //       if(id==null){
+  //         String unique='${DateTime.now().millisecondsSinceEpoch}';
+  //         showLoadingDialog(Get.context!);
+  //         authController.register(widget.customerName!, widget.address!, widget.customerPhone!,
+  //             widget.password!, widget.nbp!, widget.myReferCode!, widget.insuranceEndingDate!,'$userProfitAmount').then((value){
+  //           authController.updateReferUser(userController.referUser.phone!, '$referBalance').then((value){
+  //             authController.addReferUserReferList(userController.referUser.phone!,widget.myReferCode!,widget.customerName!,referUserProfitAmount!,widget.customerPhone!).then((value){
+  //               productController.createOrder(widget.customerName!, widget.customerPhone!,
+  //                   unique, districtsValue!, hubValue!, '${productController.cartList.length}', '${productController.total}', productController.cartList).then((value){
+  //                 Get.back();
+  //               });
+  //             });
+  //           });
+  //         });
+  //       }else{
+  //         String unique='${DateTime.now().millisecondsSinceEpoch}';
+  //         showLoadingDialog(Get.context!);
+  //         productController.createOrder(widget.customerName!, widget.customerPhone!,
+  //             unique, districtsValue!, hubValue!, '${productController.cartList.length}', '${productController.total}', productController.cartList).then((value){
+  //           Get.back();
+  //         });
+  //       }
+  //     } else {
+  //       showToast('Transaction failed');
+  //     }
+  //   }
+  // }
 
 }
 

@@ -11,12 +11,12 @@ import 'package:mak_b/widgets/gradient_button.dart';
 import 'package:mak_b/widgets/notification_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class RegisterPage extends StatefulWidget {
+class FirstUserRegisterPage extends StatefulWidget {
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  _FirstUserRegisterPageState createState() => _FirstUserRegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _FirstUserRegisterPageState extends State<FirstUserRegisterPage> {
   final AuthController authController = Get.find<AuthController>();
   final UserController userController = Get.find<UserController>();
   final ProductController productController = Get.find<ProductController>();
@@ -26,7 +26,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _phone = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final TextEditingController _nbp = TextEditingController();
-  final TextEditingController _referCode = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +33,8 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       //resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Register', style: TextStyle(color: Colors.black)),
+        centerTitle: true,
+        title: Text('Register As a First User\n Good luck for your business!', style: TextStyle(color: Colors.black)),
         toolbarHeight: AppBar().preferredSize.height,
         leading: IconButton(
           onPressed: () {
@@ -78,7 +78,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           decoration: BoxDecoration(
                               border: Border(
                                   bottom:
-                                      BorderSide(color: Colors.grey[100]!))),
+                                  BorderSide(color: Colors.grey[100]!))),
                           child: TextField(
                             controller: _name,
                             decoration: InputDecoration(
@@ -102,7 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           decoration: BoxDecoration(
                               border: Border(
                                   bottom:
-                                      BorderSide(color: Colors.grey[100]!))),
+                                  BorderSide(color: Colors.grey[100]!))),
                           child: TextField(
                             controller: _phone,
                             decoration: InputDecoration(
@@ -126,26 +126,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           decoration: BoxDecoration(
                               border: Border(
                                   bottom:
-                                      BorderSide(color: Colors.grey[100]!))),
+                                  BorderSide(color: Colors.grey[100]!))),
                           child: TextField(
                             controller: _nbp,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Nid/BirthCertificate/Passport",
-                                hintStyle: TextStyle(color: Colors.grey[400])),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom:
-                                      BorderSide(color: Colors.grey[100]!))),
-                          child: TextField(
-                            controller: _referCode,
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Refer Code",
                                 hintStyle: TextStyle(color: Colors.grey[400])),
                           ),
                         ),
@@ -167,41 +153,20 @@ class _RegisterPageState extends State<RegisterPage> {
                           final String monthYear = DateFormat('MMyy')
                               .format(DateTime(DateTime.now().month, DateTime.now().year));
                           String myReferCode = 'MakB$monthYear$newString';
+                          int insuranceEndingYear = DateTime.now().year + 5;
+                          String demoInsuranceEndingDate =
+                              '$insuranceEndingYear-${DateTime.now().month}-${DateTime.now().day}';
+                          DateTime insuranceEndingDate =
+                          DateFormat("yyyy-MM-dd").parse(demoInsuranceEndingDate);
+                          String insuranceEndingDateInTimeStamp =
+                          insuranceEndingDate.millisecondsSinceEpoch.toString();
                           if (_name.text.isNotEmpty &&
                               _address.text.isNotEmpty &&
                               _phone.text.isNotEmpty &&
                               _password.text.isNotEmpty &&
-                              _nbp.text.isNotEmpty &&
-                              _referCode.text.isNotEmpty) {
-                            bool isReg = await authController.isRegistered(_phone.text);
-                            if (!isReg) {
-                              if(productController.cartList.length!=0){
-                                await userController.getReferUser(_referCode.text).then((value){
-                                  if(userController.referredList.length != int.parse(userController.referUserModel.value.referLimit!)){
-                                    if (userController.isReferCodeCorrect.value) {
-                                      Get.back();
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => PaymentPage(
-                                                  _referCode.text, _name.text,_phone.text,_address.text,_password.text,
-                                                  _nbp.text,myReferCode)));
-                                    }
-                                    //authController.createUser(_name.text, _address.text, _phone.text, _password.text,_nbp.text,_referCode.text);
-                                  }else{
-                                    Get.back();
-                                    showToast('Refer limit is over for this referCode!');
-                                  }
-                                });
-                              }else{
-                                Get.back();
-                                showToast('Registration cannot be done with empty cart!' );
-                              }
-                            } else {
-                              Get.back();
-                              showToast('Phone Number already exist');
-                            }
-
+                              _nbp.text.isNotEmpty) {
+                            authController.createFirstUser(_name.text, _address.text, _phone.text,
+                                _password.text, _nbp.text,myReferCode, insuranceEndingDateInTimeStamp, '0');
                           } else {
                             Get.back();
                             showToast('Complete all required fields');
@@ -222,3 +187,4 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 }
+

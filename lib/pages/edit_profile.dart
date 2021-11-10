@@ -25,12 +25,12 @@ class _EditProfileState extends State<EditProfile> {
   final TextEditingController _zip = TextEditingController();
 
   void _initialize(){
-    _name.text=userController.user.name??'';
-    _email.text=userController.user.email??'';
-    _phone.text=userController.user.phone??'';
-    _address.text=userController.user.address??'';
-    _nbp.text=userController.user.nbp??'';
-    _zip.text=userController.user.zip??'';
+    _name.text=userController.userModel.value.name??'';
+    _email.text=userController.userModel.value.email??'';
+    _phone.text=userController.userModel.value.phone??'';
+    _address.text=userController.userModel.value.address??'';
+    _nbp.text=userController.userModel.value.nbp??'';
+    _zip.text=userController.userModel.value.zip??'';
     setState(() => count++);
   }
   @override
@@ -165,7 +165,7 @@ class _EditProfileState extends State<EditProfile> {
                         onPressed: () {
                           if(_name.text.isNotEmpty&& _address.text.isNotEmpty&&
                               _phone.text.isNotEmpty&&_nbp.text.isNotEmpty){
-                            authController.updateProfile(_name.text, _address.text, _phone.text, _nbp.text, _email.text, _zip.text);
+                            userController.updateProfile(_name.text, _address.text, _phone.text, _nbp.text, _email.text, _zip.text);
                           }else{
                             showToast('Complete all required fields');
                           }

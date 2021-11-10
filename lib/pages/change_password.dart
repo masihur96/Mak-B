@@ -74,8 +74,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
                             if (newPass!.endsWith(renewPass!)) {
-                              if(password==userController.user.password){
-                                authController.changePassword(newPass!);
+                              if(password==userController.userModel.value.password){
+                                userController.changePassword(newPass!);
                               }else{
                                 showToast('Current password is wrong');
                               }

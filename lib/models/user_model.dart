@@ -20,6 +20,7 @@ class UserModel{
   String? insuranceBalance;
   String? lastInsurancePaymentDate;
   String? level;
+  bool? insuranceWithDraw;
   String? mainBalance;
   String? videoWatched;
   String? watchDate;
@@ -50,6 +51,7 @@ class UserModel{
       this.insuranceBalance,
       this.lastInsurancePaymentDate,
       this.level,
+      this.insuranceWithDraw,
       this.mainBalance,
       this.videoWatched,
       this.watchDate,
