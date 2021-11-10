@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "606650145624",
+    "project_id": "makb-2021",
+    "storage_bucket": "makb-2021.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:606650145624:android:8ce033abd9560aa018232d",
+        "android_client_info": {
+          "package_name": "com.example.mak_b"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "606650145624-schfhe09t060td2colk10q155lbct0ab.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATYOLDmVRhNvx6O3Z3Xfu0QDCSYWv2Myo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "606650145624-schfhe09t060td2colk10q155lbct0ab.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

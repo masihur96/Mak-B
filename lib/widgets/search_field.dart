@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:mak_b/pages/search_page.dart';
 import 'package:mak_b/variables/constants.dart';
 import 'package:mak_b/variables/size_config.dart';
 
@@ -9,9 +12,7 @@ class SearchField extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     return InkWell(
       onTap: (){
-        // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) {
-        //   return SearchPage();  }),(Route<dynamic> route) => false);
-
+        Get.to(()=>SearchPage());
       },
       child: Container(
         width: size.width * 0.72,

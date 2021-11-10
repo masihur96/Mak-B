@@ -1,5 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:mak_b/bottom_navigation_bar/account_nav.dart';
+import 'package:mak_b/controller/user_controller.dart';
 import 'package:mak_b/variables/size_config.dart';
 import 'package:mak_b/widgets/package_card.dart';
 
@@ -9,6 +14,7 @@ class MyStorePage extends StatefulWidget {
 }
 
 class _MyStorePageState extends State<MyStorePage> {
+  final UserController userController=Get.find<UserController>();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -40,14 +46,14 @@ class _MyStorePageState extends State<MyStorePage> {
                 child: GridView.builder(
                   shrinkWrap: true,
                   physics: new ClampingScrollPhysics(),
-                  itemCount:10,
+                  itemCount:userController.storePackageList.length,
                   gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 2,
                       childAspectRatio: 4.9/9),
                   itemBuilder: (BuildContext context, int index) {
                     // if (demoProducts[index].isPopular)
-                    return PackageCard();
+                    return PackageCard(product: userController.storePackageList[index], sold: true,);
                     // return SizedBox
                     //     .shrink(); // here by default width and height is 0
                   },
