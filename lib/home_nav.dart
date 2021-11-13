@@ -130,7 +130,7 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
             });
           }
           var newString = document.doc['phone'].substring(document.doc['phone'].length - 6);
-          final String monthYear = DateFormat('MMyy').format(DateTime(newReferMonth!, newReferYear!));
+          final String monthYear = DateFormat("MMyy").format(DateTime.parse("$newReferYear-$newReferMonth-${date.day}"));
           String myReferCode = 'MakB$monthYear$newString';
           //var newYear = '$newReferYear'.substring('$newReferYear'.length - 2);
           //var newString = document.doc['phone'].substring(document.doc['phone'].length - 6);

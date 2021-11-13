@@ -260,16 +260,16 @@ class _ProductPageState extends State<ProductPage> {
                                     SizedBox(
                                       width: 5,
                                     ),
-                                    Text(
-                                      "\$${productController.productList[index].price}",
-                                      style: TextStyle(
-                                        decoration: TextDecoration.lineThrough,
-                                        fontSize:
-                                        getProportionateScreenWidth(context, 12),
-                                        fontWeight: FontWeight.w300,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
+                                    // Text(
+                                    //   "\$${productController.productList[index].price}",
+                                    //   style: TextStyle(
+                                    //     decoration: TextDecoration.lineThrough,
+                                    //     fontSize:
+                                    //     getProportionateScreenWidth(context, 12),
+                                    //     fontWeight: FontWeight.w300,
+                                    //     color: Colors.grey[600],
+                                    //   ),
+                                    // ),
                                     const SizedBox(height: 6),
                                   ],
                                 ),

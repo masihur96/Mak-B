@@ -95,16 +95,16 @@ class ProductCard extends StatelessWidget {
                       SizedBox(
                         width: 5,
                       ),
-                      Text(
-                        "\$${product.price}",
-                        style: TextStyle(
-                          decoration: TextDecoration.lineThrough,
-                          fontSize:
-                              getProportionateScreenWidth(context, 12),
-                          fontWeight: FontWeight.w300,
-                          color: Colors.grey[600],
-                        ),
-                      ),
+                      // Text(
+                      //   "\$${product.price}",
+                      //   style: TextStyle(
+                      //     decoration: TextDecoration.lineThrough,
+                      //     fontSize:
+                      //         getProportionateScreenWidth(context, 12),
+                      //     fontWeight: FontWeight.w300,
+                      //     color: Colors.grey[600],
+                      //   ),
+                      // ),
                       const SizedBox(height: 6),
                     ],
                   ),

@@ -83,7 +83,7 @@ class _FirstUserRegisterPageState extends State<FirstUserRegisterPage> {
                             controller: _name,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: "Name",
+                                hintText: "Name(Same as Nid/BC/Passport)",
                                 hintStyle: TextStyle(color: Colors.grey[400])),
                           ),
                         ),
@@ -150,8 +150,8 @@ class _FirstUserRegisterPageState extends State<FirstUserRegisterPage> {
                         onPressed: () async {
                           showLoadingDialog(Get.context!);
                           var newString = _phone.text.substring(_phone.text.length - 6);
-                          final String monthYear = DateFormat('MMyy')
-                              .format(DateTime(DateTime.now().month, DateTime.now().year));
+                          DateTime now = DateTime.now();
+                          final String monthYear = DateFormat('MMyy').format(now);
                           String myReferCode = 'MakB$monthYear$newString';
                           int insuranceEndingYear = DateTime.now().year + 5;
                           String demoInsuranceEndingDate =
