@@ -100,6 +100,7 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
     await userController.getWithDrawHistory(id!);
     await userController.getDepositHistory(id!);
     await userController.getReferUserReferList(id!);
+    await userController.getWatchedHistory();
     await FirebaseFirestore.instance.collection('Users').where('id',isEqualTo: id).get().then((querySnapshots)async{
       querySnapshots.docChanges.forEach((document) {
         if(watchDt!=document.doc['watchDate']){
@@ -177,9 +178,13 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
     final ProductController productController=Get.find<ProductController>();
     final Size size = MediaQuery.of(context).size;
     if(_counter==0){
+       userController.getContactInfo();
       if(id!=null){
         updateUserDetails(userController);
       }
+    }
+    if(id!=null){
+      userController.getUser(id!);
     }
     return Scaffold(
       backgroundColor: Colors.green[50],

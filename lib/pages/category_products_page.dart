@@ -126,7 +126,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
               ///SideBar
               Container(
                 width: size.width * .24,
-                color: Colors.green.shade300,
+                color: Colors.blueGrey.shade200,
                 child: ListView.builder(
                   itemCount: productController.subCategoryList==null?0:productController.subCategoryList.length,
                   itemBuilder: (context, index) {
@@ -146,7 +146,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                       child: Container(
                         color: index == subIndex
                             ? kPrimaryColor
-                            : Colors.green.shade300,
+                            : Colors.blueGrey.shade200,
                         padding: EdgeInsets.all(10),
                         child: Text(
                           '${productController.subCategoryList[index].subCategory}',

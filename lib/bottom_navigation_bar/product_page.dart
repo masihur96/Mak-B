@@ -88,7 +88,8 @@ class _ProductPageState extends State<ProductPage> {
               //   ],
               // ),
             ),
-            SizedBox(height: 10,),
+            SizedBox(height: 20),
+            Divider(),
             // ListView.builder(
             //   shrinkWrap: true,
             //   itemCount: productController.categoryList.length,
@@ -206,7 +207,7 @@ class _ProductPageState extends State<ProductPage> {
           children: [
             //SizedBox(height: getProportionateScreenWidth(context,10)),
               GestureDetector(
-                onTap:()=> id==null?showToast('Please log in first'):Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
+                onTap:()=> id==null?showToast('Please log in first'):userController.userModel.value.videoWatched=='5'?_showDialog():Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -227,7 +228,9 @@ class _ProductPageState extends State<ProductPage> {
                       right: 20.0,
                       child: SolidColorButton(
                           child: Text('Watch Now',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
-                          onPressed: ()=>id==null?showToast('Please log in first'):Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
+                          onPressed: ()=>id==null?showToast('Please log in first'):
+                          userController.userModel.value.videoWatched=='5'?_showDialog():
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
                           borderRadius: 5.0,
                           height: size.width*.06,
                           width: size.width*.3,
@@ -359,5 +362,56 @@ class _ProductPageState extends State<ProductPage> {
         ),
       ), //CustomBottomNavBar(selectedMenu: MenuState.home),
     );
+  }
+
+  _showDialog() {
+    showDialog(
+        context: Get.context!,
+        barrierDismissible: false,
+        builder: (context) {
+
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: AlertDialog(
+              backgroundColor: Colors.white,
+              scrollable: true,
+              contentPadding: EdgeInsets.all(20),
+              title: Column(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.width * .030,
+                  ),
+                  Text(
+                    'Your video watching limit is over for today.\n'
+                        'Please wait for the next day.\nThank you!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal, color: kPrimaryColor),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.width * .050,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      InkWell(
+                        onTap: (){
+                          Get.back();
+                          //Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          "Ok",
+                          style: TextStyle(
+                              color: kPrimaryColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
   }
 }

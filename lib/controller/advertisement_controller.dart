@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mak_b/controller/user_controller.dart';
+import 'package:mak_b/home_nav.dart';
 import 'package:mak_b/models/advertisement_model.dart';
+import 'package:mak_b/variables/constants.dart';
 import 'package:mak_b/widgets/notification_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,7 +25,7 @@ class AdvertisementController extends GetxController{
 
      print('Initialize');
     try{
-      await FirebaseFirestore.instance.collection('Advertisement').get().then((snapShot){
+      await FirebaseFirestore.instance.collection('Advertisement').get().then((snapShot)async{
         videoList.clear();
       //  showLoadingDialog(Get.context!);
         snapShot.docChanges.forEach((element) {
@@ -33,6 +36,7 @@ class AdvertisementController extends GetxController{
             date: element.doc['date'],
           );
           videoList.add(advertisementModel) ;
+
         });
     //    Get.back();
         print('Video Length: ${videoList.length}');
@@ -42,6 +46,8 @@ class AdvertisementController extends GetxController{
       print('Error from Video:$error');
     }
   }
+
+
 
 
   String userMainBalance='';
@@ -64,31 +70,103 @@ class AdvertisementController extends GetxController{
   }
 
   Future<void> updateAddAmount()async {
-    final UserController userController=Get.find<UserController>();
+
     SharedPreferences preferences = await SharedPreferences.getInstance();
     print('Submit Data Into Firebase');
-
  //   print(currentDate);
     var  id = preferences.get('id');
-    print(id);
 
     try{
       getSingleUserData(id.toString()).then((value) async{
+
         String currentDate='${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}';
-        if(watchDate ==currentDate ){
-          showToast('You have finished watching videos for today');
 
-        }else {
 
+        if( int.parse(videoWatched) !=5 ){
           await FirebaseFirestore.instance.collection('Users').doc(id.toString()).update({
-            "videoWatched": '5',
+            "videoWatched": '${int.parse(videoWatched)+1}',
             "watchDate": currentDate,
-            "mainBalance": '${int.parse(userMainBalance)+5}',
+            "mainBalance": '${int.parse(userMainBalance)+ 1}',
           }).then((value) async{
-            await userController.getUser(id.toString());
-           //  Get.back();
+
+            FirebaseFirestore.instance.collection('Users').doc(id.toString()).collection('VideoHistory').doc(currentDate).set(
+                {
+                  "videoWatched": '${int.parse(videoWatched)+1}',
+                  "watchDate": currentDate,
+                });
+            // await FirebaseFirestore.instance.collection('Users').doc(id.toString()).collection('VideoHistory').doc(currentDate).get().then((snapshot) {
+            //   if(snapshot.exists){
+            //      FirebaseFirestore.instance.collection('Users').doc(id.toString()).collection('VideoHistory').doc(currentDate).update(
+            //         {
+            //           "videoWatched": videoValue,
+            //           "watchDate": currentDate,
+            //         });
+            //   }
+            //   else{
+            //
+            //   }
+            // }).then((value) async{
+            //   await getSingleUserData(id.toString());
+            // });
+
+
+            //  Get.back();
+          }).then((value) {
+            getSingleUserData(id.toString());
           });
-        }
+
+        }else{
+            showDialog(
+                context: Get.context!,
+                barrierDismissible: false,
+                builder: (context) {
+                  return WillPopScope(
+                    onWillPop: () async => false,
+                    child: AlertDialog(
+                      backgroundColor: Colors.white,
+                      scrollable: true,
+                      contentPadding: EdgeInsets.all(20),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.width * .030,
+                          ),
+                          Text(
+                            'Congratulations!',
+                            textAlign: TextAlign.center,style: TextStyle(fontSize: 30,color: kPrimaryColor),
+                          ),
+                          Text(
+                            'You have watched 5 videos and limit is over for today.\n'
+                                'Please wait for the next day.\nThank you!',
+                            textAlign: TextAlign.center,
+
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.width * .050,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              InkWell(
+                                onTap: (){
+                                  Get.offAll(()=>HomeNav());
+                                },
+                                child: Text(
+                                  "Ok",
+                                  style: TextStyle(
+
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                });
+          }
       });
     }catch (err){
 
@@ -98,38 +176,6 @@ class AdvertisementController extends GetxController{
 
   }
 
-
-  // Future<void> getAdvertisementData(var id)async{
-  //   try{
-  //     await FirebaseFirestore.instance.collection('Users').doc(id).get().then((snapShot){
-  //       _cartList.clear();
-  //       _productIdList.clear();
-  //       total=0.obs;
-  //       totalProfitAmount=0.obs;
-  //       snapShot.docChanges.forEach((element) {
-  //         Cart cart=Cart(
-  //             id: element.doc['id'],
-  //             productName: element.doc['productName'],
-  //             productId: element.doc['productId'],
-  //             productImage: element.doc['productImage'],
-  //             price: element.doc['price'],
-  //             quantity: element.doc['quantity'],
-  //             color: element.doc['color'],
-  //             size: element.doc['size'],
-  //             profitAmount: element.doc['profitAmount']
-  //         );
-  //         _cartList.add(cart) ;
-  //         _productIdList.add(cart.productId!);
-  //         total=total+(int.parse(cart.price!)*cart.quantity!);
-  //         totalProfitAmount=totalProfitAmount+int.parse(cart.profitAmount!)*cart.quantity!;
-  //       });
-  //       print('ProductId${_productIdList.length}');
-  //       print(total);
-  //     });
-  //   }catch(error){
-  //     print(error);
-  //   }
-  // }
 
 
 }

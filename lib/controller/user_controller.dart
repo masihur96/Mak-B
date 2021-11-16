@@ -6,12 +6,14 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:mak_b/controller/auth_controller.dart';
 import 'package:mak_b/models/Cart.dart';
 import 'package:mak_b/models/check_first_user_model.dart';
+import 'package:mak_b/models/info_model.dart';
 import 'package:mak_b/models/package_model.dart';
 import 'package:mak_b/models/product_order_model.dart';
 import 'package:mak_b/models/refered_list_model.dart';
 import 'package:mak_b/models/set_rate_model.dart';
 import 'package:mak_b/models/user_model.dart';
 import 'package:mak_b/models/deposit_model.dart';
+import 'package:mak_b/models/watch_history_model.dart';
 import 'package:mak_b/models/withdraw_model.dart';
 import 'package:mak_b/pages/login_page.dart';
 import 'package:mak_b/pages/my_store_page.dart';
@@ -33,10 +35,12 @@ class UserController extends AuthController {
   RxList<ReferredList> referredList = <ReferredList>[].obs;
   Rx<DepositModel> depositModel = DepositModel().obs;
   RxList<DepositModel> depositList = <DepositModel>[].obs;
+  RxList<WatchHistoryModel> watchHistoryList = <WatchHistoryModel>[].obs;
   Rx<bool> isReferCodeCorrect = false.obs;
   Rx<RateModel> rateData = RateModel().obs;
   RxList<PackageModel> storePackageList = <PackageModel>[].obs;
   RxList<ProductOrderModel> productOrderList = <ProductOrderModel>[].obs;
+  RxList<ContactInfoModel> infoList = <ContactInfoModel>[].obs;
   get cartList => _cartList;
   get productIds => _productIds;
 
@@ -836,6 +840,55 @@ class UserController extends AuthController {
       update();
     } catch (error) {
       print("getting user error: $error");
+    }
+  }
+
+  Future<void> getWatchedHistory() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(id)
+          .collection('VideoHistory')
+          .get()
+          .then((snapShot) {
+        watchHistoryList.clear();
+        snapShot.docChanges.forEach((element) {
+          WatchHistoryModel watchHistoryModel = WatchHistoryModel(
+            watchDate: element.doc['watchDate'],
+            videoWatched: element.doc['videoWatched'],
+          );
+          watchHistoryList.add(watchHistoryModel);
+        });
+        print(watchHistoryList.length);
+      });
+      update();
+    } catch (error) {
+      print("getting deposit history error: $error");
+    }
+  }
+
+  Future<void> getContactInfo()async{
+    try{
+      await FirebaseFirestore.instance.collection('ContactInfo').get().then((snapShot){
+        infoList.clear();
+        snapShot.docChanges.forEach((element) {
+          ContactInfoModel contactInfoModel = ContactInfoModel(
+            email: element.doc['email'],
+            phone: element.doc['phone'],
+            address: element.doc['address'],
+            fbLink: element.doc['fbLink'],
+            youtubeLink: element.doc['youtubeLink'],
+            twitterLink: element.doc['twitterLink'],
+            instagram: element.doc['instagram'],
+            linkedIn: element.doc['linkedIn'],
+            date: element.doc['date'],
+          );
+          infoList.add(contactInfoModel) ;
+        });
+        print('Contact Info: ${infoList.length}');
+      });
+    }catch(error){
+      print(error);
     }
   }
 }
