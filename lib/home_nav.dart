@@ -105,6 +105,7 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
         if(watchDt!=document.doc['watchDate']){
           FirebaseFirestore.instance.collection('Users').doc(id).update({
             "watchDate": DateFormat('yyyy-MM-dd').format(DateTime.now()),
+            "videoWatched": '0',
           });
         }
         setState(() {

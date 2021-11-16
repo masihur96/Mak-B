@@ -6,6 +6,7 @@ import 'package:mak_b/controller/product_controller.dart';
 import 'package:mak_b/controller/user_controller.dart';
 import 'package:mak_b/models/Product.dart';
 import 'package:mak_b/pages/category_products_page.dart';
+import 'package:mak_b/pages/contact_info.dart';
 import 'package:mak_b/pages/details/details_screen.dart';
 import 'package:mak_b/pages/login_page.dart';
 import 'package:mak_b/pages/watch_video_page.dart';
@@ -54,39 +55,103 @@ class _ProductPageState extends State<ProductPage> {
     await userController.getRate();
     await productController.getCategory();
     await productController.getAreaHub(productController.areaList[0].id);
-
+    await productController.getCategory();
+    await productController.getSubCategory(productController.categoryList[0].category);
+    await productController.getSubCategoryProducts(productController.subCategoryList[0].subCategory);
   }
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
+    if(productController.categoryList.isEmpty) productController.getCategory();
+    if(productController.subCategoryList.isEmpty) productController.getSubCategory(productController.categoryList[0].category);
+    if(productController.categoryProductList.isEmpty) productController.getSubCategoryProducts(productController.subCategoryList[0].subCategory);
     return Scaffold(
       drawer: new Drawer(
         child: new ListView(
           children: <Widget>[
+            SizedBox(height: 20,),
             Container(
-              height: 50,
-              color: kPrimaryColor,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(width: 10,),
-                  Center(child: Text('Categories',style: TextStyle(color: Colors.white),)),
-                ],
+              height: 80,width: 80,
+             decoration: BoxDecoration(
+             color: Colors.white70,
+             shape: BoxShape.circle,
+             ),
+              child: Image.asset("assets/icons/deub.png"),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.start,
+              //   children: [
+              //     SizedBox(width: 10,),
+              //     Center(child:
+              //
+              //     Text('Categories',style: TextStyle(color: Colors.white))
+              //     ),
+              //   ],
+              // ),
+            ),
+            SizedBox(height: 10,),
+            // ListView.builder(
+            //   shrinkWrap: true,
+            //   itemCount: productController.categoryList.length,
+            //     itemBuilder:(_,index){
+            //   return InkWell(
+            //     onTap: (){
+            //         Get.to(()=>CategoryProductsPage(productController.categoryList[index].category));
+            //     },
+            //     child: ListTile(
+            //       title: Text(productController.categoryList[index].category),
+            //     ),
+            //   );
+            // }),
+
+            // ListView.builder(
+            //     shrinkWrap: true,
+            //     itemCount: productController.categoryList.length,
+            //     itemBuilder:(_,index){
+            //       return InkWell(
+            //         onTap: (){
+            //           Get.to(()=>CategoryProductsPage(productController.categoryList[index].category));
+            //         },
+            //         child: ExpansionTile(
+            //           expandedAlignment: Alignment.topLeft,
+            //           title: Text(productController.categoryList[index].category),
+            //           children: <Widget>[
+            //             Row(
+            //               children: [
+            //                 SizedBox(width: 30,),
+            //                 Text("children 1",style: TextStyle(color: Colors.black),),
+            //               ],
+            //             ),
+            //             SizedBox(height: 20,),
+            //             Row(
+            //               children: [
+            //                 SizedBox(width: 30,),
+            //                 Text("children 2",style: TextStyle(color: Colors.black),),
+            //               ],
+            //             ),
+            //             SizedBox(height: 10,),],
+            //         )
+            //       );
+            //     }),
+            InkWell(
+              onTap: ()async{
+                Get.to(()=>CategoryProductsPage());
+              },
+              child: ListTile(
+                title: Text('Categories'),
+                leading: Icon(Icons.category_outlined, color: Colors.grey),
               ),
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: productController.categoryList.length,
-                itemBuilder:(_,index){
-              return InkWell(
-                onTap: (){
-                    Get.to(()=>CategoryProductsPage(productController.categoryList[index].category));
-                },
-                child: ListTile(
-                  title: Text(productController.categoryList[index].category),
-                ),
-              );
-            }),
+            Divider(),
+
+            InkWell(
+              onTap: ()async{
+                Get.to(()=>ContactInfo());
+              },
+              child: ListTile(
+                title: Text('Contact Info'),
+                leading: Icon(Icons.contact_support_outlined, color: Colors.grey),
+              ),
+            ),
             Divider(),
 
             id == null?InkWell(

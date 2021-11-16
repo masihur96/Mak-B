@@ -54,7 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 color: Colors.white70,
                 shape: BoxShape.circle,
               ),
-              child: Image.asset("assets/icons/logo.PNG"),
+              child: Image.asset("assets/icons/deub.png"),
             ),
             Padding(
               padding: EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),

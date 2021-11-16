@@ -37,6 +37,8 @@ class _SplashScreenState extends State<SplashScreen> {
     await userController.getProductOrder();
     await userController.getRate();
     await productController.getCategory();
+    await productController.getSubCategory(productController.categoryList[0].category);
+    await productController.getSubCategoryProducts(productController.subCategoryList[0].subCategory);
     await productController.getCart();
     await productController.getAreaHub(productController.areaList[0].id);
 
@@ -62,16 +64,38 @@ class _SplashScreenState extends State<SplashScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Container(
-          height: size.height,
-          width: size.width*.8,
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage("assets/images/splash.gif"),
-                  fit: BoxFit.contain),
-              borderRadius: BorderRadius.circular(5)),
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: size.height*.3,
+                  width: size.width*.8,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage("assets/images/splash.png"),
+                          fit: BoxFit.contain),
+                      borderRadius: BorderRadius.circular(5)),
+                ),
+                Container(
+                  height: size.height*.4,
+                  width: size.width*.8,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage("assets/icons/deub.png"),
+                          fit: BoxFit.contain),
+                      borderRadius: BorderRadius.circular(5)),
+                ),
+              ],
+            ),
+          ),
+          Text('Powered by MakB\n',style: TextStyle(color: Colors.grey,fontSize: size.width*.032),)
+
+        ],
       ),
     );
   }
