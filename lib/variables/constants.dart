@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mak_b/variables/size_config.dart';
 
-const kPrimaryColor = Color(0xFF19B52B);
+const kPrimaryColor = Color(0xFF0861AF);//(0xFF19B52B);
 BuildContext? context;
 const kPrimaryLightColor = Color(0xFF19B56B);
 const kPrimaryGradientColor = LinearGradient(

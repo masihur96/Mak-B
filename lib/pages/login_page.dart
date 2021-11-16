@@ -37,13 +37,13 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: size.height*.05),
               Container(
                 padding: EdgeInsets.all(getProportionateScreenWidth(context,5)),
-                height: getProportionateScreenWidth(context,100),
-                width: getProportionateScreenWidth(context,100),
+                height: getProportionateScreenWidth(context,120),
+                width: getProportionateScreenWidth(context,120),
                 decoration: BoxDecoration(
                   color: Colors.white70,
                   shape: BoxShape.circle,
                 ),
-                child: Image.asset("assets/icons/logo.PNG"),
+                child: Image.asset("assets/icons/deub.png"),
               ),
               Padding(
                 padding: EdgeInsets.all(10.0),

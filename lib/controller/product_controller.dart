@@ -7,6 +7,7 @@ import 'package:mak_b/models/area_hub_model.dart';
 import 'package:mak_b/models/category_model.dart';
 import 'package:mak_b/models/package_model.dart';
 import 'package:mak_b/models/product_model.dart';
+import 'package:mak_b/models/sub_category_model.dart';
 import 'package:mak_b/widgets/notification_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,6 +24,8 @@ class ProductController extends GetxController{
   String? id;
   String? deviceId;
   RxList<PackageModel> packageList = <PackageModel>[].obs;
+  RxList<SubCategoryModel> _subCategoryList = <SubCategoryModel>[].obs;
+
 
   void _checkPreferences() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -42,6 +45,7 @@ class ProductController extends GetxController{
   get productIdList => _productIdList;
   get areaList => _areaList;
   get areaHubList => _areaHubList;
+  get subCategoryList => _subCategoryList;
 
   Future<void> getProducts()async{
     try{
@@ -257,9 +261,30 @@ class ProductController extends GetxController{
     }
   }
 
-  Future<void> getCategoryProducts(String cat)async{
+  Future<void> getSubCategory(String cat)async{
     try{
-      await FirebaseFirestore.instance.collection('Products').where('category',isEqualTo: cat).get().then((snapShot){
+      await FirebaseFirestore.instance.collection('SubCategory').where('category',isEqualTo: cat).get().then((snapShot){
+        _subCategoryList.clear();
+        snapShot.docChanges.forEach((element) {
+          SubCategoryModel subCategory= SubCategoryModel(
+            subCategory: element.doc['subCategory'],
+            id: element.doc['id'],
+            category: element.doc['category'],
+          );
+          _subCategoryList.add(subCategory);
+        });
+        print('SubCategory: ${_subCategoryList.length}');
+      });
+
+
+    }catch(error){
+      print(error);
+    }
+  }
+
+  Future<void> getSubCategoryProducts(String subCat)async{
+    try{
+      await FirebaseFirestore.instance.collection('Products').where('subCategory',isEqualTo: subCat).get().then((snapShot){
         _categoryProductList.clear();
         snapShot.docChanges.forEach((element) {
           ProductModel productModel=ProductModel(

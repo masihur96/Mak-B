@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:mak_b/models/Product.dart';
 import 'package:mak_b/models/product_model.dart';
 import 'package:mak_b/pages/details/details_screen.dart';
-
 import 'package:mak_b/variables/constants.dart';
 import 'package:mak_b/variables/size_config.dart';
 
@@ -79,7 +78,7 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 12.0, left: 3),
+                  padding: const EdgeInsets.only(right: 12.0, left: 3,bottom: 3),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -93,18 +92,18 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width: 5,
+                        height: 5,
                       ),
-                      Text(
-                        "\$${product.price}",
-                        style: TextStyle(
-                          decoration: TextDecoration.lineThrough,
-                          fontSize:
-                              getProportionateScreenWidth(context, 12),
-                          fontWeight: FontWeight.w300,
-                          color: Colors.grey[600],
-                        ),
-                      ),
+                      // Text(
+                      //   "\$${product.price}",
+                      //   style: TextStyle(
+                      //     decoration: TextDecoration.lineThrough,
+                      //     fontSize:
+                      //         getProportionateScreenWidth(context, 12),
+                      //     fontWeight: FontWeight.w300,
+                      //     color: Colors.grey[600],
+                      //   ),
+                      // ),
                       const SizedBox(height: 6),
                     ],
                   ),

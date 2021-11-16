@@ -6,6 +6,7 @@ import 'package:mak_b/controller/product_controller.dart';
 import 'package:mak_b/controller/user_controller.dart';
 import 'package:mak_b/models/Product.dart';
 import 'package:mak_b/pages/category_products_page.dart';
+import 'package:mak_b/pages/contact_info.dart';
 import 'package:mak_b/pages/details/details_screen.dart';
 import 'package:mak_b/pages/login_page.dart';
 import 'package:mak_b/pages/watch_video_page.dart';
@@ -54,39 +55,104 @@ class _ProductPageState extends State<ProductPage> {
     await userController.getRate();
     await productController.getCategory();
     await productController.getAreaHub(productController.areaList[0].id);
-
+    await productController.getCategory();
+    await productController.getSubCategory(productController.categoryList[0].category);
+    await productController.getSubCategoryProducts(productController.subCategoryList[0].subCategory);
   }
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
+    if(productController.categoryList.isEmpty) productController.getCategory();
+    if(productController.subCategoryList.isEmpty) productController.getSubCategory(productController.categoryList[0].category);
+    if(productController.categoryProductList.isEmpty) productController.getSubCategoryProducts(productController.subCategoryList[0].subCategory);
     return Scaffold(
       drawer: new Drawer(
         child: new ListView(
           children: <Widget>[
+            SizedBox(height: 20,),
             Container(
-              height: 50,
-              color: kPrimaryColor,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(width: 10,),
-                  Center(child: Text('Categories',style: TextStyle(color: Colors.white),)),
-                ],
+              height: 80,width: 80,
+             decoration: BoxDecoration(
+             color: Colors.white70,
+             shape: BoxShape.circle,
+             ),
+              child: Image.asset("assets/icons/deub.png"),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.start,
+              //   children: [
+              //     SizedBox(width: 10,),
+              //     Center(child:
+              //
+              //     Text('Categories',style: TextStyle(color: Colors.white))
+              //     ),
+              //   ],
+              // ),
+            ),
+            SizedBox(height: 20),
+            Divider(),
+            // ListView.builder(
+            //   shrinkWrap: true,
+            //   itemCount: productController.categoryList.length,
+            //     itemBuilder:(_,index){
+            //   return InkWell(
+            //     onTap: (){
+            //         Get.to(()=>CategoryProductsPage(productController.categoryList[index].category));
+            //     },
+            //     child: ListTile(
+            //       title: Text(productController.categoryList[index].category),
+            //     ),
+            //   );
+            // }),
+
+            // ListView.builder(
+            //     shrinkWrap: true,
+            //     itemCount: productController.categoryList.length,
+            //     itemBuilder:(_,index){
+            //       return InkWell(
+            //         onTap: (){
+            //           Get.to(()=>CategoryProductsPage(productController.categoryList[index].category));
+            //         },
+            //         child: ExpansionTile(
+            //           expandedAlignment: Alignment.topLeft,
+            //           title: Text(productController.categoryList[index].category),
+            //           children: <Widget>[
+            //             Row(
+            //               children: [
+            //                 SizedBox(width: 30,),
+            //                 Text("children 1",style: TextStyle(color: Colors.black),),
+            //               ],
+            //             ),
+            //             SizedBox(height: 20,),
+            //             Row(
+            //               children: [
+            //                 SizedBox(width: 30,),
+            //                 Text("children 2",style: TextStyle(color: Colors.black),),
+            //               ],
+            //             ),
+            //             SizedBox(height: 10,),],
+            //         )
+            //       );
+            //     }),
+            InkWell(
+              onTap: ()async{
+                Get.to(()=>CategoryProductsPage());
+              },
+              child: ListTile(
+                title: Text('Categories'),
+                leading: Icon(Icons.category_outlined, color: Colors.grey),
               ),
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: productController.categoryList.length,
-                itemBuilder:(_,index){
-              return InkWell(
-                onTap: (){
-                    Get.to(()=>CategoryProductsPage(productController.categoryList[index].category));
-                },
-                child: ListTile(
-                  title: Text(productController.categoryList[index].category),
-                ),
-              );
-            }),
+            Divider(),
+
+            InkWell(
+              onTap: ()async{
+                Get.to(()=>ContactInfo());
+              },
+              child: ListTile(
+                title: Text('Contact Info'),
+                leading: Icon(Icons.contact_support_outlined, color: Colors.grey),
+              ),
+            ),
             Divider(),
 
             id == null?InkWell(
@@ -141,7 +207,7 @@ class _ProductPageState extends State<ProductPage> {
           children: [
             //SizedBox(height: getProportionateScreenWidth(context,10)),
               GestureDetector(
-                onTap:()=> id==null?showToast('Please log in first'):Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
+                onTap:()=> id==null?showToast('Please log in first'):userController.userModel.value.videoWatched=='5'?_showDialog():Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -162,7 +228,9 @@ class _ProductPageState extends State<ProductPage> {
                       right: 20.0,
                       child: SolidColorButton(
                           child: Text('Watch Now',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
-                          onPressed: ()=>id==null?showToast('Please log in first'):Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
+                          onPressed: ()=>id==null?showToast('Please log in first'):
+                          userController.userModel.value.videoWatched=='5'?_showDialog():
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
                           borderRadius: 5.0,
                           height: size.width*.06,
                           width: size.width*.3,
@@ -260,16 +328,16 @@ class _ProductPageState extends State<ProductPage> {
                                     SizedBox(
                                       width: 5,
                                     ),
-                                    Text(
-                                      "\$${productController.productList[index].price}",
-                                      style: TextStyle(
-                                        decoration: TextDecoration.lineThrough,
-                                        fontSize:
-                                        getProportionateScreenWidth(context, 12),
-                                        fontWeight: FontWeight.w300,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
+                                    // Text(
+                                    //   "\$${productController.productList[index].price}",
+                                    //   style: TextStyle(
+                                    //     decoration: TextDecoration.lineThrough,
+                                    //     fontSize:
+                                    //     getProportionateScreenWidth(context, 12),
+                                    //     fontWeight: FontWeight.w300,
+                                    //     color: Colors.grey[600],
+                                    //   ),
+                                    // ),
                                     const SizedBox(height: 6),
                                   ],
                                 ),
@@ -294,5 +362,56 @@ class _ProductPageState extends State<ProductPage> {
         ),
       ), //CustomBottomNavBar(selectedMenu: MenuState.home),
     );
+  }
+
+  _showDialog() {
+    showDialog(
+        context: Get.context!,
+        barrierDismissible: false,
+        builder: (context) {
+
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: AlertDialog(
+              backgroundColor: Colors.white,
+              scrollable: true,
+              contentPadding: EdgeInsets.all(20),
+              title: Column(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.width * .030,
+                  ),
+                  Text(
+                    'Your video watching limit is over for today.\n'
+                        'Please wait for the next day.\nThank you!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal, color: kPrimaryColor),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.width * .050,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      InkWell(
+                        onTap: (){
+                          Get.back();
+                          //Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          "Ok",
+                          style: TextStyle(
+                              color: kPrimaryColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
   }
 }

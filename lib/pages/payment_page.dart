@@ -104,7 +104,7 @@ class _PaymentPageState extends State<PaymentPage> {
     hubValue=productController.areaHubList[0].hub[0];
     _list=productController.areaList;
     _hubList=productController.areaHubList;
-    String profit='${productController.totalProfitAmount}';
+    String profit=id==null?'${productController.totalProfitAmount}':'${userController.totalProfitAmount}';
     setState(() {
       count++;
       referredBy=widget.referenceCode==''?'None':widget.referenceCode;
@@ -217,7 +217,13 @@ class _PaymentPageState extends State<PaymentPage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Total Product: ${productController.cartList.length}',
+                              id==null?Text('Total Product: ${productController.cartList.length}',
+                                  style: TextStyle(
+
+                                      color: Colors.black,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: size.width * .04)):
+                              Text('Total Product: ${userController.cartList.length}',
                                   style: TextStyle(
 
                                       color: Colors.black,
@@ -422,9 +428,17 @@ class _PaymentPageState extends State<PaymentPage> {
                                         fontWeight: FontWeight.bold,
                                         fontStyle: FontStyle.normal,
                                         fontSize: size.width * .04)),
-                                Padding(
+                                id==null?Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text('${productController.total}\৳',
+                                      style: TextStyle(
+
+                                          color: Color(0xFF19B52B),
+                                          fontStyle: FontStyle.normal,
+                                          fontSize: size.width * .045)),
+                                ):Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text('${userController.total}\৳',
                                       style: TextStyle(
 
                                           color: Color(0xFF19B52B),
@@ -442,9 +456,9 @@ class _PaymentPageState extends State<PaymentPage> {
                   String unique='${DateTime.now().millisecondsSinceEpoch}';
                   if(id==null){
                     showLoadingDialog(Get.context!);
-                    String profit='${productController.totalProfitAmount}';
+                    String profit1='${productController.totalProfitAmount}';
                     setState(() {
-                      referUserProfitAmount=int.parse(profit) *.2;
+                      referUserProfitAmount=int.parse(profit1) *.2;
                       referBalance=double.parse(userController.referUserModel.value.mainBalance!)+referUserProfitAmount;
                     });
                     getData();

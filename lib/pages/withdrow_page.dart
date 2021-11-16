@@ -92,7 +92,7 @@ class _WithDrawPageState extends State<WithDrawPage> {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          'Service Charge : ${userController.rateData.value.serviceCharge!}',
+                          'Govt. Vat + Tax : ${userController.rateData.value.serviceCharge!}',
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: size.width * .04,

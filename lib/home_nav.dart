@@ -100,11 +100,13 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
     await userController.getWithDrawHistory(id!);
     await userController.getDepositHistory(id!);
     await userController.getReferUserReferList(id!);
+    await userController.getWatchedHistory();
     await FirebaseFirestore.instance.collection('Users').where('id',isEqualTo: id).get().then((querySnapshots)async{
       querySnapshots.docChanges.forEach((document) {
         if(watchDt!=document.doc['watchDate']){
           FirebaseFirestore.instance.collection('Users').doc(id).update({
             "watchDate": DateFormat('yyyy-MM-dd').format(DateTime.now()),
+            "videoWatched": '0',
           });
         }
         setState(() {
@@ -130,7 +132,7 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
             });
           }
           var newString = document.doc['phone'].substring(document.doc['phone'].length - 6);
-          final String monthYear = DateFormat('MMyy').format(DateTime(newReferMonth!, newReferYear!));
+          final String monthYear = DateFormat("MMyy").format(DateTime.parse("$newReferYear-$newReferMonth-${date.day}"));
           String myReferCode = 'MakB$monthYear$newString';
           //var newYear = '$newReferYear'.substring('$newReferYear'.length - 2);
           //var newString = document.doc['phone'].substring(document.doc['phone'].length - 6);
@@ -176,9 +178,13 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
     final ProductController productController=Get.find<ProductController>();
     final Size size = MediaQuery.of(context).size;
     if(_counter==0){
+       userController.getContactInfo();
       if(id!=null){
         updateUserDetails(userController);
       }
+    }
+    if(id!=null){
+      userController.getUser(id!);
     }
     return Scaffold(
       backgroundColor: Colors.green[50],

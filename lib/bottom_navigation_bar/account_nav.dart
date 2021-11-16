@@ -15,6 +15,7 @@ import 'package:mak_b/pages/insaurance.dart';
 import 'package:mak_b/pages/my_store_page.dart';
 import 'package:mak_b/pages/order_list_page.dart';
 import 'package:mak_b/pages/refferred_people.dart';
+import 'package:mak_b/pages/video_watch_history.dart';
 import 'package:mak_b/pages/withdrow_page.dart';
 import 'package:mak_b/variables/constants.dart';
 import 'package:mak_b/widgets/notification_widget.dart';
@@ -454,6 +455,7 @@ class _AccountNavState extends State<AccountNav> {
           SizedBox(height: size.width * .02),
 
           _functionBuilder('Referred People', Icons.people, size),
+          _functionBuilder('My video watched history', Icons.slow_motion_video, size),
           _functionBuilder('My Store', Icons.store, size),
           _functionBuilder('My Order', Icons.shopping_basket, size),
           _functionBuilder('Insurance', Icons.account_balance_wallet, size),
@@ -471,6 +473,7 @@ class _AccountNavState extends State<AccountNav> {
         onTap: (){
           Get.to((){
             if(title=='Referred People') return RefferredPeople();
+            else if(title=='My video watched history') return VideoWatchedHistory();
               else if(title=='My Store') return MyStorePage();
               else if(title=='My Order') return OrderListPage();
               else if(title=='Insurance') return Insaurance();
