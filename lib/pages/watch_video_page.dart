@@ -23,7 +23,6 @@ class _WatchVideoState extends State<WatchVideo> {
 
    List <String> videoUrlList = [];
  int counter=0;
- int counter1=0;
 
   int seconds = 0;
   Timer? _timer;
@@ -57,32 +56,29 @@ class _WatchVideoState extends State<WatchVideo> {
     );
   }
   customInit(AdvertisementController advertisement){
-      counter1++;
-
     for(var i =0;i<advertisement.videoList.length;i++){
       videoUrlList.add(advertisement.videoList[i].videoUrl!);
     }
-      _isLoading=true;
     _controller = VideoPlayerController.network(
         videoUrlList[0])
       ..initialize().then((_) {
-
+        startTimer(advertisement);
         setState(() {
-          _isLoading=false;
           videoDuration = _controller!.value.duration;
         });
         print('Video Duration: ${videoDuration!.inSeconds}');
        // print('Video Position: ${_controller!.value.position}');
 
 
-        setState(() {});
+        setState(() {
+          _controller!.play();
+        });
       });
 
     print(videoUrlList);
 
 
   }
-  //
 
   _showDialog() {
 
@@ -164,35 +160,36 @@ class _WatchVideoState extends State<WatchVideo> {
   }
 
 
-  playVideo(int index){
+  playVideo(int index,AdvertisementController advertisement){
     if(_controller!=null){
-      _isLoading=true;
-      _controller!.dispose();
+      //_controller!.dispose();
       _controller = VideoPlayerController.network(
           videoUrlList[index])
         ..initialize().then((_) {
+          startTimer(advertisement);
           setState(() {
-            _isLoading=false;
             videoDuration = _controller!.value.duration;
           });
           print('Video Duration: ${videoDuration!.inSeconds}');
 
-
-          setState(() {});
+          setState(() {
+            _controller!.play();
+          });
         });
     }else {
-      _isLoading=true;
       _controller = VideoPlayerController.network(
           videoUrlList[index])
         ..initialize().then((_) {
+          startTimer(advertisement);
           setState(() {
-            _isLoading=false;
             videoDuration = _controller!.value.duration;
           });
           print('Video Duration: ${videoDuration!.inSeconds}');
 
 
-          setState(() {});
+          setState(() {
+            _controller!.play();
+          });
         });
 
     }
@@ -203,6 +200,7 @@ class _WatchVideoState extends State<WatchVideo> {
   @override
   void dispose() {
     // TODO: implement dispose
+    _timer!.cancel();
     super.dispose();
     _controller!.dispose();
   }
@@ -214,13 +212,15 @@ class _WatchVideoState extends State<WatchVideo> {
     return GetBuilder<AdvertisementController>(
 
         builder: (advertisement) {
-          if(counter1==0){
-            customInit(advertisement);
-          }
+
           Future.delayed(Duration.zero, () async {
             if (counter == 0) {
-              counter++;
+              customInit(advertisement);
+              setState(() {
+                counter++;
+              });
               _showDialog();
+
             }
           });
           return Scaffold(
@@ -246,29 +246,29 @@ class _WatchVideoState extends State<WatchVideo> {
             child: AspectRatio(
               aspectRatio: 5/3,
 
-              child: Center(child: VideoPlayer(_controller!,)),
+              child: _controller!=null?Center(child: VideoPlayer(_controller!,)):Container(),
             ),
           ),
-          Align(
-         alignment: Alignment.center,
-         child: Padding(
-           padding:  EdgeInsets.only(top: size.width*.25),
-           child: FloatingActionButton(
-             backgroundColor: Colors.grey,
-            onPressed: () {
-              startTimer(advertisement);
-                setState(() {
-                _controller!.value.isPlaying
-                ? _controller!.pause()
-                      : _controller!.play();
-                });
-                },
-                child: Icon(
-                _controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                ),
-            ),
-         ),
-       ),
+       // Align(
+       //   alignment: Alignment.center,
+       //   child: Padding(
+       //     padding:  EdgeInsets.only(top: size.width*.25),
+       //     child: FloatingActionButton(
+       //       backgroundColor: Colors.grey,
+       //      onPressed: () {
+       //        startTimer(advertisement);
+       //          setState(() {
+       //          _controller!.value.isPlaying
+       //          ? _controller!.pause()
+       //                : _controller!.play();
+       //          });
+       //          },
+       //          child: Icon(
+       //          _controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
+       //          ),
+       //      ),
+       //   ),
+       // ),
         ],
       ),
       SizedBox(height: 20),
@@ -295,7 +295,9 @@ class _WatchVideoState extends State<WatchVideo> {
             itemBuilder: (BuildContext context, int index) {
             return InkWell(
               onTap: (){
-                playVideo(index);
+                _timer!.cancel();
+                _controller!.dispose();
+                playVideo(index,advertisement);
               },
               child: Row(
                 children: [

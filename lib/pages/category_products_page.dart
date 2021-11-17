@@ -8,6 +8,8 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:mak_b/variables/constants.dart';
 import 'package:mak_b/widgets/product_card.dart';
 
+import '../home_nav.dart';
+
 class CategoryProductsPage extends StatefulWidget {
   // String? category;
   //
@@ -36,6 +38,12 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
   //     });
   //   });
   // }
+  void clear(ProductController productController){
+    setState(() {
+      _isLoading=false;
+    });
+    productController.categoryProductList.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +56,12 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
       length: productController.categoryList==null?0:productController.categoryList.length,
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Get.to(()=>HomeNav());
+            },
+          ),
           bottom: TabBar(
             onTap: (covariant) async {
               setState((){
@@ -62,12 +76,7 @@ class _CategoryProductsPageState extends State<CategoryProductsPage> {
                   setState(() {
                     _isLoading=false;
                   });
-                }):await productController.getSubCategoryProducts('Nothing').
-                then((value){
-                  setState(() {
-                    _isLoading=false;
-                  });
-                });
+                }):clear(productController);
               });
               // if (_tabIndex != 0) {
               //   apiProvider.updateSubCategoryList(

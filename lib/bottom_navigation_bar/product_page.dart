@@ -59,12 +59,19 @@ class _ProductPageState extends State<ProductPage> {
     await productController.getSubCategory(productController.categoryList[0].category);
     await productController.getSubCategoryProducts(productController.subCategoryList[0].subCategory);
   }
+  Future<void> fetch1()async{
+    if(productController.categoryList.isEmpty) await productController.getCategory();
+    if(productController.subCategoryList.isEmpty) await productController.getSubCategory(productController.categoryList[0].category);
+    if(productController.categoryProductList.isEmpty) await productController.getSubCategoryProducts(productController.subCategoryList[0].subCategory);
+    if(userController.storePackageList.isEmpty)await userController.getMyStore();
+    if(userController.productOrderList.isEmpty)await userController.getProductOrder();
+    if(productController.packageList.isEmpty)await productController.getPackage();
+    if(userController.infoList.isEmpty)await userController.getContactInfo();
+  }
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    if(productController.categoryList.isEmpty) productController.getCategory();
-    if(productController.subCategoryList.isEmpty) productController.getSubCategory(productController.categoryList[0].category);
-    if(productController.categoryProductList.isEmpty) productController.getSubCategoryProducts(productController.subCategoryList[0].subCategory);
+    fetch1();
     return Scaffold(
       drawer: new Drawer(
         child: new ListView(

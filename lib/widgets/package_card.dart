@@ -41,7 +41,7 @@ class _PackageCardState extends State<PackageCard> {
                 Container(
                   height: size.width*.55 ,
                   decoration: BoxDecoration(
-                      color: Colors.green.shade100,
+                      //color: Colors.green.shade100,
                       borderRadius: BorderRadius.all(Radius.circular(15))
                   ),
                   child: widget.product.image!=null?Hero(
@@ -50,7 +50,7 @@ class _PackageCardState extends State<PackageCard> {
                         imageUrl: widget.product.image![0],
                         placeholder: (context, url) => CircleAvatar(
                             backgroundColor: Colors.grey.shade200,
-                            radius: size.width * .08,
+                            radius: size.width * .2,
                             backgroundImage: AssetImage(
                                 'assets/images/placeholder.png')),
                         errorWidget: (context, url, error) =>

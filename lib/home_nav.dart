@@ -172,16 +172,23 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
       });
     });
   }
+  Future<void> fetch(UserController userController,ProductController productController)async{
+    await userController.getMyStore();
+    await userController.getProductOrder();
+    await userController.getRate();
+    await userController.getContactInfo();
+    await productController.getPackage();
+  }
   @override
   Widget build(BuildContext context) {
     final UserController userController=Get.find<UserController>();
     final ProductController productController=Get.find<ProductController>();
     final Size size = MediaQuery.of(context).size;
     if(_counter==0){
-       userController.getContactInfo();
       if(id!=null){
         updateUserDetails(userController);
       }
+      fetch(userController,productController);
     }
     if(id!=null){
       userController.getUser(id!);

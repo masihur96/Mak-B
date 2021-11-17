@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:mak_b/controller/user_controller.dart';
+import 'package:mak_b/variables/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactInfo extends StatefulWidget {
@@ -37,13 +38,13 @@ class _ContactInfoState extends State<ContactInfo> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Email:',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 16),),
+                  Text('Email:',style: TextStyle(color: kPrimaryColor,fontWeight: FontWeight.w500,fontSize: 16),),
                   Text('${userController.infoList[0].email}',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 16),),
-
-                  Text('Phone No:',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 16),),
+                  SizedBox(height: 7),
+                  Text('Phone No:',style: TextStyle(color: kPrimaryColor,fontWeight: FontWeight.w500,fontSize: 16),),
                   Text('${userController.infoList[0].phone}',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 16),),
-
-                  Text('Address: ',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 16),),
+                  SizedBox(height: 7),
+                  Text('Address: ',style: TextStyle(color: kPrimaryColor,fontWeight: FontWeight.w500,fontSize: 16),),
                   Text('${userController.infoList[0].address}',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 16),),
 
                   SizedBox(height: 20,),
@@ -52,7 +53,6 @@ class _ContactInfoState extends State<ContactInfo> {
                     children: [
                       InkWell(
                         onTap: (){
-                          print('d');
                           String url='${userController.infoList[0].fbLink}';
                           _launchURL(url);
                          },

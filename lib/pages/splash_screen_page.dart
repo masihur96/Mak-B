@@ -32,11 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await productController.getProducts();
     await productController.getArea();
     await productController.getCart();
-    await productController.getPackage();
-    await userController.getMyStore();
-    await userController.getProductOrder();
     await userController.getRate();
-    await userController.getContactInfo();
     await productController.getCategory();
     await productController.getSubCategory(productController.categoryList[0].category);
     await productController.getSubCategoryProducts(productController.subCategoryList[0].subCategory);
