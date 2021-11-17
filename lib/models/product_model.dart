@@ -2,6 +2,7 @@ class ProductModel{
   String? id;
   String? title;
   String? description;
+  String? thumbNail;
   String? price;
   String? profitAmount;
   List<dynamic>? size;
@@ -15,6 +16,7 @@ class ProductModel{
     this.id,
     this.title,
     this.description,
+    this.thumbNail,
     this.price,
     this.profitAmount,
     this.size,

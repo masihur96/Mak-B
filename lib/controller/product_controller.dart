@@ -55,6 +55,7 @@ class ProductController extends GetxController{
           ProductModel productModel=ProductModel(
             id: element.doc['id'],
             title: element.doc['title'],
+            thumbNail: element.doc['thumbnail'],
             description: element.doc['description'],
             price: element.doc['price'],
             profitAmount: element.doc['profitAmount'],
@@ -74,7 +75,7 @@ class ProductController extends GetxController{
     }
   }
 
-  Future<void> addToCart(String productName,String productId,String price,int quantity,String color,String size,String image,String profitAmount)async {
+  Future<void> addToCart(String productName,String thumbnail,String productId,String price,int quantity,String color,String size,String image,String profitAmount)async {
     try{
       showLoadingDialog(Get.context!);
       await FirebaseFirestore.instance.collection('Cart').doc(deviceId).collection('CartList').doc(productId).set({
@@ -82,6 +83,7 @@ class ProductController extends GetxController{
         "productName": productName,
         "productId": productId,
         "productImage":image,
+        "thumbnail":thumbnail,
         "price": price,
         "quantity": quantity,
         "color":color,
@@ -110,6 +112,7 @@ class ProductController extends GetxController{
               productName: element.doc['productName'],
               productId: element.doc['productId'],
               productImage: element.doc['productImage'],
+              thumbnail: element.doc['thumbnail'],
               price: element.doc['price'],
               quantity: element.doc['quantity'],
               color: element.doc['color'],
@@ -225,6 +228,7 @@ class ProductController extends GetxController{
               id: element.doc['id'],
               title: element.doc['title'],
               description: element.doc['description'],
+              thumbNail: element.doc['thumbnail'],
               price: element.doc['price'],
               quantity: element.doc['quantity'],
               size: element.doc['size'],

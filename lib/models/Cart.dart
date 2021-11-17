@@ -4,6 +4,7 @@ class Cart {
   String? productName;
   String? productId;
   String? productImage;
+  String? thumbnail;
   String? price;
   int? quantity;
   String? color;
@@ -15,6 +16,7 @@ class Cart {
       this.productName,
       this.productId,
       this.productImage,
+      this.thumbnail,
       this.price,
       this.quantity,
       this.color,

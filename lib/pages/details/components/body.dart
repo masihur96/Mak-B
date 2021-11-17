@@ -282,6 +282,7 @@ class _BodyState extends State<Body> {
                                 id == null
                                     ? productController.addToCart(
                                         widget.product.title!,
+                                        widget.product.thumbNail!,
                                         widget.product.id!,
                                         widget.product.price!,
                                         1,
@@ -291,6 +292,7 @@ class _BodyState extends State<Body> {
                                         widget.product.profitAmount!)
                                     : userController.addToUserCart(
                                         widget.product.title!,
+                                        widget.product.thumbNail!,
                                         widget.product.id!,
                                         widget.product.price!,
                                         1,
@@ -357,6 +359,7 @@ class _BodyState extends State<Body> {
                                     ? productController
                                         .addToCart(
                                             widget.product.title!,
+                                            widget.product.thumbNail!,
                                             widget.product.id!,
                                             widget.product.price!,
                                             1,
@@ -370,6 +373,7 @@ class _BodyState extends State<Body> {
                                     : userController
                                         .addToUserCart(
                                             widget.product.title!,
+                                            widget.product.thumbNail!,
                                             widget.product.id!,
                                             widget.product.price!,
                                             1,

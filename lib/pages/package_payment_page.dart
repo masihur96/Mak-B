@@ -18,13 +18,13 @@ class PackagePaymentPage extends StatefulWidget {
   String? packageId;
   String? packageName;
   String? packagePrice;
-  String? discount,quantity;
+  String? discount,quantity,thumbnail;
   List<dynamic> size;
   List<dynamic> color;
   List<dynamic> images;
 
 
-  PackagePaymentPage(this.id,this.packageId,this.packageName, this.packagePrice,this.discount,this.quantity,this.size,this.color,this.images);
+  PackagePaymentPage(this.id,this.packageId,this.packageName, this.packagePrice,this.discount,this.quantity,this.size,this.color,this.images,this.thumbnail);
 
   @override
   _PackagePaymentPageState createState() => _PackagePaymentPageState();
@@ -324,7 +324,7 @@ class _PackagePaymentPageState extends State<PackagePaymentPage> {
                     onPressed: ()async{
                       await userController.requestForPackageCollection(widget.id!,widget.packageId!,
                           widget.packageName!,widget.packagePrice,widget.images,widget.color,widget.size,
-                          widget.discount!,widget.quantity!);
+                          widget.discount!,widget.thumbnail!,widget.quantity!);
                     },
                     borderRadius: 10, height: size.width*.1, width: size.width*.5, gradientColors: [Color(0xFF0198DD), Color(0xFF19B52B)]),
 

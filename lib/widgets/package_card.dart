@@ -47,7 +47,7 @@ class _PackageCardState extends State<PackageCard> {
                   child: widget.product.image!=null?Hero(
                       tag: widget.product.id.toString(),
                       child: CachedNetworkImage(
-                        imageUrl: widget.product.image![0],
+                        imageUrl: widget.product.thumbNail!,
                         placeholder: (context, url) => CircleAvatar(
                             backgroundColor: Colors.grey.shade200,
                             radius: size.width * .2,
@@ -67,7 +67,7 @@ class _PackageCardState extends State<PackageCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                          width: size.width*.3,
+                          width: size.width*.24,
                           child: Text(widget.product.title!,style: TextStyle(color: Colors.black),)),
 
                       Column(

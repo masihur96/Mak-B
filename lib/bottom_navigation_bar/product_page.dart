@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:mak_b/controller/product_controller.dart';
 import 'package:mak_b/controller/user_controller.dart';
-import 'package:mak_b/models/Product.dart';
 import 'package:mak_b/pages/category_products_page.dart';
 import 'package:mak_b/pages/contact_info.dart';
 import 'package:mak_b/pages/details/details_screen.dart';
@@ -288,7 +287,7 @@ class _ProductPageState extends State<ProductPage> {
                                     child: productController.productList[index].image!=null?Hero(
                                         tag: productController.productList[index].id.toString(),
                                         child: CachedNetworkImage(
-                                          imageUrl: productController.productList[index].image![0],
+                                          imageUrl: productController.productList[index].thumbNail,
                                           placeholder: (context, url) => CircleAvatar(
                                               backgroundColor: Colors.grey.shade200,
                                               radius: size.width * .08,

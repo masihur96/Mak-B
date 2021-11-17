@@ -260,7 +260,7 @@ class _BodyState extends State<Body> {
                           onPressed: () {
                             id == null
                                 ? Get.to(() => LoginPage()):userController.addStoreProduct(widget.product.id!, widget.product.title!, widget.product.price!, widget.product.image!, widget.product.colors!,
-                                widget.product.size!, widget.product.description!, widget.product.discountAmount!, widget.product.quantity!);
+                                widget.product.size!, widget.product.description!,widget.product.thumbNail!, widget.product.discountAmount!, widget.product.quantity!);
                            // _paySSLCommerz(userController);
                           },
                           borderRadius: 5.0,
@@ -283,7 +283,8 @@ class _BodyState extends State<Body> {
                             style: TextStyle(color: Colors.white),
                           ),
                           onPressed: () {
-                            Get.to(() => PackagePaymentPage(widget.product.documentId,widget.product.id,widget.product.title!, widget.product.price!,widget.product.discountAmount,widget.product.quantity,widget.product.size!,widget.product.colors!,widget.product.image!));
+                            Get.to(() => PackagePaymentPage(widget.product.documentId,widget.product.id,widget.product.title!, widget.product.price!,widget.product.discountAmount,widget.product.quantity,
+                                widget.product.size!,widget.product.colors!,widget.product.image!,widget.product.thumbNail));
                           },
                           borderRadius: 5.0,
                           height: size.width * .12,
@@ -358,7 +359,7 @@ class _BodyState extends State<Body> {
       //showSuccessMgs('"Transaction Status: ${model.status}"');
       if (model.status == 'VALID') {
         userController.addStoreProduct(widget.product.id!, widget.product.title!, widget.product.price!, widget.product.image!, widget.product.colors!,
-            widget.product.size!, widget.product.description!, widget.product.discountAmount!, widget.product.quantity!);
+            widget.product.size!, widget.product.description!,widget.product.thumbNail!, widget.product.discountAmount!, widget.product.quantity!);
 
       } else {
         print(model.status);
