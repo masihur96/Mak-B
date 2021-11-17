@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:mak_b/models/Product.dart';
 import 'package:mak_b/models/product_model.dart';
 import 'package:mak_b/pages/details/details_screen.dart';
 import 'package:mak_b/variables/constants.dart';
@@ -47,7 +46,7 @@ class ProductCard extends StatelessWidget {
                       child: product.image!=null?Hero(
                         tag: product.id.toString(),
                         child: CachedNetworkImage(
-                          imageUrl: product.image![0],
+                          imageUrl: product.thumbNail!,
                           placeholder: (context, url) => CircleAvatar(
                               backgroundColor: Colors.grey.shade200,
                               radius: size.width * .08,

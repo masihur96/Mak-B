@@ -544,7 +544,7 @@ class UserController extends AuthController {
   }
 
   Future<void> addStoreProduct(String packageId,String productName, dynamic productPrice,List<dynamic> images,
-      List<dynamic>colors,List<dynamic>sizes,String desc,String discount,String quantity) async {
+      List<dynamic>colors,List<dynamic>sizes,String desc,String thumbnail,String discount,String quantity) async {
     String date = DateTime.now().millisecondsSinceEpoch.toString();
     String ids = "$id$date";
     try {
@@ -561,6 +561,7 @@ class UserController extends AuthController {
         "productPrice": productPrice,
         "discount": discount,
         "description":desc,
+        "thumbnail":thumbnail,
         "quantity": quantity,
         "date": date,
         "imageUrl":images,
@@ -581,6 +582,7 @@ class UserController extends AuthController {
           "productPrice": productPrice,
           "discount": discount,
           "description":desc,
+          "thumbnail":thumbnail,
           "quantity": quantity,
           "date": date,
           "imageUrl":images,
@@ -619,6 +621,7 @@ class UserController extends AuthController {
             price: element.doc['productPrice'],
             status: element.doc['status'],
             description: element.doc['description'],
+            thumbNail: element.doc['thumbnail'],
             discountAmount: element.doc['discount'],
             size: element.doc['sizes'],
             colors: element.doc['colors'],
@@ -686,7 +689,7 @@ class UserController extends AuthController {
 
 
   Future<void> requestForPackageCollection(String idd,String packageId,String name, dynamic price,List<dynamic> images,
-      List<dynamic>colors,List<dynamic>sizes,String discount,String quantity) async {
+      List<dynamic>colors,List<dynamic>sizes,String discount,String thumbnail,String quantity) async {
     String date = DateTime.now().millisecondsSinceEpoch.toString();
     try {
       showLoadingDialog(Get.context!);
@@ -705,6 +708,7 @@ class UserController extends AuthController {
           "quantity": quantity,
           "date": date,
           "imageUrl":images,
+          "thumbnail":thumbnail,
           "colors":colors,
           "sizes":sizes,
           "status": "pending",
@@ -733,7 +737,7 @@ class UserController extends AuthController {
   }
 
 
-  Future<void> addToUserCart(String productName,String productId,String price,int quantity,String color,String size,String image,String profitAmount)async {
+  Future<void> addToUserCart(String productName,String thumbnail,String productId,String price,int quantity,String color,String size,String image,String profitAmount)async {
     await _checkPreferences();
     try{
       showLoadingDialog(Get.context!);
@@ -742,6 +746,7 @@ class UserController extends AuthController {
         "productName": productName,
         "productId": productId,
         "productImage":image,
+        "thumbnail":thumbnail,
         "price": price,
         "quantity": quantity,
         "color":color,
@@ -770,6 +775,7 @@ class UserController extends AuthController {
               productName: element.doc['productName'],
               productId: element.doc['productId'],
               productImage: element.doc['productImage'],
+              thumbnail: element.doc['thumbnail'],
               price: element.doc['price'],
               quantity: element.doc['quantity'],
               color: element.doc['color'],

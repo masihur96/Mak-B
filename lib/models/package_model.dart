@@ -2,6 +2,7 @@ class PackageModel{
   String? documentId;
   String? title;
   String? description;
+  String? thumbNail;
   String? price;
   String? discountAmount;
   List<dynamic>? size;
@@ -15,6 +16,7 @@ class PackageModel{
     this.documentId,
     this.title,
     this.description,
+    this.thumbNail,
     this.discountAmount,
     this.price,
     this.size,

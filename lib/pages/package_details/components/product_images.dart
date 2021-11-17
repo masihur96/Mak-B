@@ -1,12 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
-import 'package:mak_b/models/Product.dart';
 import 'package:mak_b/models/package_model.dart';
-import 'package:mak_b/models/product_model.dart';
 import 'package:carousel_pro_nullsafety/carousel_pro_nullsafety.dart';
-import 'package:mak_b/variables/constants.dart';
-import 'package:mak_b/variables/size_config.dart';
 
 class ProductImages extends StatefulWidget {
   const ProductImages({

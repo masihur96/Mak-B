@@ -132,7 +132,7 @@ class _CartPageState extends State<CartPage> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: CachedNetworkImage(
                                     imageUrl: productController
-                                        .cartList[index].productImage!,
+                                        .cartList[index].thumbnail!,
                                     imageBuilder: (context, imageProvider) =>
                                         Container(
                                       width: size.width * .25,
@@ -318,7 +318,7 @@ class _CartPageState extends State<CartPage> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: CachedNetworkImage(
                                     imageUrl: userController
-                                        .cartList[index].productImage!,
+                                        .cartList[index].thumbnail!,
                                     imageBuilder: (context, imageProvider) =>
                                         Container(
                                           width: size.width * .25,

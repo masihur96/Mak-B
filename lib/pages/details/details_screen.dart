@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mak_b/models/product_model.dart';
-import '../../models/Product.dart';
 import 'components/body.dart';
 
 class DetailsScreen extends StatefulWidget {
