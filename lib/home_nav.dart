@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:mak_b/bottom_navigation_bar/account_nav.dart';
 import 'package:mak_b/bottom_navigation_bar/cart_page.dart';
 import 'package:mak_b/bottom_navigation_bar/package_list.dart';
@@ -179,6 +181,10 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
     await userController.getContactInfo();
     await productController.getPackage();
   }
+  Future<bool> _onBackPressed() async {
+    _showDialog();
+    return true;
+  }
   @override
   Widget build(BuildContext context) {
     final UserController userController=Get.find<UserController>();
@@ -193,52 +199,113 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
     if(id!=null){
       userController.getUser(id!);
     }
-    return Scaffold(
-      backgroundColor: Colors.green[50],
-      bottomNavigationBar: MotionTabBar(
-        initialSelectedTab: 'Product',
-        labels: const ["Product", "Package", "Cart", "Account"],
-        icons: const [
-          FontAwesomeIcons.tshirt,
-          FontAwesomeIcons.boxOpen,
-          FontAwesomeIcons.cartPlus,
-          FontAwesomeIcons.userCircle
-        ],
-        tabSize: 50,
-        tabBarHeight: AppBar().preferredSize.height,
-        textStyle: TextStyle(
-          fontSize: size.width * .04,
-          color: Colors.black,
-          fontWeight: FontWeight.w400,
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        backgroundColor: Colors.green[50],
+        bottomNavigationBar: MotionTabBar(
+          initialSelectedTab: 'Product',
+          labels: const ["Product", "Package", "Cart", "Account"],
+          icons: const [
+            FontAwesomeIcons.tshirt,
+            FontAwesomeIcons.boxOpen,
+            FontAwesomeIcons.cartPlus,
+            FontAwesomeIcons.userCircle
+          ],
+          tabSize: 50,
+          tabBarHeight: AppBar().preferredSize.height,
+          textStyle: TextStyle(
+            fontSize: size.width * .04,
+            color: Colors.black,
+            fontWeight: FontWeight.w400,
+          ),
+          tabIconColor: Colors.grey.shade500,
+          tabIconSize: 24.0,
+          tabIconSelectedSize: 24.0,
+          tabSelectedColor: Color(0xFF19B52B).withOpacity(0.1),
+          tabIconSelectedColor: kPrimaryColor,
+          tabBarColor: Colors.white,
+          onTabItemSelected: (int value) {
+            setState(() {
+              _tabController!.index = value;
+              // value == 0
+              //     ? _pageTitle = 'Product'
+              //     : value == 1
+              //         ? _pageTitle = 'Package'
+              //         :value == 2?_pageTitle = 'Cart'
+              //         : _pageTitle = 'Account';
+            });
+          },
         ),
-        tabIconColor: Colors.grey.shade500,
-        tabIconSize: 24.0,
-        tabIconSelectedSize: 24.0,
-        tabSelectedColor: Color(0xFF19B52B).withOpacity(0.1),
-        tabIconSelectedColor: kPrimaryColor,
-        tabBarColor: Colors.white,
-        onTabItemSelected: (int value) {
-          setState(() {
-            _tabController!.index = value;
-            // value == 0
-            //     ? _pageTitle = 'Product'
-            //     : value == 1
-            //         ? _pageTitle = 'Package'
-            //         :value == 2?_pageTitle = 'Cart'
-            //         : _pageTitle = 'Account';
-          });
-        },
-      ),
-      body: TabBarView(
-        physics: NeverScrollableScrollPhysics(),
-        controller: _tabController,
-        children: <Widget>[
-          ProductPage(),
-          PackageListPage(),
-          CartPage(),
-          id == null?LoginPage():AccountNav()
-        ],
+        body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
+          controller: _tabController,
+          children: <Widget>[
+            ProductPage(),
+            PackageListPage(),
+            CartPage(),
+            id == null?LoginPage():AccountNav()
+          ],
+        ),
       ),
     );
+
+  }
+  _showDialog() {
+    showDialog(
+        context: Get.context!,
+        barrierDismissible: false,
+        builder: (context) {
+
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: AlertDialog(
+              backgroundColor: Colors.white,
+              scrollable: true,
+              contentPadding: EdgeInsets.all(20),
+              title: Column(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.width * .030,
+                  ),
+                  Text(
+                    'Are you sure you want to exit?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal, color: kPrimaryColor),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.width * .050,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () => Get.back(),
+                        child: Text(
+                          "No",
+                          style: TextStyle(
+                              color: kPrimaryColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: (){
+                          SystemNavigator.pop();
+                        },
+                        child: Text(
+                          "Yes",
+                          style: TextStyle(
+                              color: kPrimaryColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
   }
 }
