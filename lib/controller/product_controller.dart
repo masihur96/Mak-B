@@ -295,6 +295,7 @@ class ProductController extends GetxController{
             id: element.doc['id'],
             title: element.doc['title'],
             description: element.doc['description'],
+            thumbNail: element.doc['thumbnail'],
             price: element.doc['price'],
             profitAmount: element.doc['profitAmount'],
             size: element.doc['size'],

@@ -49,7 +49,6 @@ class _BodyState extends State<Body> {
   bool exist=false;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _checkPreferences();
   }

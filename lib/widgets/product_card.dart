@@ -43,7 +43,7 @@ class ProductCard extends StatelessWidget {
                         color: kSecondaryColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      child: product.image!=null?Hero(
+                      child: product.thumbNail!=null?Hero(
                         tag: product.id.toString(),
                         child: CachedNetworkImage(
                           imageUrl: product.thumbNail!,
@@ -56,7 +56,7 @@ class ProductCard extends StatelessWidget {
                               Icon(Icons.error),
                           fit: BoxFit.cover,
                         )
-                      ):Container(),
+                      ):Container(height: 25),
                     ),
                     // Padding(
                     //   padding: const EdgeInsets.only(top: 2.0, right: 2.0),

@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mak_b/controller/advertisement_controller.dart';
@@ -21,15 +19,15 @@ class _WatchVideoState extends State<WatchVideo> {
 
   VideoPlayerController? _controller;
 
-   List <String> videoUrlList = [];
- int counter=0;
+  List <String> videoUrlList = [];
+  int counter=0;
 
   int seconds = 0;
   Timer? _timer;
 
   Duration? videoDuration;
 
-  void startTimer( AdvertisementController advertisementController) async{
+  void startTimer( AdvertisementController advertisementController,UserController userController) async{
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
       oneSec,
@@ -44,7 +42,7 @@ class _WatchVideoState extends State<WatchVideo> {
             print('Updated');
            // updateVideoInfo();
 
-            advertisementController.updateAddAmount();
+            advertisementController.updateAddAmount(userController);
 
             }
             if (seconds == 0) {
@@ -55,29 +53,25 @@ class _WatchVideoState extends State<WatchVideo> {
       ),
     );
   }
-  customInit(AdvertisementController advertisement){
+  customInit(AdvertisementController advertisement, UserController userController){
     for(var i =0;i<advertisement.videoList.length;i++){
       videoUrlList.add(advertisement.videoList[i].videoUrl!);
     }
     _controller = VideoPlayerController.network(
         videoUrlList[0])
       ..initialize().then((_) {
-        startTimer(advertisement);
+        startTimer(advertisement,userController);
         setState(() {
           videoDuration = _controller!.value.duration;
         });
         print('Video Duration: ${videoDuration!.inSeconds}');
        // print('Video Position: ${_controller!.value.position}');
-
-
         setState(() {
           _controller!.play();
         });
       });
 
     print(videoUrlList);
-
-
   }
 
   _showDialog() {
@@ -160,13 +154,13 @@ class _WatchVideoState extends State<WatchVideo> {
   }
 
 
-  playVideo(int index,AdvertisementController advertisement){
+  playVideo(int index,AdvertisementController advertisement, UserController userController){
     if(_controller!=null){
       //_controller!.dispose();
       _controller = VideoPlayerController.network(
           videoUrlList[index])
         ..initialize().then((_) {
-          startTimer(advertisement);
+          startTimer(advertisement,userController);
           setState(() {
             videoDuration = _controller!.value.duration;
           });
@@ -180,18 +174,15 @@ class _WatchVideoState extends State<WatchVideo> {
       _controller = VideoPlayerController.network(
           videoUrlList[index])
         ..initialize().then((_) {
-          startTimer(advertisement);
+          startTimer(advertisement, userController);
           setState(() {
             videoDuration = _controller!.value.duration;
           });
           print('Video Duration: ${videoDuration!.inSeconds}');
-
-
           setState(() {
             _controller!.play();
           });
         });
-
     }
 
   }
@@ -199,7 +190,6 @@ class _WatchVideoState extends State<WatchVideo> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _timer!.cancel();
     super.dispose();
     _controller!.dispose();
@@ -208,14 +198,13 @@ class _WatchVideoState extends State<WatchVideo> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
+    final UserController userController =Get.find();
 
     return GetBuilder<AdvertisementController>(
-
         builder: (advertisement) {
-
           Future.delayed(Duration.zero, () async {
             if (counter == 0) {
-              customInit(advertisement);
+              customInit(advertisement,userController);
               setState(() {
                 counter++;
               });
@@ -227,12 +216,12 @@ class _WatchVideoState extends State<WatchVideo> {
             appBar: AppBar(
               title: Text('Watch Video'),
             ),
-            body: _bodyUI(size,advertisement),
+            body: _bodyUI(size,advertisement, userController),
           );
         }
     );
   }
-  Widget _bodyUI(Size size,AdvertisementController advertisement) => ListView(
+  Widget _bodyUI(Size size,AdvertisementController advertisement, UserController userController) => ListView(
     children: [
       SizedBox(height: 10),
       Stack(
@@ -245,7 +234,6 @@ class _WatchVideoState extends State<WatchVideo> {
           Center(
             child: AspectRatio(
               aspectRatio: 5/3,
-
               child: _controller!=null?Center(child: VideoPlayer(_controller!,)):Container(),
             ),
           ),
@@ -297,7 +285,7 @@ class _WatchVideoState extends State<WatchVideo> {
               onTap: (){
                 _timer!.cancel();
                 _controller!.dispose();
-                playVideo(index,advertisement);
+                playVideo(index,advertisement,userController);
               },
               child: Row(
                 children: [

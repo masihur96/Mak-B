@@ -40,9 +40,9 @@ class _PackagePaymentPageState extends State<PackagePaymentPage> {
   List<AreaHubModel> _list=[];
   List<AreaHubModel> _hubList=[];
   String? id;
+  bool _isLoading=false;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _checkPreferences();
   }
@@ -207,7 +207,6 @@ class _PackagePaymentPageState extends State<PackagePaymentPage> {
                               Row(
                                 children: [
                                   Text('Division: ' ,  style: TextStyle(
-
                                       color: Colors.black,
                                       fontStyle: FontStyle.normal,
                                       fontSize: size.width * .04)),
@@ -223,11 +222,15 @@ class _PackagePaymentPageState extends State<PackagePaymentPage> {
                                       }).toList(),
 
                                       onChanged: (newValue)async{
+                                        setState(() {
+                                          _isLoading=true;
+                                        });
                                         await productController.getAreaHub(newValue.toString());
                                         setState(() {
                                           districtsValue = newValue.toString();
                                           _hubList=productController.areaHubList;
                                           hubValue=productController.areaHubList[0].hub[0];
+                                          _isLoading=false;
                                         });
                                       },
                                     ),
@@ -235,7 +238,8 @@ class _PackagePaymentPageState extends State<PackagePaymentPage> {
                                 ],
                               ),
 
-                              Row(
+                              _isLoading? CircularProgressIndicator()
+                                  :Row(
                                 children: [
                                   Text('HUB: ',   style: TextStyle(
                                       color: Colors.black,

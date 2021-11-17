@@ -60,6 +60,7 @@ class _PaymentPageState extends State<PaymentPage> {
   List<AreaHubModel> _list=[];
   List<AreaHubModel> _hubList=[];
   List cartItemList = [];
+  bool _isLoading=false;
 
   var tempList =[];
   TextEditingController _nameTextFieldController = TextEditingController();
@@ -291,11 +292,15 @@ class _PaymentPageState extends State<PaymentPage> {
                                       }).toList(),
 
                                       onChanged: (newValue)async{
+                                        setState(() {
+                                          _isLoading=true;
+                                        });
                                         await productController.getAreaHub(newValue.toString());
                                         setState(() {
                                           districtsValue = newValue.toString();
                                           _hubList=productController.areaHubList;
                                           hubValue=productController.areaHubList[0].hub[0];
+                                          _isLoading=false;
                                         });
                                       },
                                     ),
@@ -303,7 +308,9 @@ class _PaymentPageState extends State<PaymentPage> {
                                 ],
                               ),
 
-                              Row(
+                              _isLoading
+                                  ?CircularProgressIndicator()
+                                  :Row(
                                 children: [
                                   Text('HUB: ',   style: TextStyle(
                                       color: Colors.black,

@@ -11,10 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AdvertisementController extends GetxController{
 
-
   RxList<AdvertisementModel> videoList =<AdvertisementModel>[].obs;
-
-
    @override // called when you use Get.put before running app
   void onInit() {
     super.onInit();
@@ -69,24 +66,20 @@ class AdvertisementController extends GetxController{
     }
   }
 
-  Future<void> updateAddAmount()async {
+  Future<void> updateAddAmount(UserController userController)async {
 
     SharedPreferences preferences = await SharedPreferences.getInstance();
     print('Submit Data Into Firebase');
  //   print(currentDate);
     var  id = preferences.get('id');
-
     try{
       getSingleUserData(id.toString()).then((value) async{
-
         String currentDate='${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}';
-
-
         if( int.parse(videoWatched) !=5 ){
           await FirebaseFirestore.instance.collection('Users').doc(id.toString()).update({
             "videoWatched": '${int.parse(videoWatched)+1}',
             "watchDate": currentDate,
-            "mainBalance": '${int.parse(userMainBalance)+ 1}',
+            "mainBalance": '${double.parse(userMainBalance)+ 1}',
           }).then((value) async{
 
             FirebaseFirestore.instance.collection('Users').doc(id.toString()).collection('VideoHistory').doc(currentDate).set(
@@ -113,6 +106,7 @@ class AdvertisementController extends GetxController{
             //  Get.back();
           }).then((value) {
             getSingleUserData(id.toString());
+            userController.getWatchedHistory();
           });
 
         }else{
@@ -169,7 +163,6 @@ class AdvertisementController extends GetxController{
           }
       });
     }catch (err){
-
       print(err);
 
     }

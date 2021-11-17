@@ -114,12 +114,13 @@ class _HomeNavState extends State<HomeNav> with TickerProviderStateMixin {
         setState(() {
           currentReferDate = DateTime.parse('${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}');
 
-          lastReferDate = DateTime.parse(document.doc['referDate']);
+          var date = new DateTime.fromMicrosecondsSinceEpoch(int.parse(document.doc['referDate']) * 1000);
+          lastReferDate = DateTime.parse('${date.year}-${date.month}-${date.day}');
         });
         var days = currentReferDate!.difference(lastReferDate!).inDays;
 
         if(days>180){
-          var date = new DateTime.fromMicrosecondsSinceEpoch(document.doc['timeStamp'] * 1000);
+          var date = new DateTime.fromMicrosecondsSinceEpoch(int.parse(document.doc['timeStamp']) * 1000);
           int referLimit = int.parse(document.doc['referLimit'])+100;
           print(date.month);
           int newMonth=date.month+6;
