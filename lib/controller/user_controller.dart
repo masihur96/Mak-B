@@ -650,7 +650,7 @@ class UserController extends AuthController {
 
   Future<void> addReferUserReferList(String referPhone,String referCode,String name,String profit,String userPhone)async{
     await FirebaseFirestore.instance.collection('Users').doc(referPhone).collection('referredList').
-    doc('${DateTime.now().millisecondsSinceEpoch}').set({
+    doc('$userPhone').set({
       "id": referPhone,
       "date":'${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}',
       "phone":userPhone,

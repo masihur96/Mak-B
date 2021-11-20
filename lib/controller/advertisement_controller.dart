@@ -13,9 +13,11 @@ class AdvertisementController extends GetxController{
 
   RxList<AdvertisementModel> videoList =<AdvertisementModel>[].obs;
    @override // called when you use Get.put before running app
-  void onInit() {
+  void onInit() async{
     super.onInit();
-    getVideo();
+  await  getVideo();
+
+
   }
 
   Future<void> getVideo()async{
@@ -60,7 +62,7 @@ class AdvertisementController extends GetxController{
       userMainBalance = document['mainBalance'];
       watchDate = document['watchDate'];
       videoWatched = document['videoWatched'];
-
+     print('get Single User Name: $watchDate');
     }catch(error){
       print('get Single User Name: $error');
     }
@@ -75,92 +77,74 @@ class AdvertisementController extends GetxController{
     try{
       getSingleUserData(id.toString()).then((value) async{
         String currentDate='${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}';
-        if( int.parse(videoWatched) !=5 ){
           await FirebaseFirestore.instance.collection('Users').doc(id.toString()).update({
             "videoWatched": '${int.parse(videoWatched)+1}',
             "watchDate": currentDate,
             "mainBalance": '${double.parse(userMainBalance)+ 1}',
           }).then((value) async{
 
-            FirebaseFirestore.instance.collection('Users').doc(id.toString()).collection('VideoHistory').doc(currentDate).set(
+            await FirebaseFirestore.instance.collection('Users').doc(id.toString()).collection('VideoHistory').doc(currentDate).set(
                 {
                   "videoWatched": '${int.parse(videoWatched)+1}',
                   "watchDate": currentDate,
                 });
-            // await FirebaseFirestore.instance.collection('Users').doc(id.toString()).collection('VideoHistory').doc(currentDate).get().then((snapshot) {
-            //   if(snapshot.exists){
-            //      FirebaseFirestore.instance.collection('Users').doc(id.toString()).collection('VideoHistory').doc(currentDate).update(
-            //         {
-            //           "videoWatched": videoValue,
-            //           "watchDate": currentDate,
-            //         });
-            //   }
-            //   else{
-            //
-            //   }
-            // }).then((value) async{
-            //   await getSingleUserData(id.toString());
-            // });
 
+          }).then((value) async {
+            await getSingleUserData(id.toString());
+            await userController.getWatchedHistory();
+            if(videoWatched =='5' ) {
+              showDialog(
+                  context: Get.context!,
+                  barrierDismissible: false,
+                  builder: (context) {
+                    return WillPopScope(
+                      onWillPop: () async => false,
+                      child: AlertDialog(
+                        backgroundColor: Colors.white,
+                        scrollable: true,
+                        contentPadding: EdgeInsets.all(20),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: MediaQuery.of(context).size.width * .030,
+                            ),
+                            Text(
+                              'Congratulations!',
+                              textAlign: TextAlign.center,style: TextStyle(fontSize: 30,color: kPrimaryColor),
+                            ),
+                            Text(
+                              'You have watched 5 videos and limit is over for today.\n'
+                                  'Please wait for the next day.\nThank you!',
+                              textAlign: TextAlign.center,
 
-            //  Get.back();
-          }).then((value) {
-            getSingleUserData(id.toString());
-            userController.getWatchedHistory();
-          });
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.width * .050,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                InkWell(
+                                  onTap: (){
+                                    Get.offAll(()=>HomeNav());
+                                  },
+                                  child: Text(
+                                    "Ok",
+                                    style: TextStyle(
 
-        }else{
-            showDialog(
-                context: Get.context!,
-                barrierDismissible: false,
-                builder: (context) {
-                  return WillPopScope(
-                    onWillPop: () async => false,
-                    child: AlertDialog(
-                      backgroundColor: Colors.white,
-                      scrollable: true,
-                      contentPadding: EdgeInsets.all(20),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: MediaQuery.of(context).size.width * .030,
-                          ),
-                          Text(
-                            'Congratulations!',
-                            textAlign: TextAlign.center,style: TextStyle(fontSize: 30,color: kPrimaryColor),
-                          ),
-                          Text(
-                            'You have watched 5 videos and limit is over for today.\n'
-                                'Please wait for the next day.\nThank you!',
-                            textAlign: TextAlign.center,
-
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.width * .050,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              InkWell(
-                                onTap: (){
-                                  Get.offAll(()=>HomeNav());
-                                },
-                                child: Text(
-                                  "Ok",
-                                  style: TextStyle(
-
-                                      fontWeight: FontWeight.bold),
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          )
-                        ],
+                              ],
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                });
-          }
+                    );
+                  });
+            }
+          });
       });
     }catch (err){
       print(err);

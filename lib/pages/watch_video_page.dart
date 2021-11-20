@@ -4,10 +4,7 @@ import 'package:get/get.dart';
 import 'package:mak_b/controller/advertisement_controller.dart';
 import 'package:mak_b/controller/user_controller.dart';
 import 'package:mak_b/variables/constants.dart';
-import 'package:mak_b/widgets/notification_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-
 import 'package:video_player/video_player.dart';
 
 class WatchVideo extends StatefulWidget {
@@ -18,21 +15,21 @@ class WatchVideo extends StatefulWidget {
 class _WatchVideoState extends State<WatchVideo> {
 
   VideoPlayerController? _controller;
-
-  List <String> videoUrlList = [];
+ List <String> videoUrlList = [];
   int counter=0;
-
   int seconds = 0;
   Timer? _timer;
-
   Duration? videoDuration;
 
-  void startTimer( AdvertisementController advertisementController,UserController userController) async{
+  List<String>? savedSharedList;
+ List<String> videoUrlListForSharedPreference = [];
+  List<String> finalVideoLink=[];
+  void startTimer( AdvertisementController advertisement,UserController userController,int index) async{
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
       oneSec,
           (Timer timer) => setState(
-            () {
+            () async {
           if (seconds != int.parse('${videoDuration!.inSeconds}') ) {
             seconds = seconds + 1;
           //  timer.cancel();
@@ -42,38 +39,125 @@ class _WatchVideoState extends State<WatchVideo> {
             print('Updated');
            // updateVideoInfo();
 
-            advertisementController.updateAddAmount(userController);
+            advertisement.updateAddAmount(userController);
+
+            if(videoUrlListForSharedPreference.contains(videoUrlList[index])){
+              print('This Video Link is already added');
+            }else{
+
+              videoUrlListForSharedPreference.add(videoUrlList[index]);
+              List<String> videoSharedPrefList = videoUrlListForSharedPreference.map((i) => i).toList();
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.setStringList("videoUrlList", videoSharedPrefList);
+             List<String>? savedUrlList = prefs.getStringList('videoUrlList');
+              setState(() {
+                savedSharedList = savedUrlList!.map((i) => i).toList();
+
+              });
+              print('Video list From Shared: $savedSharedList');
+            }
 
             }
-            if (seconds == 0) {
-              _timer!.cancel();
-            }
+
           }
 
       ),
     );
   }
-  customInit(AdvertisementController advertisement, UserController userController){
-    for(var i =0;i<advertisement.videoList.length;i++){
-      videoUrlList.add(advertisement.videoList[i].videoUrl!);
-    }
-    _controller = VideoPlayerController.network(
-        videoUrlList[0])
-      ..initialize().then((_) {
-        startTimer(advertisement,userController);
-        setState(() {
-          videoDuration = _controller!.value.duration;
-        });
-        print('Video Duration: ${videoDuration!.inSeconds}');
-       // print('Video Position: ${_controller!.value.position}');
-        setState(() {
-          _controller!.play();
-        });
-      });
 
-    print(videoUrlList);
+
+
+  customInit(AdvertisementController advertisement, UserController userController)async{
+     //To get SharedPreferenceData
+    SharedPreferences preference = await SharedPreferences.getInstance();
+     List<String>? savedUrlList = preference.getStringList('videoUrlList');
+
+     var  id = preference.get('id');
+     advertisement.getSingleUserData(id.toString()).then((value) async {
+       String currentDate='${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}';
+       print(advertisement.watchDate);
+       print(currentDate);
+
+       for(var i=0;i<advertisement.videoList.length;i++){
+         videoUrlList.add(advertisement.videoList[i].videoUrl!);
+       }
+       if(currentDate == advertisement.watchDate){
+         setState(() {
+           savedUrlList !=null? videoUrlListForSharedPreference = savedUrlList:videoUrlListForSharedPreference=[];
+
+         });
+         print(advertisement.videoList.length);
+         if(videoUrlListForSharedPreference.contains( advertisement.videoList[0].videoUrl!)){
+           _controller = VideoPlayerController.network(
+               advertisement.videoList[0].videoUrl!)
+             ..initialize().then((_) {
+               //  startTimer(advertisement,userController,0);
+               setState(() {
+                 videoDuration = _controller!.value.duration;
+               });
+               print('Video Duration: ${videoDuration!.inSeconds}');
+               // print('Video Position: ${_controller!.value.position}');
+               setState(() {
+                 _controller!.play();
+               });
+             });
+         }else {
+           _controller = VideoPlayerController.network(
+               advertisement.videoList[0].videoUrl!)
+             ..initialize().then((_) {
+               startTimer(advertisement,userController,0);
+               setState(() {
+                 videoDuration = _controller!.value.duration;
+               });
+               print('Video Duration: ${videoDuration!.inSeconds}');
+               // print('Video Position: ${_controller!.value.position}');
+               setState(() {
+                 _controller!.play();
+               });
+             });
+         }
+       }else {
+         List<String>? savedUrlList = preference.getStringList('videoUrlList');
+         setState(() {
+           savedUrlList !=null? videoUrlListForSharedPreference = savedUrlList:videoUrlListForSharedPreference=[];
+         });
+         if(videoUrlListForSharedPreference.contains( advertisement.videoList[0].videoUrl!)){
+           _controller = VideoPlayerController.network(
+               advertisement.videoList[0].videoUrl!)
+             ..initialize().then((_) {
+               //  startTimer(advertisement,userController,0);
+               setState(() {
+                 videoDuration = _controller!.value.duration;
+               });
+               print('Video Duration: ${videoDuration!.inSeconds}');
+               // print('Video Position: ${_controller!.value.position}');
+               setState(() {
+                 _controller!.play();
+               });
+             });
+         }else {
+           _controller = VideoPlayerController.network(
+               advertisement.videoList[0].videoUrl!)
+             ..initialize().then((_) {
+               startTimer(advertisement,userController,0);
+               setState(() {
+                 videoDuration = _controller!.value.duration;
+               });
+               print('Video Duration: ${videoDuration!.inSeconds}');
+               // print('Video Position: ${_controller!.value.position}');
+               setState(() {
+                 _controller!.play();
+               });
+             });
+         }
+       }
+     });
+
+
+
+
+
   }
-
   _showDialog() {
 
     showDialog(
@@ -152,33 +236,32 @@ class _WatchVideoState extends State<WatchVideo> {
           );
         });
   }
-
-
   playVideo(int index,AdvertisementController advertisement, UserController userController){
     if(_controller!=null){
       //_controller!.dispose();
       _controller = VideoPlayerController.network(
-          videoUrlList[index])
-        ..initialize().then((_) {
-          startTimer(advertisement,userController);
+          advertisement.videoList[index].videoUrl!)
+        ..initialize().then((_) async{
+          startTimer(advertisement,userController,index);
           setState(() {
             videoDuration = _controller!.value.duration;
           });
           print('Video Duration: ${videoDuration!.inSeconds}');
-
           setState(() {
             _controller!.play();
           });
+
+
         });
     }else {
       _controller = VideoPlayerController.network(
-          videoUrlList[index])
-        ..initialize().then((_) {
-          startTimer(advertisement, userController);
+          advertisement.videoList[index].videoUrl!)
+        ..initialize().then((_) async {
+          startTimer(advertisement, userController,index);
           setState(() {
             videoDuration = _controller!.value.duration;
           });
-          print('Video Duration: ${videoDuration!.inSeconds}');
+
           setState(() {
             _controller!.play();
           });
@@ -190,7 +273,7 @@ class _WatchVideoState extends State<WatchVideo> {
 
   @override
   void dispose() {
-    _timer!.cancel();
+    _timer!=null?_timer!.cancel():null;
     super.dispose();
     _controller!.dispose();
   }
@@ -199,11 +282,19 @@ class _WatchVideoState extends State<WatchVideo> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     final UserController userController =Get.find();
+    String currentDate='${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}';
+
 
     return GetBuilder<AdvertisementController>(
         builder: (advertisement) {
           Future.delayed(Duration.zero, () async {
             if (counter == 0) {
+              SharedPreferences preference = await SharedPreferences.getInstance();
+              var  id = preference.get('id');
+              await advertisement.getSingleUserData(id.toString());
+              if(currentDate != advertisement.watchDate){
+                await preference.remove('videoUrlList');
+              }
               customInit(advertisement,userController);
               setState(() {
                 counter++;
@@ -274,33 +365,86 @@ class _WatchVideoState extends State<WatchVideo> {
                   color: Colors.grey, offset: Offset(0, 1), blurRadius: 5.0)
             ]),
 
+        child: Column(
+          children: [
+            Text('Video watched: ${videoUrlListForSharedPreference.length} /${advertisement.videoList.length}',style: TextStyle(fontSize: 20),),
+            Text('Today Earn: ${videoUrlListForSharedPreference.length} TK',style: TextStyle(fontSize: 20),),
+          ],
+        ),
+
       ),
       Container(
-        height: size.width,
+        height: size.width*.7,
         child: ListView.builder(
             padding: const EdgeInsets.all(8),
             itemCount: advertisement.videoList.length,
             itemBuilder: (BuildContext context, int index) {
-            return InkWell(
+            return videoUrlListForSharedPreference.contains(advertisement.videoList[index].videoUrl)?
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //         color: Colors.red.shade100,
+            //       borderRadius: BorderRadius.all(Radius.circular(10))
+            //     ),
+            //     padding: const EdgeInsets.all(8.0),
+            //
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         Row(
+            //           children: [
+            //             Image.asset('assets/images/video_icon.png',width: 50,height: 50,),
+            //
+            //             Padding(
+            //               padding: const EdgeInsets.only(left: 18.0),
+            //               child: Column(
+            //                 crossAxisAlignment: CrossAxisAlignment.start,
+            //                 children: [
+            //                   Text('Title: ${ advertisement.videoList[index].title}'),
+            //                   Text('Date: ${ advertisement.videoList[index].date}'),
+            //                 ],
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //         videoUrlListForSharedPreference.contains(advertisement.videoList[index].videoUrl)? Text('Watched'):Container()
+            //       ],
+            //     ),
+            //   ),
+            // ):
+             Container():InkWell(
               onTap: (){
-                _timer!.cancel();
+              //  _timer!.cancel();
                 _controller!.dispose();
                 playVideo(index,advertisement,userController);
               },
-              child: Row(
-                children: [
-                  Image.asset('assets/images/video_icon.png',width: 50,height: 50,),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 18.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Title: ${ advertisement.videoList[index].title}'),
-                        Text('Date: ${ advertisement.videoList[index].date}'),
-                      ],
-                    ),
+
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Image.asset('assets/images/video_icon.png',width: 50,height: 50,),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 18.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Title: ${advertisement.videoList[index].title}'),
+                                Text('Date: ${advertisement.videoList[index].date}'),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             );
           }

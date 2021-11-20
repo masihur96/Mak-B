@@ -452,8 +452,34 @@ class _AccountNavState extends State<AccountNav> {
               ],
             ),
           ),
-          SizedBox(height: size.width * .02),
+          SizedBox(height: size.width * .01),
 
+          Container(
+            width: size.width * .85,
+            padding: EdgeInsets.all(size.width * .04),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Your Balance',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: size.width * .05,
+                      fontWeight: FontWeight.w600),
+                ),
+                SizedBox(
+                  height: size.width * .04,
+                ),
+                Text(
+                  '${userController.userModel.value.mainBalance}৳',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: size.width * .04,
+                  ),
+                ),
+              ],
+            ),
+          ),
           _functionBuilder('Referred People', Icons.people, size),
           _functionBuilder('My video watched history', Icons.slow_motion_video, size),
           _functionBuilder('My Store', Icons.store, size),
