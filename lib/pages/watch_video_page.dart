@@ -295,6 +295,7 @@ class _WatchVideoState extends State<WatchVideo> {
               if(currentDate != advertisement.watchDate){
                 await preference.remove('videoUrlList');
               }
+
               customInit(advertisement,userController);
               setState(() {
                 counter++;
@@ -373,82 +374,80 @@ class _WatchVideoState extends State<WatchVideo> {
         ),
 
       ),
-      Container(
-        height: size.width*.7,
-        child: ListView.builder(
-            padding: const EdgeInsets.all(8),
-            itemCount: advertisement.videoList.length,
-            itemBuilder: (BuildContext context, int index) {
-            return videoUrlListForSharedPreference.contains(advertisement.videoList[index].videoUrl)?
-            // Padding(
-            //   padding: const EdgeInsets.all(8.0),
-            //   child: Container(
-            //     decoration: BoxDecoration(
-            //         color: Colors.red.shade100,
-            //       borderRadius: BorderRadius.all(Radius.circular(10))
-            //     ),
-            //     padding: const EdgeInsets.all(8.0),
-            //
-            //     child: Row(
-            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       children: [
-            //         Row(
-            //           children: [
-            //             Image.asset('assets/images/video_icon.png',width: 50,height: 50,),
-            //
-            //             Padding(
-            //               padding: const EdgeInsets.only(left: 18.0),
-            //               child: Column(
-            //                 crossAxisAlignment: CrossAxisAlignment.start,
-            //                 children: [
-            //                   Text('Title: ${ advertisement.videoList[index].title}'),
-            //                   Text('Date: ${ advertisement.videoList[index].date}'),
-            //                 ],
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //         videoUrlListForSharedPreference.contains(advertisement.videoList[index].videoUrl)? Text('Watched'):Container()
-            //       ],
-            //     ),
-            //   ),
-            // ):
-             Container():InkWell(
-              onTap: (){
-              //  _timer!.cancel();
-                _controller!.dispose();
-                playVideo(index,advertisement,userController);
-              },
+      ListView.builder(
+          padding: const EdgeInsets.all(8),
+          shrinkWrap: true,
+          itemCount: advertisement.videoList.length,
+          itemBuilder: (BuildContext context, int index) {
+          return videoUrlListForSharedPreference.contains(advertisement.videoList[index].videoUrl)?
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Container(
+          //     decoration: BoxDecoration(
+          //         color: Colors.red.shade100,
+          //       borderRadius: BorderRadius.all(Radius.circular(10))
+          //     ),
+          //     padding: const EdgeInsets.all(8.0),
+          //
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //       children: [
+          //         Row(
+          //           children: [
+          //             Image.asset('assets/images/video_icon.png',width: 50,height: 50,),
+          //
+          //             Padding(
+          //               padding: const EdgeInsets.only(left: 18.0),
+          //               child: Column(
+          //                 crossAxisAlignment: CrossAxisAlignment.start,
+          //                 children: [
+          //                   Text('Title: ${ advertisement.videoList[index].title}'),
+          //                   Text('Date: ${ advertisement.videoList[index].date}'),
+          //                 ],
+          //               ),
+          //             ),
+          //           ],
+          //         ),
+          //         videoUrlListForSharedPreference.contains(advertisement.videoList[index].videoUrl)? Text('Watched'):Container()
+          //       ],
+          //     ),
+          //   ),
+          // ):
+           Container():InkWell(
+            onTap: (){
+            //  _timer!.cancel();
+              _controller!.dispose();
+              playVideo(index,advertisement,userController);
+            },
 
-              child: Padding(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
                 padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Image.asset('assets/images/video_icon.png',width: 50,height: 50,),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 18.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Title: ${advertisement.videoList[index].title}'),
-                                Text('Date: ${advertisement.videoList[index].date}'),
-                              ],
-                            ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset('assets/images/video_icon.png',width: 50,height: 50,),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 18.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Title: ${advertisement.videoList[index].title}'),
+                              Text('Date: ${advertisement.videoList[index].date}'),
+                            ],
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-            );
-          }
-        ),
+            ),
+          );
+        }
       )
       
     ],

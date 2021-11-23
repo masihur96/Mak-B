@@ -209,7 +209,8 @@ class _ProductPageState extends State<ProductPage> {
           return fetch();
         },
         child: ListView(
-          physics: BouncingScrollPhysics(),
+          physics:ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          shrinkWrap: true,
           children: [
             //SizedBox(height: getProportionateScreenWidth(context,10)),
               GestureDetector(
@@ -266,89 +267,92 @@ class _ProductPageState extends State<ProductPage> {
                               MaterialPageRoute(
                                   builder: (context) => DetailsScreen(product: productController.productList[index])));
                         },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xFF19B52B).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Stack(
-                                alignment: Alignment.topRight,
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(
-                                        getProportionateScreenWidth(context, 20)),
-                                    decoration: BoxDecoration(
-                                      color: kSecondaryColor.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: productController.productList[index].image!=null?Hero(
-                                        tag: productController.productList[index].id.toString(),
-                                        child: CachedNetworkImage(
-                                          imageUrl: productController.productList[index].thumbNail,
-                                          placeholder: (context, url) => CircleAvatar(
-                                              backgroundColor: Colors.grey.shade200,
-                                              radius: size.width * .08,
-                                              backgroundImage: AssetImage(
-                                                  'assets/images/placeholder.png')),
-                                          errorWidget: (context, url, error) =>
-                                              Icon(Icons.error),
-                                          fit: BoxFit.cover,
-                                        )
-                                    ):Container(),
-                                  ),
-                                  // Padding(
-                                  //   padding: const EdgeInsets.only(top: 2.0, right: 2.0),
-                                  //   child: Icon(
-                                  //     Icons.add_circle_outline,
-                                  //     color: kPrimaryColor,
-                                  //   ),
-                                  // )
-                                ],
-                              ),
-                              const SizedBox(height: 6),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 12.0, left: 3),
-                                child: Text(
-                                  productController.productList[index].title!,
-                                  style: TextStyle(color: Colors.black),
-                                  maxLines: 2,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 12.0, left: 3),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Color(0xFF19B52B).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Stack(
+                                  alignment: Alignment.topRight,
                                   children: [
-                                    Text(
-                                      "\৳${productController.productList[index].price}",
-                                      style: TextStyle(
-                                        fontSize:
-                                        getProportionateScreenWidth(context, 15),
-                                        fontWeight: FontWeight.w500,
-                                        color: kPrimaryColor,
+                                    Container(
+                                      padding: EdgeInsets.all(
+                                          getProportionateScreenWidth(context, 20)),
+                                      decoration: BoxDecoration(
+                                        color: kSecondaryColor.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(15),
                                       ),
+                                      child: productController.productList[index].image!=null?Hero(
+                                          tag: productController.productList[index].id.toString(),
+                                          child: CachedNetworkImage(
+                                            imageUrl: productController.productList[index].thumbNail,
+                                            placeholder: (context, url) => CircleAvatar(
+                                                backgroundColor: Colors.grey.shade200,
+                                                radius: size.width * .08,
+                                                backgroundImage: AssetImage(
+                                                    'assets/images/placeholder.png')),
+                                            errorWidget: (context, url, error) =>
+                                                Icon(Icons.error),
+                                            fit: BoxFit.cover,
+                                          )
+                                      ):Container(),
                                     ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    // Text(
-                                    //   "\$${productController.productList[index].price}",
-                                    //   style: TextStyle(
-                                    //     decoration: TextDecoration.lineThrough,
-                                    //     fontSize:
-                                    //     getProportionateScreenWidth(context, 12),
-                                    //     fontWeight: FontWeight.w300,
-                                    //     color: Colors.grey[600],
+                                    // Padding(
+                                    //   padding: const EdgeInsets.only(top: 2.0, right: 2.0),
+                                    //   child: Icon(
+                                    //     Icons.add_circle_outline,
+                                    //     color: kPrimaryColor,
                                     //   ),
-                                    // ),
-                                    const SizedBox(height: 6),
+                                    // )
                                   ],
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 6),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 12.0, left: 3),
+                                  child: Text(
+                                    productController.productList[index].title!,
+                                    style: TextStyle(color: Colors.black),
+                                    maxLines: 2,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 12.0, left: 3),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "\৳${productController.productList[index].price}",
+                                        style: TextStyle(
+                                          fontSize:
+                                          getProportionateScreenWidth(context, 15),
+                                          fontWeight: FontWeight.w500,
+                                          color: kPrimaryColor,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      // Text(
+                                      //   "\$${productController.productList[index].price}",
+                                      //   style: TextStyle(
+                                      //     decoration: TextDecoration.lineThrough,
+                                      //     fontSize:
+                                      //     getProportionateScreenWidth(context, 12),
+                                      //     fontWeight: FontWeight.w300,
+                                      //     color: Colors.grey[600],
+                                      //   ),
+                                      // ),
+                                      const SizedBox(height: 6),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

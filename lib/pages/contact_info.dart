@@ -56,27 +56,27 @@ class _ContactInfoState extends State<ContactInfo> {
                           String url='${userController.infoList[0].fbLink}';
                           _launchURL(url);
                          },
-                          child: Icon(FontAwesomeIcons.facebook)),
+                          child: Icon(FontAwesomeIcons.facebook,color: Colors.blue,)),
                       InkWell(
                           onTap: (){
                             _launchURL('${userController.infoList[0].instagram}');
                           },
-                          child: Icon(FontAwesomeIcons.instagram)),
+                          child: Icon(FontAwesomeIcons.instagram,color: Colors.redAccent,)),
                       InkWell(
                           onTap: (){
                             _launchURL('${userController.infoList[0].linkedIn}');
                           },
-                          child: Icon(FontAwesomeIcons.linkedin)),
+                          child: Icon(FontAwesomeIcons.linkedin,color: Colors.blue,)),
                       InkWell(
                           onTap: (){
                             _launchURL('${userController.infoList[0].twitterLink}');
                           },
-                          child: Icon(FontAwesomeIcons.twitter)),
+                          child: Icon(FontAwesomeIcons.twitter,color: Colors.lightBlue,)),
                       InkWell(
                           onTap: (){
                             _launchURL('${userController.infoList[0].youtubeLink}');
                           },
-                          child: Icon(FontAwesomeIcons.youtube)),
+                          child: Icon(FontAwesomeIcons.youtube,color: Colors.red,)),
                     ],
                   )
                 ],
