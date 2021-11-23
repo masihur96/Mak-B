@@ -18,6 +18,7 @@ import 'package:mak_b/pages/refferred_people.dart';
 import 'package:mak_b/pages/video_watch_history.dart';
 import 'package:mak_b/pages/withdrow_page.dart';
 import 'package:mak_b/variables/constants.dart';
+import 'package:mak_b/widgets/gradient_button.dart';
 import 'package:mak_b/widgets/notification_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -217,7 +218,48 @@ class _AccountNavState extends State<AccountNav> {
                           ),
                         ),
                         SizedBox(
-                          height: size.width * .04,
+                          height: size.width * .02,
+                        ),
+
+                        Padding(
+                          padding:  EdgeInsets.all(size.width * .02),
+                          child: Container(
+                            padding:  EdgeInsets.all(size.width * .02),
+                            width: size.width*.5,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [Color(0xFF0198DD), Color(0xFF19B52B)],
+                              ),
+                              borderRadius: BorderRadius.all(Radius.circular(10))
+
+                            ),
+
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Your Balance : ',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: size.width * .04,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                SizedBox(
+                                  height: size.width * .04,
+                                ),
+                                Text(
+                                  '${userController.userModel.value.mainBalance}৳',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: size.width * .04,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -311,6 +353,7 @@ class _AccountNavState extends State<AccountNav> {
                             )
                           ],
                         ),
+
                         SizedBox(
                           height: size.width * .04,
                         ),
@@ -454,32 +497,7 @@ class _AccountNavState extends State<AccountNav> {
           ),
           SizedBox(height: size.width * .01),
 
-          Container(
-            width: size.width * .85,
-            padding: EdgeInsets.all(size.width * .04),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Your Balance',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: size.width * .05,
-                      fontWeight: FontWeight.w600),
-                ),
-                SizedBox(
-                  height: size.width * .04,
-                ),
-                Text(
-                  '${userController.userModel.value.mainBalance}৳',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: size.width * .04,
-                  ),
-                ),
-              ],
-            ),
-          ),
+
           _functionBuilder('Referred People', Icons.people, size),
           _functionBuilder('My video watched history', Icons.slow_motion_video, size),
           _functionBuilder('My Store', Icons.store, size),
