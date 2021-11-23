@@ -28,43 +28,49 @@ class _MyStorePageState extends State<MyStorePage> {
       body: SafeArea(
         child:Padding(
           padding: EdgeInsets.only(left: 5.0,right: 5.0),
-          child:   ListView(
-            physics: BouncingScrollPhysics(),
-            children: [
-              SizedBox(height: getProportionateScreenWidth(context,10)),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Padding(
-                  padding:  EdgeInsets.only(top: size.width*.02,left: size.width*.02,right: size.width*.02,bottom:size.width*.02 ),
+          child:   RefreshIndicator(
+            onRefresh: ()async{
+              await  userController.getMyStore();
+              print('Refresh');
+            },
+            child: ListView(
+              physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              children: [
+                SizedBox(height: getProportionateScreenWidth(context,10)),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding:  EdgeInsets.only(top: size.width*.02,left: size.width*.02,right: size.width*.02,bottom:size.width*.02 ),
 
-                  child: Text('Store Collection',style: TextStyle(color: Colors.black,fontSize: size.width*.05 ),),
+                    child: Text('Store Collection',style: TextStyle(color: Colors.black,fontSize: size.width*.05 ),),
+                  ),
                 ),
-              ),
 
-              Padding(
-                padding: const EdgeInsets.only(right:8.0),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: new ClampingScrollPhysics(),
-                  itemCount:userController.storePackageList.length,
-                  gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 2,
-                      childAspectRatio: 4.9/9),
-                  itemBuilder: (BuildContext context, int index) {
-                    // if (demoProducts[index].isPopular)
-                    return PackageCard(product: userController.storePackageList[index], sold: true,);
-                    // return SizedBox
-                    //     .shrink(); // here by default width and height is 0
-                  },
+                Padding(
+                  padding: const EdgeInsets.only(right:8.0),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: new ClampingScrollPhysics(),
+                    itemCount:userController.storePackageList.length,
+                    gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 2,
+                        childAspectRatio: 4.9/9),
+                    itemBuilder: (BuildContext context, int index) {
+                      // if (demoProducts[index].isPopular)
+                      return PackageCard(product: userController.storePackageList[index], sold: true,);
+                      // return SizedBox
+                      //     .shrink(); // here by default width and height is 0
+                    },
+                  ),
                 ),
-              ),
 
 
 
 
 
-          ],),
+            ],),
+          ),
         ),
       ),
     );

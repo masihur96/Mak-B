@@ -423,6 +423,16 @@ class UserController extends AuthController {
     });
   }
 
+  Future<void> updateBalance(String profitAmount) async {
+    await getUser(id!);
+    double amount=double.parse(userModel.value.mainBalance!)+double.parse(profitAmount);
+    await FirebaseFirestore.instance.collection('Users').doc(id).update({
+      "mainBalance": '$amount',
+    }).then((value) async {
+      await getUser(id!);
+    });
+  }
+
   Future<void> updateInsuranceWithDraw() async {
     showLoadingDialog(Get.context!);
     await FirebaseFirestore.instance.collection('Users').doc(id).update({
@@ -662,7 +672,7 @@ class UserController extends AuthController {
 
   Future<void> getProductOrder()async{
     try{
-      await FirebaseFirestore.instance.collection('Orders').where('phone',isEqualTo: id).get().then((snapShot){
+      await FirebaseFirestore.instance.collection('Orders').where('phone',isEqualTo: id).orderBy('orderNumber',descending: true).get().then((snapShot){
         productOrderList.clear();
         snapShot.docChanges.forEach((element) {
           ProductOrderModel productOrderModel =ProductOrderModel(
@@ -788,6 +798,7 @@ class UserController extends AuthController {
           totalProfitAmount=totalProfitAmount+int.parse(cart.profitAmount!)*cart.quantity!;
         });
         print('ProductId${_productIds.length}');
+        print(totalProfitAmount);
         print(total);
       });
     }catch(error){
