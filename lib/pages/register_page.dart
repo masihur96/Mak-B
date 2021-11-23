@@ -173,35 +173,39 @@ class _RegisterPageState extends State<RegisterPage> {
                               _password.text.isNotEmpty &&
                               _nbp.text.isNotEmpty &&
                               _referCode.text.isNotEmpty) {
-                            bool isReg = await authController.isRegistered(_phone.text);
-                            if (!isReg) {
-                              if(productController.cartList.length!=0){
-                                await userController.getReferUser(_referCode.text).then((value){
-                                  if(userController.referredList.length != int.parse(userController.referUserModel.value.referLimit!)){
-                                    if (userController.isReferCodeCorrect.value) {
+                            if(_phone.text.length==11){
+                              bool isReg = await authController.isRegistered(_phone.text);
+                              if (!isReg) {
+                                if(productController.cartList.length!=0){
+                                  await userController.getReferUser(_referCode.text).then((value){
+                                    if(userController.referredList.length != int.parse(userController.referUserModel.value.referLimit!)){
+                                      if (userController.isReferCodeCorrect.value) {
+                                        Get.back();
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => PaymentPage(
+                                                    _referCode.text, _name.text,_phone.text,_address.text,_password.text,
+                                                    _nbp.text,myReferCode)));
+                                      }
+                                      //authController.createUser(_name.text, _address.text, _phone.text, _password.text,_nbp.text,_referCode.text);
+                                    }else{
                                       Get.back();
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => PaymentPage(
-                                                  _referCode.text, _name.text,_phone.text,_address.text,_password.text,
-                                                  _nbp.text,myReferCode)));
+                                      showToast('Refer limit is over for this referCode!');
                                     }
-                                    //authController.createUser(_name.text, _address.text, _phone.text, _password.text,_nbp.text,_referCode.text);
-                                  }else{
-                                    Get.back();
-                                    showToast('Refer limit is over for this referCode!');
-                                  }
-                                });
-                              }else{
+                                  });
+                                }else{
+                                  Get.back();
+                                  showToast('Registration cannot be done with empty cart!' );
+                                }
+                              } else {
                                 Get.back();
-                                showToast('Registration cannot be done with empty cart!' );
+                                showToast('Phone Number already exist');
                               }
-                            } else {
+                            }else{
                               Get.back();
-                              showToast('Phone Number already exist');
+                              showToast('Incorrect Phone Number');
                             }
-
                           } else {
                             Get.back();
                             showToast('Complete all required fields');

@@ -247,9 +247,7 @@ class _AccountNavState extends State<AccountNav> {
                                       fontSize: size.width * .04,
                                       fontWeight: FontWeight.w600),
                                 ),
-                                SizedBox(
-                                  height: size.width * .04,
-                                ),
+                                SizedBox(height: size.width * .04),
                                 Text(
                                   '${userController.userModel.value.mainBalance}৳',
                                   style: TextStyle(
@@ -261,6 +259,14 @@ class _AccountNavState extends State<AccountNav> {
                             ),
                           ),
                         ),
+                        // Text(
+                        //   userController.userModel.value.mainBalance??'',
+                        //   textAlign: TextAlign.center,
+                        //   style: TextStyle(
+                        //       color: Colors.black,
+                        //       fontWeight: FontWeight.w400,
+                        //       fontSize: size.width * .07),
+                        // ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

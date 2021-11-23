@@ -493,6 +493,7 @@ class _PaymentPageState extends State<PaymentPage> {
                         '${productController.total}', cartItemList,userController).then((value)async{
                        await   userController.updateBalance('$userProfitAmount').then((value){
                             Get.back();
+                            Get.back();
                             Get.to(()=>HomeNav());
                             showToast('Order Placed');
                           });

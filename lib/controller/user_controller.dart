@@ -325,7 +325,7 @@ class UserController extends AuthController {
       await FirebaseFirestore.instance
           .collection('Users')
           .doc(id)
-          .collection('DepositHistory')
+          .collection('DepositHistory').orderBy('date',descending: true)
           .get()
           .then((snapShot) {
         depositList.clear();

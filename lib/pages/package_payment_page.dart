@@ -293,7 +293,7 @@ class _PackagePaymentPageState extends State<PackagePaymentPage> {
                       shadowColor: Colors.grey,
                       elevation: 5,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(9.0),
+                        borderRadius: BorderRadius.circular(9.0)
                       ),
                       child: Column(
                         children: [
