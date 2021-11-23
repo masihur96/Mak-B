@@ -162,6 +162,7 @@ class UserController extends AuthController {
 
   Future<void> withdraw(String transactionSystem, String transactionMobileNo,
       String amount, String name, dynamic due, String image) async {
+    await _checkPreferences();
     String date = DateTime.now().millisecondsSinceEpoch.toString();
     String withdrawId = "$id$date";
     try {
@@ -224,6 +225,7 @@ class UserController extends AuthController {
 
   Future<void> depositBalance(String amount, dynamic depositBalance,
       dynamic mainBalance, String name, String phone) async {
+    await _checkPreferences();
     String date = DateTime.now().millisecondsSinceEpoch.toString();
     String depositId = "$id$date";
     try {
@@ -274,6 +276,7 @@ class UserController extends AuthController {
   }
 
   Future<void> depositRequest(String name, String phone) async {
+    await _checkPreferences();
     String date = DateTime.now().millisecondsSinceEpoch.toString();
     String depositId = "$id$date";
     try {
@@ -727,10 +730,10 @@ class UserController extends AuthController {
               .collection('Users')
               .doc(id)
               .collection('MyStore').doc(idd).update({
-              "status": 'processing',
+              "status": 'pending',
           }).then((value)async{
             await FirebaseFirestore.instance.collection('SoldPackages').doc(idd).update({
-              "status": 'processing',
+              "status": 'pending',
             }).then((value)async{
               await getMyStore().then((value) async {
                 Get.back();
@@ -861,6 +864,7 @@ class UserController extends AuthController {
   }
 
   Future<void> getWatchedHistory() async {
+    await _checkPreferences();
     try {
       await FirebaseFirestore.instance
           .collection('Users')

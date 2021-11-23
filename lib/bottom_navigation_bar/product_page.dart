@@ -71,17 +71,17 @@ class _ProductPageState extends State<ProductPage> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     fetch1();
-    return Scaffold(
+    return Obx(()=>Scaffold(
       drawer: new Drawer(
         child: new ListView(
           children: <Widget>[
             SizedBox(height: 20,),
             Container(
               height: 80,width: 80,
-             decoration: BoxDecoration(
-             color: Colors.white70,
-             shape: BoxShape.circle,
-             ),
+              decoration: BoxDecoration(
+                color: Colors.white70,
+                shape: BoxShape.circle,
+              ),
               child: Image.asset("assets/icons/deub.png"),
               // Row(
               //   mainAxisAlignment: MainAxisAlignment.start,
@@ -196,9 +196,9 @@ class _ProductPageState extends State<ProductPage> {
           SizedBox(width: 1),
           Center(
             child: IconBtnWithCounter(
-              svgSrc: "icons/Cart Icon.svg",
-              numOfitem: id==null?productController.cartList==null?0:productController.cartList.length:userController.cartList==null?0:userController.cartList.length,
-              press: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()))
+                svgSrc: "icons/Cart Icon.svg",
+                numOfitem: id==null?productController.cartList==null?0:productController.cartList.length:userController.cartList==null?0:userController.cartList.length,
+                press: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage()))
             ),
           ),
           SizedBox(width: 3),
@@ -213,39 +213,39 @@ class _ProductPageState extends State<ProductPage> {
           shrinkWrap: true,
           children: [
             //SizedBox(height: getProportionateScreenWidth(context,10)),
-              GestureDetector(
-                onTap:()=> id==null?showToast('Please log in first'):userController.userModel.value.videoWatched=='5'?_showDialog():Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 8.0),
-                      height: 170,
-                      width: size.width,
-                      decoration: BoxDecoration(
+            GestureDetector(
+              onTap:()=> id==null?showToast('Please log in first'):userController.userModel.value.videoWatched=='5'?_showDialog():Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 8.0),
+                    height: 170,
+                    width: size.width,
+                    decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
                         image: DecorationImage(
-                          image: AssetImage('assets/images/watch_1.png'),
-                          fit: BoxFit.fill
+                            image: AssetImage('assets/images/watch_1.png'),
+                            fit: BoxFit.fill
                         )
-                      ),
                     ),
-                    Positioned(
-                      bottom: 10.0,
-                      right: 20.0,
-                      child: SolidColorButton(
-                          child: Text('Watch Now',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
-                          onPressed: ()=>id==null?showToast('Please log in first'):
-                          userController.userModel.value.videoWatched=='5'?_showDialog():
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
-                          borderRadius: 5.0,
-                          height: size.width*.06,
-                          width: size.width*.3,
-                          bgColor: Colors.amber),
-                    )
-                  ],
-                ),
+                  ),
+                  Positioned(
+                    bottom: 10.0,
+                    right: 20.0,
+                    child: SolidColorButton(
+                        child: Text('Watch Now',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
+                        onPressed: ()=>id==null?showToast('Please log in first'):
+                        userController.userModel.value.videoWatched=='5'?_showDialog():
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
+                        borderRadius: 5.0,
+                        height: size.width*.06,
+                        width: size.width*.3,
+                        bgColor: Colors.amber),
+                  )
+                ],
               ),
+            ),
             SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(right:8.0),
@@ -371,7 +371,7 @@ class _ProductPageState extends State<ProductPage> {
           ],
         ),
       ), //CustomBottomNavBar(selectedMenu: MenuState.home),
-    );
+    ));
   }
 
   _showDialog() {
