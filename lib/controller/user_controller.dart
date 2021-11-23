@@ -162,6 +162,7 @@ class UserController extends AuthController {
 
   Future<void> withdraw(String transactionSystem, String transactionMobileNo,
       String amount, String name, dynamic due, String image) async {
+    await _checkPreferences();
     String date = DateTime.now().millisecondsSinceEpoch.toString();
     String withdrawId = "$id$date";
     try {
@@ -224,6 +225,7 @@ class UserController extends AuthController {
 
   Future<void> depositBalance(String amount, dynamic depositBalance,
       dynamic mainBalance, String name, String phone) async {
+    await _checkPreferences();
     String date = DateTime.now().millisecondsSinceEpoch.toString();
     String depositId = "$id$date";
     try {
@@ -274,6 +276,7 @@ class UserController extends AuthController {
   }
 
   Future<void> depositRequest(String name, String phone) async {
+    await _checkPreferences();
     String date = DateTime.now().millisecondsSinceEpoch.toString();
     String depositId = "$id$date";
     try {
@@ -420,6 +423,16 @@ class UserController extends AuthController {
       Get.back();
       Get.back();
       showToast('Profile Updated');
+    });
+  }
+
+  Future<void> updateBalance(String profitAmount) async {
+    await getUser(id!);
+    double amount=double.parse(userModel.value.mainBalance!)+double.parse(profitAmount);
+    await FirebaseFirestore.instance.collection('Users').doc(id).update({
+      "mainBalance": '$amount',
+    }).then((value) async {
+      await getUser(id!);
     });
   }
 
@@ -662,7 +675,7 @@ class UserController extends AuthController {
 
   Future<void> getProductOrder()async{
     try{
-      await FirebaseFirestore.instance.collection('Orders').where('phone',isEqualTo: id).get().then((snapShot){
+      await FirebaseFirestore.instance.collection('Orders').where('phone',isEqualTo: id).orderBy('orderNumber',descending: true).get().then((snapShot){
         productOrderList.clear();
         snapShot.docChanges.forEach((element) {
           ProductOrderModel productOrderModel =ProductOrderModel(
@@ -717,10 +730,10 @@ class UserController extends AuthController {
               .collection('Users')
               .doc(id)
               .collection('MyStore').doc(idd).update({
-              "status": 'processing',
+              "status": 'pending',
           }).then((value)async{
             await FirebaseFirestore.instance.collection('SoldPackages').doc(idd).update({
-              "status": 'processing',
+              "status": 'pending',
             }).then((value)async{
               await getMyStore().then((value) async {
                 Get.back();
@@ -788,6 +801,7 @@ class UserController extends AuthController {
           totalProfitAmount=totalProfitAmount+int.parse(cart.profitAmount!)*cart.quantity!;
         });
         print('ProductId${_productIds.length}');
+        print(totalProfitAmount);
         print(total);
       });
     }catch(error){
@@ -850,6 +864,7 @@ class UserController extends AuthController {
   }
 
   Future<void> getWatchedHistory() async {
+    await _checkPreferences();
     try {
       await FirebaseFirestore.instance
           .collection('Users')

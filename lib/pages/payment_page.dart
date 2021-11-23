@@ -100,18 +100,6 @@ class _PaymentPageState extends State<PaymentPage> {
     }
     print(cartItemList[0]['productName']);
   }
-  Future<void> operate()async{
-    districtsValue = productController.areaList[0].id;
-    hubValue=productController.areaHubList[0].hub[0];
-    _list=productController.areaList;
-    _hubList=productController.areaHubList;
-    String profit=id==null?'${productController.totalProfitAmount}':'${userController.totalProfitAmount}';
-    setState(() {
-      count++;
-      referredBy=widget.referenceCode==''?'None':widget.referenceCode;
-      userProfitAmount=int.parse(profit) *.3;
-    });
-  }
   String? id;
   @override
   void initState() {
@@ -119,16 +107,33 @@ class _PaymentPageState extends State<PaymentPage> {
     super.initState();
     _checkPreferences();
   }
-  void _checkPreferences() async {
+  Future <void> _checkPreferences() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
       id = preferences.get('id') as String?;
       //pass = preferences.get('pass');
     });
   }
+  Future<void> operate()async{
+    districtsValue = productController.areaList[0].id;
+    hubValue=productController.areaHubList[0].hub[0];
+    _list=productController.areaList;
+    _hubList=productController.areaHubList;
+    await _checkPreferences();
+    // String profit;
+    // id==null?profit='${productController.totalProfitAmount}':profit='${userController.totalProfitAmount}';
+    setState(() {
+      count++;
+      referredBy=widget.referenceCode==''?'None':widget.referenceCode;
+      id==null?userProfitAmount=int.parse('${productController.totalProfitAmount}') *.3:userProfitAmount=int.parse('${userController.totalProfitAmount}') *.3;
+    });
+    print(id);
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    print(id);
     if(count==0){
       operate();
     }
@@ -218,13 +223,13 @@ class _PaymentPageState extends State<PaymentPage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              id==null?Text('Total Product: ${productController.cartList.length}',
+                              id==null?Text('Total Items: ${productController.cartList.length}',
                                   style: TextStyle(
 
                                       color: Colors.black,
                                       fontStyle: FontStyle.normal,
                                       fontSize: size.width * .04)):
-                              Text('Total Product: ${userController.cartList.length}',
+                              Text('Total Items: ${userController.cartList.length}',
                                   style: TextStyle(
 
                                       color: Colors.black,
@@ -485,10 +490,12 @@ class _PaymentPageState extends State<PaymentPage> {
                     getUserData();
                     productController.createOrder(widget.customerName!, widget.customerPhone!,
                         unique, districtsValue!, hubValue!, '${productController.cartList.length}',
-                        '${productController.total}', cartItemList,userController).then((value){
-                      Get.back();
-                      Get.to(()=>HomeNav());
-                      showToast('Order Placed');
+                        '${productController.total}', cartItemList,userController).then((value)async{
+                       await   userController.updateBalance('$userProfitAmount').then((value){
+                            Get.back();
+                            Get.to(()=>HomeNav());
+                            showToast('Order Placed');
+                          });
                     });
                   }
 
