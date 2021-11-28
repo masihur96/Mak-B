@@ -41,7 +41,7 @@ class _PackageListPageState extends State<PackageListPage> {
               print('Refresh');
             },
             child: ListView(
-              physics: BouncingScrollPhysics(),
+              physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
               children: [
                 SizedBox(height: getProportionateScreenWidth(context,10)),
                 Padding(

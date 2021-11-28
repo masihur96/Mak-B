@@ -25,7 +25,7 @@ class _OrderListPageState extends State<OrderListPage> {
           print('Refresh');
         },
         child: ListView.builder(
-          physics: ClampingScrollPhysics(),
+          physics: ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
           itemCount: userController.productOrderList.length,
           itemBuilder: (context, index){
             return Container(

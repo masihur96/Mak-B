@@ -46,7 +46,7 @@ class UserController extends AuthController {
 
   String? id;
 
-  Future<void> _checkPreferences() async {
+  Future<void> checkPreferences() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     id = preferences.get('id') as String?;
   }
@@ -54,7 +54,7 @@ class UserController extends AuthController {
   @override // called when you use Get.put before running app
   void onInit() {
     super.onInit();
-    _checkPreferences();
+    checkPreferences();
   }
 
   // set user(UserModel value){
@@ -162,7 +162,7 @@ class UserController extends AuthController {
 
   Future<void> withdraw(String transactionSystem, String transactionMobileNo,
       String amount, String name, dynamic due, String image) async {
-    await _checkPreferences();
+    await checkPreferences();
     String date = DateTime.now().millisecondsSinceEpoch.toString();
     String withdrawId = "$id$date";
     try {
@@ -225,7 +225,7 @@ class UserController extends AuthController {
 
   Future<void> depositBalance(String amount, dynamic depositBalance,
       dynamic mainBalance, String name, String phone) async {
-    await _checkPreferences();
+    await checkPreferences();
     String date = DateTime.now().millisecondsSinceEpoch.toString();
     String depositId = "$id$date";
     try {
@@ -276,7 +276,7 @@ class UserController extends AuthController {
   }
 
   Future<void> depositRequest(String name, String phone) async {
-    await _checkPreferences();
+    await checkPreferences();
     String date = DateTime.now().millisecondsSinceEpoch.toString();
     String depositId = "$id$date";
     try {
@@ -643,7 +643,7 @@ class UserController extends AuthController {
           );
           storePackageList.add(model);
         });
-        print('jj${storePackageList.length}');
+        print('My Store: ${storePackageList.length}');
       });
       update();
     } catch (error) {
@@ -751,7 +751,7 @@ class UserController extends AuthController {
 
 
   Future<void> addToUserCart(String productName,String thumbnail,String productId,String price,int quantity,String color,String size,String image,String profitAmount)async {
-    await _checkPreferences();
+    await checkPreferences();
     try{
       showLoadingDialog(Get.context!);
       await FirebaseFirestore.instance.collection('Users').doc(id).collection('CartList').doc(productId).set({
@@ -864,7 +864,7 @@ class UserController extends AuthController {
   }
 
   Future<void> getWatchedHistory() async {
-    await _checkPreferences();
+    await checkPreferences();
     try {
       await FirebaseFirestore.instance
           .collection('Users')

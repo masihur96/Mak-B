@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:mak_b/controller/product_controller.dart';
 import 'package:mak_b/controller/user_controller.dart';
 
 class RefferredPeople extends StatefulWidget {
@@ -11,10 +12,26 @@ class RefferredPeople extends StatefulWidget {
 }
 
 class _RefferredPeopleState extends State<RefferredPeople> {
+
+
   final UserController userController = Get.find<UserController>();
+
+  int counter = 0;
+  customInit(UserController userController){
+    counter++;
+
+    if(userController.id==null){
+      userController.checkPreferences();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+    if(counter ==0){
+      customInit(userController);
+    }
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -38,54 +55,78 @@ class _RefferredPeopleState extends State<RefferredPeople> {
   Widget _bodyUI(Size size) {
     return Padding(
       padding: EdgeInsets.all(size.width * .04),
-      child: ListView(
-        physics: BouncingScrollPhysics(),
-        children: [
-          Container(
-              width: size.width,
-              child: Text(
-                'You reffered ${userController.referredList.length} people',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: size.width * .04,
-                    fontWeight: FontWeight.bold),
-              )),
-          SizedBox(
-            height: size.width * .04,
-          ),
-          ListView.builder(
-              shrinkWrap: true,
-              physics: ClampingScrollPhysics(),
-              itemCount: userController.referredList.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.only(bottom: size.width * .02),
-                  child: Card(
-                    child: ListTile(
-                        // leading: CircleAvatar(
-                        //   backgroundColor: Colors.grey.shade200,
-                        //   backgroundImage: NetworkImage(
-                        //       userController.referredList[index].),
-                        // ),
-                        title: Column(
+      child: RefreshIndicator(
+        onRefresh: ()async{
+          await userController.getReferUserReferList(userController.id!);
+          print('Refresh');
+        },
+        child: ListView(
+          physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          children: [
+            Container(
+                width: size.width,
+                child: Text(
+                  'You reffered ${userController.referredList.length} people',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: size.width * .04,
+                      fontWeight: FontWeight.bold),
+                )),
+            SizedBox(
+              height: size.width * .04,
+            ),
+            ListView.builder(
+                shrinkWrap: true,
+                physics: ClampingScrollPhysics(),
+                itemCount: userController.referredList.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: size.width * .02),
+                    child: Card(
+                      child: ListTile(
+                          // leading: CircleAvatar(
+                          //   backgroundColor: Colors.grey.shade200,
+                          //   backgroundImage: NetworkImage(
+                          //       userController.referredList[index].),
+                          // ),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Name:  ${userController.referredList[index].name!}',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: size.width * .04,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                'Contact No:  ${userController.referredList[index].phone!}',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: size.width * .03,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                'ReferCode:  ${userController.referredList[index].referCode!}',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: size.width * .03,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Name:  ${userController.referredList[index].name!}',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: size.width * .04,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              'Contact No:  ${userController.referredList[index].phone!}',
+                              'Profit:  ${userController.referredList[index].profit!}',
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: size.width * .03,
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              'ReferCode:  ${userController.referredList[index].referCode!}',
+                              'Date:  ${userController.referredList[index].date!}',
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: size.width * .03,
@@ -93,30 +134,12 @@ class _RefferredPeopleState extends State<RefferredPeople> {
                             ),
                           ],
                         ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Profit:  ${userController.referredList[index].profit!}',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: size.width * .03,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            'Date:  ${userController.referredList[index].date!}',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: size.width * .03,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
                       ),
                     ),
-                  ),
-                );
-              })
-        ],
+                  );
+                })
+          ],
+        ),
       ),
     );
   }
