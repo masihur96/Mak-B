@@ -300,69 +300,69 @@ class _BodyState extends State<Body> {
     );
   }
 
-  Future<void> _paySSLCommerz(UserController userController) async {
-    Sslcommerz sslcommerz = Sslcommerz(
-        initializer: SSLCommerzInitialization(
-          //Use the ipn if you have valid one, or it will fail the transaction.
-          //ipn_url: "www.ipnurl.com",
-            multi_card_name: '',
-            currency: SSLCurrencyType.BDT,
-            product_category: "Product",
-            sdkType: SSLCSdkType.LIVE,
-            store_id: "demotest",
-            store_passwd: "qwerty",
-            total_amount: 100.0,
-            tran_id: DateTime.now().millisecondsSinceEpoch.toString()));
-    sslcommerz
-        .addEMITransactionInitializer(
-        sslcemiTransactionInitializer: SSLCEMITransactionInitializer(
-            emi_options: 1, emi_max_list_options: 3, emi_selected_inst: 2))
-        .addShipmentInfoInitializer(
-        sslcShipmentInfoInitializer: SSLCShipmentInfoInitializer(
-            shipmentMethod: "yes",
-            numOfItems: 5,
-            shipmentDetails: ShipmentDetails(
-                shipAddress1: 'Gazipur, Dhaka',
-                shipCity: 'Dhaka',
-                shipCountry: "Bangladesh",
-                shipName: "From hub",
-                shipPostCode: '1700')))
-        .addCustomerInfoInitializer(
-        customerInfoInitializer: SSLCCustomerInfoInitializer(
-            customerState: "Uttara",
-            customerName: "Mak bro",
-            customerEmail: "makbro@gmail.com",
-            customerAddress1: "Uttara",
-            customerCity: "Dhaka",
-            customerPostCode: '1230',
-            customerCountry: "Bangladesh",
-            customerPhone: "01610000016"))
-        .addProductInitializer(
-        sslcProductInitializer:
-        // ***** ssl product initializer for general product STARTS*****
-        SSLCProductInitializer(
-            productName: "T-Shirt",
-            productCategory: "All",
-            general: General(
-                general: "General Purpose",
-                productProfile: "Product Profile")));
-    var result = await sslcommerz.payNow();
-    if (result is PlatformException) {
-      print("the response is: " +
-          result.message.toString() +
-          " code: " +
-          result.code);
-    } else {
-      SSLCTransactionInfoModel model = result;
-      //print('Payment Status: ${model.status}');
-      //showSuccessMgs('"Transaction Status: ${model.status}"');
-      if (model.status == 'VALID') {
-        userController.addStoreProduct(widget.product.id!, widget.product.title!, widget.product.price!, widget.product.image!, widget.product.colors!,
-            widget.product.size!, widget.product.description!,widget.product.thumbNail!, widget.product.discountAmount!, widget.product.quantity!);
-
-      } else {
-        print(model.status);
-      }
-    }
-  }
+  // Future<void> _paySSLCommerz(UserController userController) async {
+  //   Sslcommerz sslcommerz = Sslcommerz(
+  //       initializer: SSLCommerzInitialization(
+  //         //Use the ipn if you have valid one, or it will fail the transaction.
+  //         //ipn_url: "www.ipnurl.com",
+  //           multi_card_name: '',
+  //           currency: SSLCurrencyType.BDT,
+  //           product_category: "Product",
+  //           sdkType: SSLCSdkType.LIVE,
+  //           store_id: "demotest",
+  //           store_passwd: "qwerty",
+  //           total_amount: 100.0,
+  //           tran_id: DateTime.now().millisecondsSinceEpoch.toString()));
+  //   sslcommerz
+  //       .addEMITransactionInitializer(
+  //       sslcemiTransactionInitializer: SSLCEMITransactionInitializer(
+  //           emi_options: 1, emi_max_list_options: 3, emi_selected_inst: 2))
+  //       .addShipmentInfoInitializer(
+  //       sslcShipmentInfoInitializer: SSLCShipmentInfoInitializer(
+  //           shipmentMethod: "yes",
+  //           numOfItems: 5,
+  //           shipmentDetails: ShipmentDetails(
+  //               shipAddress1: 'Gazipur, Dhaka',
+  //               shipCity: 'Dhaka',
+  //               shipCountry: "Bangladesh",
+  //               shipName: "From hub",
+  //               shipPostCode: '1700')))
+  //       .addCustomerInfoInitializer(
+  //       customerInfoInitializer: SSLCCustomerInfoInitializer(
+  //           customerState: "Uttara",
+  //           customerName: "Mak bro",
+  //           customerEmail: "makbro@gmail.com",
+  //           customerAddress1: "Uttara",
+  //           customerCity: "Dhaka",
+  //           customerPostCode: '1230',
+  //           customerCountry: "Bangladesh",
+  //           customerPhone: "01610000016"))
+  //       .addProductInitializer(
+  //       sslcProductInitializer:
+  //       // ***** ssl product initializer for general product STARTS*****
+  //       SSLCProductInitializer(
+  //           productName: "T-Shirt",
+  //           productCategory: "All",
+  //           general: General(
+  //               general: "General Purpose",
+  //               productProfile: "Product Profile")));
+  //   var result = await sslcommerz.payNow();
+  //   if (result is PlatformException) {
+  //     print("the response is: " +
+  //         result.message.toString() +
+  //         " code: " +
+  //         result.code);
+  //   } else {
+  //     SSLCTransactionInfoModel model = result;
+  //     //print('Payment Status: ${model.status}');
+  //     //showSuccessMgs('"Transaction Status: ${model.status}"');
+  //     if (model.status == 'VALID') {
+  //       userController.addStoreProduct(widget.product.id!, widget.product.title!, widget.product.price!, widget.product.image!, widget.product.colors!,
+  //           widget.product.size!, widget.product.description!,widget.product.thumbNail!, widget.product.discountAmount!, widget.product.quantity!);
+  //
+  //     } else {
+  //       print(model.status);
+  //     }
+  //   }
+  // }
 }

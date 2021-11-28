@@ -512,152 +512,152 @@ class _PaymentPageState extends State<PaymentPage> {
       ),
     );
   }
-  // Future<void> _displayTextInputDialog(BuildContext context,Size size) async {
-  //   return showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return AlertDialog(
-  //           title: Text('Update Data',style: TextStyle(color: Color(0xFF19B52B)),),
-  //           content: Container(
-  //             height: size.width*.8,
-  //             decoration: BoxDecoration(
-  //               borderRadius: BorderRadius.all(Radius.circular(10))
-  //             ),
-  //             child: Column(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               children: [
-  //                 TextField(
-  //                   controller: _nameTextFieldController,
-  //                   decoration: textFieldFormDecoration(size).copyWith(
-  //                     labelText: 'Name',
-  //                     hintText: 'Mak-B',
-  //                   ),
-  //                 ),
-  //                 Padding(
-  //                   padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
-  //                   child: TextField(
-  //                     controller: _addressFieldController,
-  //                     decoration: textFieldFormDecoration(size).copyWith(
-  //                       labelText: 'Address',
-  //                       hintText: 'House-16, Sonargaon, Dhaka',
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 TextField(
-  //
-  //                   controller: _phoneFieldController,
-  //                   decoration: textFieldFormDecoration(size).copyWith(
-  //
-  //                     labelText: 'Phone',
-  //                     hintText: '0147582369',
-  //                   ),
-  //                 ),
-  //                 Padding(
-  //                   padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
-  //                   child: TextField(
-  //                     controller: _descriptionFieldController,
-  //                     decoration: textFieldFormDecoration(size).copyWith(
-  //                       labelText: 'Description',
-  //                       hintText: 'I Need this Product Urgently',
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 GradientButton(child: Text('Update'), onPressed: (){}, borderRadius: 10, height: size.width*.1, width: size.width*.3, gradientColors: [Color(0xFF0198DD), Color(0xFF19B52B)])
-  //
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       });
-  // }
+  Future<void> _displayTextInputDialog(BuildContext context,Size size) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Update Data',style: TextStyle(color: Color(0xFF19B52B)),),
+            content: Container(
+              height: size.width*.8,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10))
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextField(
+                    controller: _nameTextFieldController,
+                    decoration: textFieldFormDecoration(size).copyWith(
+                      labelText: 'Name',
+                      hintText: 'Mak-B',
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
+                    child: TextField(
+                      controller: _addressFieldController,
+                      decoration: textFieldFormDecoration(size).copyWith(
+                        labelText: 'Address',
+                        hintText: 'House-16, Sonargaon, Dhaka',
+                      ),
+                    ),
+                  ),
+                  TextField(
 
-  // Future<void> _paySSLCommerz() async {
-  //   Sslcommerz sslcommerz = Sslcommerz(
-  //       initializer: SSLCommerzInitialization(
-  //         //Use the ipn if you have valid one, or it will fail the transaction.
-  //         //ipn_url: "www.ipnurl.com",
-  //           multi_card_name: '',
-  //           currency: SSLCurrencyType.BDT,
-  //           product_category: "Food",
-  //           sdkType: SSLCSdkType.LIVE,
-  //           store_id: "demotest",
-  //           store_passwd: "qwerty",
-  //           total_amount: double.parse('${productController.total}'),
-  //           tran_id: DateTime.now().millisecondsSinceEpoch.toString()));
-  //   sslcommerz
-  //       .addEMITransactionInitializer(
-  //       sslcemiTransactionInitializer: SSLCEMITransactionInitializer(
-  //           emi_options: 1, emi_max_list_options: 3, emi_selected_inst: 2))
-  //       .addShipmentInfoInitializer(
-  //       sslcShipmentInfoInitializer: SSLCShipmentInfoInitializer(
-  //           shipmentMethod: "yes",
-  //           numOfItems: productController.cartList.length,
-  //           shipmentDetails: ShipmentDetails(
-  //               shipAddress1: hubValue!,
-  //               shipCity: districtsValue!,
-  //               shipCountry: "Bangladesh",
-  //               shipName: "From hub",
-  //               shipPostCode: '')))
-  //       .addCustomerInfoInitializer(
-  //       customerInfoInitializer: SSLCCustomerInfoInitializer(
-  //           customerState: "Uttara",
-  //           customerName: "Mak bro",
-  //           customerEmail: "makbro@gmail.com",
-  //           customerAddress1: "Uttara",
-  //           customerCity: "Dhaka",
-  //           customerPostCode:'1230',
-  //           customerCountry: "Bangladesh",
-  //           customerPhone: "01610000016"))
-  //       .addProductInitializer(
-  //       sslcProductInitializer:
-  //       // ***** ssl product initializer for general product STARTS*****
-  //       SSLCProductInitializer(
-  //           productName: "T-Shirt",
-  //           productCategory: "All",
-  //           general: General(
-  //               general: "General Purpose",
-  //               productProfile: "Product Profile")))
-  //       .addAdditionalInitializer(
-  //       sslcAdditionalInitializer:
-  //       SSLCAdditionalInitializer(valueA: "SSL_VERIFYPEER_FALSE"));
-  //   var result = await sslcommerz.payNow();
-  //   if (result is PlatformException) {
-  //     print("the response is: " +
-  //         result.message.toString() +
-  //         " code: " +
-  //         result.code);
-  //   } else {
-  //     SSLCTransactionInfoModel model = result;
-  //     //print('Payment Status: ${model.status}');
-  //     //showSuccessMgs('"Transaction Status: ${model.status}"');
-  //     if (model.status == 'VALID') {
-  //       if(id==null){
-  //         String unique='${DateTime.now().millisecondsSinceEpoch}';
-  //         showLoadingDialog(Get.context!);
-  //         authController.register(widget.customerName!, widget.address!, widget.customerPhone!,
-  //             widget.password!, widget.nbp!, widget.myReferCode!, widget.insuranceEndingDate!,'$userProfitAmount').then((value){
-  //           authController.updateReferUser(userController.referUser.phone!, '$referBalance').then((value){
-  //             authController.addReferUserReferList(userController.referUser.phone!,widget.myReferCode!,widget.customerName!,referUserProfitAmount!,widget.customerPhone!).then((value){
-  //               productController.createOrder(widget.customerName!, widget.customerPhone!,
-  //                   unique, districtsValue!, hubValue!, '${productController.cartList.length}', '${productController.total}', productController.cartList).then((value){
-  //                 Get.back();
-  //               });
-  //             });
-  //           });
-  //         });
-  //       }else{
-  //         String unique='${DateTime.now().millisecondsSinceEpoch}';
-  //         showLoadingDialog(Get.context!);
-  //         productController.createOrder(widget.customerName!, widget.customerPhone!,
-  //             unique, districtsValue!, hubValue!, '${productController.cartList.length}', '${productController.total}', productController.cartList).then((value){
-  //           Get.back();
-  //         });
-  //       }
-  //     } else {
-  //       showToast('Transaction failed');
-  //     }
-  //   }
-  // }
+                    controller: _phoneFieldController,
+                    decoration: textFieldFormDecoration(size).copyWith(
+
+                      labelText: 'Phone',
+                      hintText: '0147582369',
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0,bottom: 8.0),
+                    child: TextField(
+                      controller: _descriptionFieldController,
+                      decoration: textFieldFormDecoration(size).copyWith(
+                        labelText: 'Description',
+                        hintText: 'I Need this Product Urgently',
+                      ),
+                    ),
+                  ),
+                  GradientButton(child: Text('Update'), onPressed: (){}, borderRadius: 10, height: size.width*.1, width: size.width*.3, gradientColors: [Color(0xFF0198DD), Color(0xFF19B52B)])
+
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Future<void> _paySSLCommerz() async {
+    Sslcommerz sslcommerz = Sslcommerz(
+        initializer: SSLCommerzInitialization(
+          //Use the ipn if you have valid one, or it will fail the transaction.
+          //ipn_url: "www.ipnurl.com",
+            multi_card_name: '',
+            currency: SSLCurrencyType.BDT,
+            product_category: "Food",
+            sdkType: SSLCSdkType.LIVE,
+            store_id: "demotest",
+            store_passwd: "qwerty",
+            total_amount: double.parse('${productController.total}'),
+            tran_id: DateTime.now().millisecondsSinceEpoch.toString()));
+    sslcommerz
+        .addEMITransactionInitializer(
+        sslcemiTransactionInitializer: SSLCEMITransactionInitializer(
+            emi_options: 1, emi_max_list_options: 3, emi_selected_inst: 2))
+        .addShipmentInfoInitializer(
+        sslcShipmentInfoInitializer: SSLCShipmentInfoInitializer(
+            shipmentMethod: "yes",
+            numOfItems: productController.cartList.length,
+            shipmentDetails: ShipmentDetails(
+                shipAddress1: hubValue!,
+                shipCity: districtsValue!,
+                shipCountry: "Bangladesh",
+                shipName: "From hub",
+                shipPostCode: '')))
+        .addCustomerInfoInitializer(
+        customerInfoInitializer: SSLCCustomerInfoInitializer(
+            customerState: "Uttara",
+            customerName: "Mak bro",
+            customerEmail: "makbro@gmail.com",
+            customerAddress1: "Uttara",
+            customerCity: "Dhaka",
+            customerPostCode:'1230',
+            customerCountry: "Bangladesh",
+            customerPhone: "01610000016"))
+        .addProductInitializer(
+        sslcProductInitializer:
+        // ***** ssl product initializer for general product STARTS*****
+        SSLCProductInitializer(
+            productName: "T-Shirt",
+            productCategory: "All",
+            general: General(
+                general: "General Purpose",
+                productProfile: "Product Profile")))
+        .addAdditionalInitializer(
+        sslcAdditionalInitializer:
+        SSLCAdditionalInitializer(valueA: "SSL_VERIFYPEER_FALSE"));
+    var result = await sslcommerz.payNow();
+    if (result is PlatformException) {
+      print("the response is: " +
+          result.message.toString() +
+          " code: " +
+          result.code);
+    } else {
+      SSLCTransactionInfoModel model = result;
+      //print('Payment Status: ${model.status}');
+      //showSuccessMgs('"Transaction Status: ${model.status}"');
+      if (model.status == 'VALID') {
+        if(id==null){
+          String unique='${DateTime.now().millisecondsSinceEpoch}';
+          showLoadingDialog(Get.context!);
+          authController.register(widget.customerName!, widget.address!, widget.customerPhone!,
+              widget.password!, widget.nbp!, widget.myReferCode!, widget.insuranceEndingDate!,'$userProfitAmount').then((value){
+            authController.updateReferUser(userController.referUser.phone!, '$referBalance').then((value){
+              authController.addReferUserReferList(userController.referUser.phone!,widget.myReferCode!,widget.customerName!,referUserProfitAmount!,widget.customerPhone!).then((value){
+                productController.createOrder(widget.customerName!, widget.customerPhone!,
+                    unique, districtsValue!, hubValue!, '${productController.cartList.length}', '${productController.total}', productController.cartList).then((value){
+                  Get.back();
+                });
+              });
+            });
+          });
+        }else{
+          String unique='${DateTime.now().millisecondsSinceEpoch}';
+          showLoadingDialog(Get.context!);
+          productController.createOrder(widget.customerName!, widget.customerPhone!,
+              unique, districtsValue!, hubValue!, '${productController.cartList.length}', '${productController.total}', productController.cartList).then((value){
+            Get.back();
+          });
+        }
+      } else {
+        showToast('Transaction failed');
+      }
+    }
+  }
 
 }
 

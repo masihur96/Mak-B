@@ -36,6 +36,7 @@ dependencies:
   carousel_pro_nullsafety: ^1.0.2
   platform_device_id: ^1.0.1
   intl: ^0.17.0
+  pull_to_refresh:
 
 #flutter_shimmer: ^2.1.1
 

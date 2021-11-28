@@ -16,6 +16,7 @@ import 'package:mak_b/variables/size_config.dart';
 import 'package:mak_b/widgets/notification_widget.dart';
 import 'package:mak_b/widgets/search_field.dart';
 import 'package:mak_b/widgets/solid_color_button.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../home_nav.dart';
 import 'cart_page.dart';
@@ -65,6 +66,25 @@ class _ProductPageState extends State<ProductPage> {
     if(userController.productOrderList.isEmpty)await userController.getProductOrder();
     if(productController.packageList.isEmpty)await productController.getPackage();
     if(userController.infoList.isEmpty)await userController.getContactInfo();
+  }
+
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  int _itemCount=18;
+
+  void _onRefresh() async{
+    await Future.delayed(const Duration(milliseconds: 1000));
+    _itemCount=100;
+    setState(() {});
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async{
+    await Future.delayed(const Duration(milliseconds: 1000));
+    _itemCount=_itemCount+100;
+    if(mounted) {
+      setState(() {});
+    }
+    _refreshController.loadComplete();
   }
   @override
   Widget build(BuildContext context) {
@@ -193,174 +213,205 @@ class _ProductPageState extends State<ProductPage> {
           SizedBox(width: 3),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: ()async{
-          return fetch();
-        },
-        child: ListView(
-          physics:ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-          shrinkWrap: true,
-          children: [
-            //SizedBox(height: getProportionateScreenWidth(context,10)),
-            GestureDetector(
-              onTap:()=> id==null?showToast('Please log in first'):userController.userModel.value.videoWatched=='5'?_showDialog():Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 8.0),
-                    height: 170,
-                    width: size.width,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        image: DecorationImage(
-                            image: AssetImage('assets/images/watch_1.png'),
-                            fit: BoxFit.fill
-                        )
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 10.0,
-                    right: 20.0,
-                    child: SolidColorButton(
-                        child: Text('Watch Now',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
-                        onPressed: ()=>id==null?showToast('Please log in first'):
-                        userController.userModel.value.videoWatched=='5'?_showDialog():
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
-                        borderRadius: 5.0,
-                        height: size.width*.06,
-                        width: size.width*.3,
-                        bgColor: Colors.amber),
-                  )
-                ],
+      body: _bodyUI(context,size)//CustomBottomNavBar(selectedMenu: MenuState.home),
+    ));
+  }
+  Widget _bodyUI(BuildContext context,Size size){
+    final Size size = MediaQuery.of(context).size;
+    return SmartRefresher(
+    enablePullDown: true,
+    enablePullUp: true,
+    header: const WaterDropHeader(waterDropColor: Colors.green),
+    footer: CustomFooter(
+      builder: (context, mode){
+        Widget body;
+        if(mode==LoadStatus.idle){
+          body =  const Text("pull up load");
+        }
+        else if(mode==LoadStatus.loading){
+          body =  const CircularProgressIndicator();
+        }
+        else if(mode == LoadStatus.failed){
+          body = const Text("Load Failed!Click retry!");
+        }
+        else if(mode == LoadStatus.canLoading){
+          body = const Text("release to load more");
+        }
+        else{
+          body = const Text("No more Data");
+        }
+        return SizedBox(
+          height: 55.0,
+          child: Center(child:body),
+        );
+      },
+    ),
+    controller: _refreshController,
+    onRefresh: _onRefresh,
+    onLoading: _onLoading,
+    child: ListView(
+      physics:ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      shrinkWrap: true,
+      children: [
+        //SizedBox(height: getProportionateScreenWidth(context,10)),
+        GestureDetector(
+          onTap:()=> id==null?showToast('Please log in first'):userController.userModel.value.videoWatched=='5'?_showDialog():Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 8.0),
+                height: 170,
+                width: size.width,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    image: DecorationImage(
+                        image: AssetImage('assets/images/watch_1.png'),
+                        fit: BoxFit.fill
+                    )
+                ),
               ),
-            ),
-            SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(right:8.0),
-              child:  StaggeredGridView.countBuilder(
-                shrinkWrap: true,
-                physics: new ClampingScrollPhysics(),
-                itemCount: productController.productList.length,
-                crossAxisCount: 3,
-                itemBuilder: (BuildContext context, int index) {
-                  // if (demoProducts[index].isPopular)
-                  return Padding(
-                    padding: EdgeInsets.only(left: getProportionateScreenWidth(context, 8)),
-                    child: SizedBox(
-                      width: getProportionateScreenWidth(context, 140),
-                      child: GestureDetector(
-                        onTap: (){
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DetailsScreen(product: productController.productList[index])));
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Color(0xFF19B52B).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+              Positioned(
+                bottom: 10.0,
+                right: 20.0,
+                child: SolidColorButton(
+                    child: Text('Watch Now',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
+                    onPressed: ()=>id==null?showToast('Please log in first'):
+                    userController.userModel.value.videoWatched=='5'?_showDialog():
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>WatchVideo())),
+                    borderRadius: 5.0,
+                    height: size.width*.06,
+                    width: size.width*.3,
+                    bgColor: Colors.amber),
+              )
+            ],
+          ),
+        ),
+        SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.only(right:8.0),
+          child:  StaggeredGridView.countBuilder(
+            shrinkWrap: true,
+            physics: new ClampingScrollPhysics(),
+            itemCount: productController.productList.length,
+            crossAxisCount: 3,
+            itemBuilder: (BuildContext context, int index) {
+              // if (demoProducts[index].isPopular)
+              return Padding(
+                padding: EdgeInsets.only(left: getProportionateScreenWidth(context, 8)),
+                child: SizedBox(
+                  width: getProportionateScreenWidth(context, 140),
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DetailsScreen(product: productController.productList[index])));
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xFF19B52B).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Stack(
+                              alignment: Alignment.topRight,
                               children: [
-                                Stack(
-                                  alignment: Alignment.topRight,
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(
-                                          getProportionateScreenWidth(context, 20)),
-                                      decoration: BoxDecoration(
-                                        color: kSecondaryColor.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                      child: productController.productList[index].image!=null?Hero(
-                                          tag: productController.productList[index].id.toString(),
-                                          child: CachedNetworkImage(
-                                            imageUrl: productController.productList[index].thumbNail,
-                                            placeholder: (context, url) => CircleAvatar(
-                                                backgroundColor: Colors.grey.shade200,
-                                                radius: size.width * .08,
-                                                backgroundImage: AssetImage(
-                                                    'assets/images/placeholder.png')),
-                                            errorWidget: (context, url, error) =>
-                                                Icon(Icons.error),
-                                            fit: BoxFit.cover,
-                                          )
-                                      ):Container(),
-                                    ),
-                                    // Padding(
-                                    //   padding: const EdgeInsets.only(top: 2.0, right: 2.0),
-                                    //   child: Icon(
-                                    //     Icons.add_circle_outline,
-                                    //     color: kPrimaryColor,
-                                    //   ),
-                                    // )
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 12.0, left: 3),
-                                  child: Text(
-                                    productController.productList[index].title!,
-                                    style: TextStyle(color: Colors.black),
-                                    maxLines: 2,
+                                Container(
+                                  padding: EdgeInsets.all(
+                                      getProportionateScreenWidth(context, 20)),
+                                  decoration: BoxDecoration(
+                                    color: kSecondaryColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(15),
                                   ),
+                                  child: productController.productList[index].image!=null?Hero(
+                                      tag: productController.productList[index].id.toString(),
+                                      child: CachedNetworkImage(
+                                        imageUrl: productController.productList[index].thumbNail,
+                                        placeholder: (context, url) => CircleAvatar(
+                                            backgroundColor: Colors.grey.shade200,
+                                            radius: size.width * .08,
+                                            backgroundImage: AssetImage(
+                                                'assets/images/placeholder.png')),
+                                        errorWidget: (context, url, error) =>
+                                            Icon(Icons.error),
+                                        fit: BoxFit.cover,
+                                      )
+                                  ):Container(),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 12.0, left: 3),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "\৳${productController.productList[index].price}",
-                                        style: TextStyle(
-                                          fontSize:
-                                          getProportionateScreenWidth(context, 15),
-                                          fontWeight: FontWeight.w500,
-                                          color: kPrimaryColor,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      // Text(
-                                      //   "\$${productController.productList[index].price}",
-                                      //   style: TextStyle(
-                                      //     decoration: TextDecoration.lineThrough,
-                                      //     fontSize:
-                                      //     getProportionateScreenWidth(context, 12),
-                                      //     fontWeight: FontWeight.w300,
-                                      //     color: Colors.grey[600],
-                                      //   ),
-                                      // ),
-                                      const SizedBox(height: 6),
-                                    ],
-                                  ),
-                                ),
+                                // Padding(
+                                //   padding: const EdgeInsets.only(top: 2.0, right: 2.0),
+                                //   child: Icon(
+                                //     Icons.add_circle_outline,
+                                //     color: kPrimaryColor,
+                                //   ),
+                                // )
                               ],
                             ),
-                          ),
+                            const SizedBox(height: 6),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12.0, left: 3),
+                              child: Text(
+                                productController.productList[index].title!,
+                                style: TextStyle(color: Colors.black),
+                                maxLines: 2,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12.0, left: 3),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "\৳${productController.productList[index].price}",
+                                    style: TextStyle(
+                                      fontSize:
+                                      getProportionateScreenWidth(context, 15),
+                                      fontWeight: FontWeight.w500,
+                                      color: kPrimaryColor,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  // Text(
+                                  //   "\$${productController.productList[index].price}",
+                                  //   style: TextStyle(
+                                  //     decoration: TextDecoration.lineThrough,
+                                  //     fontSize:
+                                  //     getProportionateScreenWidth(context, 12),
+                                  //     fontWeight: FontWeight.w300,
+                                  //     color: Colors.grey[600],
+                                  //   ),
+                                  // ),
+                                  const SizedBox(height: 6),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  );
-                  // return SizedBox
-                  //     .shrink(); // here by default width and height is 0
-                },
-                staggeredTileBuilder: (int index) =>
-                new StaggeredTile.fit(1),
-                mainAxisSpacing: 15.0,
+                  ),
+                ),
+              );
+              // return SizedBox
+              //     .shrink(); // here by default width and height is 0
+            },
+            staggeredTileBuilder: (int index) =>
+            new StaggeredTile.fit(1),
+            mainAxisSpacing: 15.0,
 
-              ),
-            ),
-            //SizedBox(width: getProportionateScreenWidth(20)),
-          ],
+          ),
         ),
-      ), //CustomBottomNavBar(selectedMenu: MenuState.home),
-    ));
+        //SizedBox(width: getProportionateScreenWidth(20)),
+      ],
+    ),
+  );
   }
 
   _showDialog() {
