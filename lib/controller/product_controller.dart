@@ -66,7 +66,7 @@ class ProductController extends GetxController{
             image: element.doc['image'],
             date: element.doc['date'],
           );
-          _productList.add(productModel) ;
+          _productList.add(productModel);
         });
         print(_productList.length);
       });
@@ -140,6 +140,7 @@ class ProductController extends GetxController{
       Get.back();
     });
   }
+
   Future<void> deleteCartItem(String productId)async {
     showLoadingDialog(Get.context!);
     await FirebaseFirestore.instance.collection('Cart').doc(deviceId).collection('CartList').doc(productId).delete().then((value)async{

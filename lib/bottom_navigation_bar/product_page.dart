@@ -41,7 +41,6 @@ class _ProductPageState extends State<ProductPage> {
   }
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _checkPreferences();
   }
@@ -56,12 +55,12 @@ class _ProductPageState extends State<ProductPage> {
     await productController.getAreaHub(productController.areaList[0].id);
     await productController.getCategory();
     await productController.getSubCategory(productController.categoryList[0].category);
-    await productController.getSubCategoryProducts(productController.subCategoryList[0].subCategory);
+    //await productController.getSubCategoryProducts(productController.subCategoryList[0].subCategory);
   }
   Future<void> fetch1()async{
     if(productController.categoryList.isEmpty) await productController.getCategory();
     if(productController.subCategoryList.isEmpty) await productController.getSubCategory(productController.categoryList[0].category);
-    if(productController.categoryProductList.isEmpty) await productController.getSubCategoryProducts(productController.subCategoryList[0].subCategory);
+    //if(productController.categoryProductList.isEmpty) await productController.getSubCategoryProducts(productController.subCategoryList[0].subCategory);
     if(userController.storePackageList.isEmpty)await userController.getMyStore();
     if(userController.productOrderList.isEmpty)await userController.getProductOrder();
     if(productController.packageList.isEmpty)await productController.getPackage();
@@ -83,16 +82,6 @@ class _ProductPageState extends State<ProductPage> {
                 shape: BoxShape.circle,
               ),
               child: Image.asset("assets/icons/deub.png"),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.start,
-              //   children: [
-              //     SizedBox(width: 10,),
-              //     Center(child:
-              //
-              //     Text('Categories',style: TextStyle(color: Colors.white))
-              //     ),
-              //   ],
-              // ),
             ),
             SizedBox(height: 20),
             Divider(),

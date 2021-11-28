@@ -35,7 +35,6 @@ class _BodyState extends State<Body> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _checkPreferences();
   }
@@ -73,17 +72,6 @@ class _BodyState extends State<Body> {
                     ),
                   ),
                   SizedBox(height: 5),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: getProportionateScreenWidth(context, 20),
-                      right: getProportionateScreenWidth(context, 64),
-                    ),
-                    child: Text(
-                      widget.product.description!,
-                      maxLines: 3,
-                    ),
-                  ),
-                  SizedBox(height: 5),
                   Row(
                     children: [
                       Padding(
@@ -112,127 +100,142 @@ class _BodyState extends State<Body> {
                     ],
                   ),
                   SizedBox(height: 5),
+
+                  ///product size, color
                   Row(
                     children: [
                       widget.product.size!.isNotEmpty
                           ? Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                      getProportionateScreenWidth(context, 20)),
-                              child: Container(
-                                width: size.width * .25,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: size.height * .01),
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: kPrimaryColor, width: 1),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5))),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                    isDense: true,
-                                    isExpanded: true,
-                                    value: _size,
-                                    hint: Text('Size',
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontFamily: 'OpenSans',
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                            getProportionateScreenWidth(context, 20)),
+                        child: Container(
+                          width: size.width * .25,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: size.height * .01),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: kPrimaryColor, width: 1),
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(5))),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton(
+                              isDense: true,
+                              isExpanded: true,
+                              value: _size,
+                              hint: Text('Size',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontFamily: 'OpenSans',
+                                    fontSize: size.height * .022,
+                                  )),
+                              items: widget.product.size!.map((sizes) {
+                                return DropdownMenuItem(
+                                  child: Text(sizes,
+                                      style: TextStyle(
+                                          color: Colors.grey[900],
                                           fontSize: size.height * .022,
-                                        )),
-                                    items: widget.product.size!.map((sizes) {
-                                      return DropdownMenuItem(
-                                        child: Text(sizes,
-                                            style: TextStyle(
-                                                color: Colors.grey[900],
-                                                fontSize: size.height * .022,
-                                                fontFamily: 'OpenSans')),
-                                        value: sizes.toString(),
-                                      );
-                                    }).toList(),
-                                    onChanged: (newVal) {
-                                      setState(() {
-                                        _size = newVal as String;
-                                      });
-                                    },
-                                    dropdownColor: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            )
+                                          fontFamily: 'OpenSans')),
+                                  value: sizes.toString(),
+                                );
+                              }).toList(),
+                              onChanged: (newVal) {
+                                setState(() {
+                                  _size = newVal as String;
+                                });
+                              },
+                              dropdownColor: Colors.white,
+                            ),
+                          ),
+                        ),
+                      )
                           : Container(),
                       widget.product.colors!.isNotEmpty
                           ? Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                      getProportionateScreenWidth(context, 20)),
-                              child: Row(
-                                children: [
-                                  Text('Color: '),
-                                  Container(
-                                    width: size.width * .4,
-                                    height: size.height * .05,
-                                    child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        shrinkWrap: true,
-                                        itemCount:
-                                            widget.product.colors!.length,
-                                        itemBuilder: (BuildContext ctx, index) {
-                                          return Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  indx = index;
-                                                });
-                                              },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(5)),
-                                                    border: Border.all(
-                                                        color: kPrimaryColor),
-                                                    color: index == indx
-                                                        ? Colors.green
-                                                            .withOpacity(0.5)
-                                                        : Colors.white,
-                                                    shape: BoxShape.rectangle),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(4.0),
-                                                  child: Container(
-                                                    height: 30,
-                                                    width: 20,
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    5)),
-                                                        color: widget.product
-                                                                .colors!.isEmpty
-                                                            ? Colors.white70
-                                                            : Color(int.parse(
-                                                                widget.product
-                                                                        .colors![
-                                                                    index])),
-                                                        shape:
-                                                            BoxShape.rectangle),
-                                                  ),
-                                                ),
-                                              ),
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                            getProportionateScreenWidth(context, 20)),
+                        child: Row(
+                          children: [
+                            Text('Color: '),
+                            Container(
+                              width: size.width * .4,
+                              height: size.height * .05,
+                              child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  shrinkWrap: true,
+                                  itemCount:
+                                  widget.product.colors!.length,
+                                  itemBuilder: (BuildContext ctx, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            indx = index;
+                                          });
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.all(
+                                                  Radius.circular(5)),
+                                              border: Border.all(
+                                                  color: kPrimaryColor),
+                                              color: index == indx
+                                                  ? Colors.green
+                                                  .withOpacity(0.5)
+                                                  : Colors.white,
+                                              shape: BoxShape.rectangle),
+                                          child: Padding(
+                                            padding:
+                                            const EdgeInsets.all(4.0),
+                                            child: Container(
+                                              height: 30,
+                                              width: 20,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                  BorderRadius.all(
+                                                      Radius.circular(
+                                                          5)),
+                                                  color: widget.product
+                                                      .colors!.isEmpty
+                                                      ? Colors.white70
+                                                      : Color(int.parse(
+                                                      widget.product
+                                                          .colors![
+                                                      index])),
+                                                  shape:
+                                                  BoxShape.rectangle),
                                             ),
-                                          );
-                                        }),
-                                  ),
-                                ],
-                              ),
-                            )
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                            ),
+                          ],
+                        ),
+                      )
                           : Container(),
                     ],
                   ),
+                  SizedBox(height: 5),
+
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: getProportionateScreenWidth(context, 20),
+                      right: getProportionateScreenWidth(context, 64),
+                    ),
+                    child: Text(
+                      widget.product.description!,
+                    ),
+                  ),
+                  SizedBox(height: 5),
                 ],
               ),
+
               TopRoundedContainer(
                 color: Colors.white,
                 child: Row(
