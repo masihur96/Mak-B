@@ -37,6 +37,7 @@ dependencies:
   platform_device_id: ^1.0.1
   intl: ^0.17.0
   pull_to_refresh:
+  animated_text_kit: ^4.2.1
 
 #flutter_shimmer: ^2.1.1
 

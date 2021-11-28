@@ -47,7 +47,7 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   Future<void> fetch()async{
-    await productController.getProducts();
+    await productController.getProducts(_itemCount);
     await productController.getArea();
     await productController.getPackage();
     await userController.getProductOrder();
@@ -69,18 +69,19 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
-  int _itemCount=18;
+  int _itemCount=100;
 
   void _onRefresh() async{
-    await Future.delayed(const Duration(milliseconds: 1000));
     _itemCount=100;
+    await productController.getProducts(_itemCount);
     setState(() {});
     _refreshController.refreshCompleted();
   }
 
   void _onLoading() async{
-    await Future.delayed(const Duration(milliseconds: 1000));
     _itemCount=_itemCount+100;
+    print('Item: $_itemCount');
+    await productController.getProducts(_itemCount);
     if(mounted) {
       setState(() {});
     }

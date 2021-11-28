@@ -29,8 +29,8 @@ class ProductController extends GetxController{
 
   void _checkPreferences() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    id = preferences.get('id') as String? ;
-    deviceId = preferences.get('deviceId') as String? ;
+    id = preferences.get('id') as String?;
+    deviceId = preferences.get('deviceId') as String?;
   }
   @override // called when you use Get.put before running app
   void onInit() {
@@ -47,9 +47,10 @@ class ProductController extends GetxController{
   get areaHubList => _areaHubList;
   get subCategoryList => _subCategoryList;
 
-  Future<void> getProducts()async{
+  Future<void> getProducts(int limit)async{
     try{
-      await FirebaseFirestore.instance.collection('Products').get().then((snapShot){
+      print('executed');
+      await FirebaseFirestore.instance.collection('Products').limit(limit).get().then((snapShot){
         _productList.clear();
         snapShot.docChanges.forEach((element) {
           ProductModel productModel=ProductModel(
@@ -69,6 +70,7 @@ class ProductController extends GetxController{
           _productList.add(productModel);
         });
         print(_productList.length);
+        update();
       });
     }catch(error){
       print(error);

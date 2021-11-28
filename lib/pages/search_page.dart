@@ -30,7 +30,7 @@ class _SearchPageState extends State<SearchPage> {
         .of(context)
         .size;
     if (_counterProduct == 0) {
-      productController.getProducts().then((value) {
+      productController.getProducts(200).then((value) {
         setState(() {
           _counterProduct++;
           productList = productController.productList;

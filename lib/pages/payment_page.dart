@@ -103,7 +103,6 @@ class _PaymentPageState extends State<PaymentPage> {
   String? id;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _checkPreferences();
   }
@@ -632,26 +631,9 @@ class _PaymentPageState extends State<PaymentPage> {
       //showSuccessMgs('"Transaction Status: ${model.status}"');
       if (model.status == 'VALID') {
         if(id==null){
-          String unique='${DateTime.now().millisecondsSinceEpoch}';
-          showLoadingDialog(Get.context!);
-          authController.register(widget.customerName!, widget.address!, widget.customerPhone!,
-              widget.password!, widget.nbp!, widget.myReferCode!, widget.insuranceEndingDate!,'$userProfitAmount').then((value){
-            authController.updateReferUser(userController.referUser.phone!, '$referBalance').then((value){
-              authController.addReferUserReferList(userController.referUser.phone!,widget.myReferCode!,widget.customerName!,referUserProfitAmount!,widget.customerPhone!).then((value){
-                productController.createOrder(widget.customerName!, widget.customerPhone!,
-                    unique, districtsValue!, hubValue!, '${productController.cartList.length}', '${productController.total}', productController.cartList).then((value){
-                  Get.back();
-                });
-              });
-            });
-          });
+
         }else{
-          String unique='${DateTime.now().millisecondsSinceEpoch}';
-          showLoadingDialog(Get.context!);
-          productController.createOrder(widget.customerName!, widget.customerPhone!,
-              unique, districtsValue!, hubValue!, '${productController.cartList.length}', '${productController.total}', productController.cartList).then((value){
-            Get.back();
-          });
+
         }
       } else {
         showToast('Transaction failed');

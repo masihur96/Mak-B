@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
@@ -29,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final ProductController productController=Get.put(ProductController());
 
     await userController.getFirstUser();
-    await productController.getProducts();
+    await productController.getProducts(100);
     await productController.getArea();
     await productController.getCart();
     await userController.getRate();
@@ -61,38 +62,38 @@ class _SplashScreenState extends State<SplashScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: size.height*.3,
-                  width: size.width*.8,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage("assets/images/splash.png"),
-                          fit: BoxFit.contain),
-                      borderRadius: BorderRadius.circular(5)),
-                ),
-                Container(
-                  height: size.height*.4,
-                  width: size.width*.8,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage("assets/icons/deub.png"),
-                          fit: BoxFit.contain),
-                      borderRadius: BorderRadius.circular(5)),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              height: size.height*.4,
+              width: size.width*.8,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("assets/icons/deub.png"),
+                      fit: BoxFit.contain),
+                  borderRadius: BorderRadius.circular(5)),
+            ),
+            AnimatedTextKit(
+              animatedTexts: [
+                TypewriterAnimatedText(
+                  'Powered by Mak B',
+                  textStyle: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width*.05,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  speed: const Duration(milliseconds: 100),
                 ),
               ],
+              totalRepeatCount: 20,
+              pause: const Duration(milliseconds: 1000),
+              displayFullTextOnTap: true,
+              stopPauseOnTap: true,
             ),
-          ),
-          Text('Powered by MakB\n',style: TextStyle(color: Colors.grey,fontSize: size.width*.032),)
-
-        ],
+          ],
+        ),
       ),
     );
   }
