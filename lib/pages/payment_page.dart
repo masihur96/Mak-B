@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:flutter_sslcommerz/model/SSLCAdditionalInitializer.dart';
-import 'package:flutter_sslcommerz/model/SSLCCustomerInfoInitializer.dart';
-import 'package:flutter_sslcommerz/model/SSLCEMITransactionInitializer.dart';
-import 'package:flutter_sslcommerz/model/SSLCSdkType.dart';
-import 'package:flutter_sslcommerz/model/SSLCShipmentInfoInitializer.dart';
-import 'package:flutter_sslcommerz/model/SSLCTransactionInfoModel.dart';
-import 'package:flutter_sslcommerz/model/SSLCommerzInitialization.dart';
-import 'package:flutter_sslcommerz/model/SSLCurrencyType.dart';
-import 'package:flutter_sslcommerz/model/sslproductinitilizer/General.dart';
-import 'package:flutter_sslcommerz/model/sslproductinitilizer/SSLCProductInitializer.dart';
-import 'package:flutter_sslcommerz/sslcommerz.dart';
+// import 'package:flutter_sslcommerz/model/SSLCAdditionalInitializer.dart';
+// import 'package:flutter_sslcommerz/model/SSLCCustomerInfoInitializer.dart';
+// import 'package:flutter_sslcommerz/model/SSLCEMITransactionInitializer.dart';
+// import 'package:flutter_sslcommerz/model/SSLCSdkType.dart';
+// import 'package:flutter_sslcommerz/model/SSLCShipmentInfoInitializer.dart';
+// import 'package:flutter_sslcommerz/model/SSLCTransactionInfoModel.dart';
+// import 'package:flutter_sslcommerz/model/SSLCommerzInitialization.dart';
+// import 'package:flutter_sslcommerz/model/SSLCurrencyType.dart';
+// import 'package:flutter_sslcommerz/model/sslproductinitilizer/General.dart';
+// import 'package:flutter_sslcommerz/model/sslproductinitilizer/SSLCProductInitializer.dart';
+// import 'package:flutter_sslcommerz/sslcommerz.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:mak_b/controller/auth_controller.dart';
@@ -235,7 +235,9 @@ class _PaymentPageState extends State<PaymentPage> {
                                       fontStyle: FontStyle.normal,
                                       fontSize: size.width * .04)),
                               SizedBox(height: 5,),
-                              Text('My Profit:  $userProfitAmount\৳',
+
+
+                              Text('My Profit: ${double.parse((userProfitAmount).toStringAsFixed(2))}\৳',
                                   style: TextStyle(
 
                                       color: Colors.black,
@@ -570,76 +572,76 @@ class _PaymentPageState extends State<PaymentPage> {
         });
   }
 
-  Future<void> _paySSLCommerz() async {
-    Sslcommerz sslcommerz = Sslcommerz(
-        initializer: SSLCommerzInitialization(
-          //Use the ipn if you have valid one, or it will fail the transaction.
-          //ipn_url: "www.ipnurl.com",
-            multi_card_name: '',
-            currency: SSLCurrencyType.BDT,
-            product_category: "Food",
-            sdkType: SSLCSdkType.LIVE,
-            store_id: "demotest",
-            store_passwd: "qwerty",
-            total_amount: double.parse('${productController.total}'),
-            tran_id: DateTime.now().millisecondsSinceEpoch.toString()));
-    sslcommerz
-        .addEMITransactionInitializer(
-        sslcemiTransactionInitializer: SSLCEMITransactionInitializer(
-            emi_options: 1, emi_max_list_options: 3, emi_selected_inst: 2))
-        .addShipmentInfoInitializer(
-        sslcShipmentInfoInitializer: SSLCShipmentInfoInitializer(
-            shipmentMethod: "yes",
-            numOfItems: productController.cartList.length,
-            shipmentDetails: ShipmentDetails(
-                shipAddress1: hubValue!,
-                shipCity: districtsValue!,
-                shipCountry: "Bangladesh",
-                shipName: "From hub",
-                shipPostCode: '')))
-        .addCustomerInfoInitializer(
-        customerInfoInitializer: SSLCCustomerInfoInitializer(
-            customerState: "Uttara",
-            customerName: "Mak bro",
-            customerEmail: "makbro@gmail.com",
-            customerAddress1: "Uttara",
-            customerCity: "Dhaka",
-            customerPostCode:'1230',
-            customerCountry: "Bangladesh",
-            customerPhone: "01610000016"))
-        .addProductInitializer(
-        sslcProductInitializer:
-        // ***** ssl product initializer for general product STARTS*****
-        SSLCProductInitializer(
-            productName: "T-Shirt",
-            productCategory: "All",
-            general: General(
-                general: "General Purpose",
-                productProfile: "Product Profile")))
-        .addAdditionalInitializer(
-        sslcAdditionalInitializer:
-        SSLCAdditionalInitializer(valueA: "SSL_VERIFYPEER_FALSE"));
-    var result = await sslcommerz.payNow();
-    if (result is PlatformException) {
-      print("the response is: " +
-          result.message.toString() +
-          " code: " +
-          result.code);
-    } else {
-      SSLCTransactionInfoModel model = result;
-      //print('Payment Status: ${model.status}');
-      //showSuccessMgs('"Transaction Status: ${model.status}"');
-      if (model.status == 'VALID') {
-        if(id==null){
-
-        }else{
-
-        }
-      } else {
-        showToast('Transaction failed');
-      }
-    }
-  }
+  // Future<void> _paySSLCommerz() async {
+  //   Sslcommerz sslcommerz = Sslcommerz(
+  //       initializer: SSLCommerzInitialization(
+  //         //Use the ipn if you have valid one, or it will fail the transaction.
+  //         //ipn_url: "www.ipnurl.com",
+  //           multi_card_name: '',
+  //           currency: SSLCurrencyType.BDT,
+  //           product_category: "Food",
+  //           sdkType: SSLCSdkType.LIVE,
+  //           store_id: "demotest",
+  //           store_passwd: "qwerty",
+  //           total_amount: double.parse('${productController.total}'),
+  //           tran_id: DateTime.now().millisecondsSinceEpoch.toString()));
+  //   sslcommerz
+  //       .addEMITransactionInitializer(
+  //       sslcemiTransactionInitializer: SSLCEMITransactionInitializer(
+  //           emi_options: 1, emi_max_list_options: 3, emi_selected_inst: 2))
+  //       .addShipmentInfoInitializer(
+  //       sslcShipmentInfoInitializer: SSLCShipmentInfoInitializer(
+  //           shipmentMethod: "yes",
+  //           numOfItems: productController.cartList.length,
+  //           shipmentDetails: ShipmentDetails(
+  //               shipAddress1: hubValue!,
+  //               shipCity: districtsValue!,
+  //               shipCountry: "Bangladesh",
+  //               shipName: "From hub",
+  //               shipPostCode: '')))
+  //       .addCustomerInfoInitializer(
+  //       customerInfoInitializer: SSLCCustomerInfoInitializer(
+  //           customerState: "Uttara",
+  //           customerName: "Mak bro",
+  //           customerEmail: "makbro@gmail.com",
+  //           customerAddress1: "Uttara",
+  //           customerCity: "Dhaka",
+  //           customerPostCode:'1230',
+  //           customerCountry: "Bangladesh",
+  //           customerPhone: "01610000016"))
+  //       .addProductInitializer(
+  //       sslcProductInitializer:
+  //       // ***** ssl product initializer for general product STARTS*****
+  //       SSLCProductInitializer(
+  //           productName: "T-Shirt",
+  //           productCategory: "All",
+  //           general: General(
+  //               general: "General Purpose",
+  //               productProfile: "Product Profile")))
+  //       .addAdditionalInitializer(
+  //       sslcAdditionalInitializer:
+  //       SSLCAdditionalInitializer(valueA: "SSL_VERIFYPEER_FALSE"));
+  //   var result = await sslcommerz.payNow();
+  //   if (result is PlatformException) {
+  //     print("the response is: " +
+  //         result.message.toString() +
+  //         " code: " +
+  //         result.code);
+  //   } else {
+  //     SSLCTransactionInfoModel model = result;
+  //     //print('Payment Status: ${model.status}');
+  //     //showSuccessMgs('"Transaction Status: ${model.status}"');
+  //     if (model.status == 'VALID') {
+  //       if(id==null){
+  //
+  //       }else{
+  //
+  //       }
+  //     } else {
+  //       showToast('Transaction failed');
+  //     }
+  //   }
+  // }
 
 }
 
